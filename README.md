@@ -1,13 +1,13 @@
 # Wollok Game: Título de juego
 
-**Grupo:** Nombre de Grupo
+**Grupo:** GruPOO7
 
 **Integrantes:**
-- Nombre y Apellido
-- Nombre y Apellido
-- Nombre y Apellido
-- Nombre y Apellido
-- Nombre y Apellido
+- Joaquin abalos
+- Jeronimo vazza
+- Matias albanell
+- Gonzalo bacigalupo
+- Mariano Felipe Otero
 
 ## Consignas
 
