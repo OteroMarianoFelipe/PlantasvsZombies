@@ -1,13 +1,27 @@
 import wollok.game.*
-import example.*
+import jardin.*
 
-program NombreDeJuego {
-	// TODO: Cambiar esto por lo que necesiten
-	game.title("Grupo: ... | Nombre de jueguito")
-	game.height(10)
-	game.width(10)
+object cursor {
+  var property position = game.at(1, 2)
+  method image() = "cursor.png" 
 
-	game.addVisual(player)
+  method moverArriba() { if (position.y() < 4) position = position.up(1) }
+  method moverAbajo() { if (position.y() > 0) position = position.down(1) }
+  method moverIzquierda() { if (position.x() > 0) position = position.left(1) }
+  method moverDerecha() { if (position.x() < 8) position = position.right(1) }
+}
 
-	game.start()
+program juego {
+  game.title("Line Defense - Plants vs Zombies")
+  game.height(6)
+  game.width(10)
+
+  game.addVisual(cursor)
+
+  keyboard.up().onPressDo({ cursor.moverArriba() })
+  keyboard.down().onPressDo({ cursor.moverAbajo() })
+  keyboard.left().onPressDo({ cursor.moverIzquierda() })
+  keyboard.right().onPressDo({ cursor.moverDerecha() })
+
+  game.start()
 }
