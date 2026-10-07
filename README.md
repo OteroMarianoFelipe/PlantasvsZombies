@@ -22,13 +22,21 @@ Recuerden que para cada checkpoint hay [expectativas mínimas](https://docs.goog
 
 # Cómo jugar
 
+## Cómo ejecutar
+
+Desde la raíz del proyecto, ejecuten:
+
+```sh
+wollok run juego.juego -p .
+```
+
 ## Objetivo
 
-TODO
+Proteger el jardin en cinco filas. Cada fila tiene una planta al comienzo y un zombie que avanza desde el extremo derecho.
 
 ## Controles
 
-TODO
+Por ahora no hay controles manuales: los zombies avanzan automaticamente una casilla cada 1,2 segundos. Los lanzaguisantes disparan cada 4 segundos y las plantas pierden vida cuando las alcanza un zombie.
 
 # Explicaciones
 
