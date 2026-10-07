@@ -1,0 +1,45 @@
+import jardin.*
+
+describe "Tests de Dominio - Checkpoint 1" {
+
+  test "El zombie dania polimorficamente a distintas plantas" {
+    const plantaAtaque = new Lanzaguisantes()
+    const plantaDefensa = new Nuez()
+    const zombie = new Zombie()
+
+    // El zombie interactua de la misma forma con ambas
+    zombie.atacar(plantaAtaque)
+    zombie.atacar(plantaDefensa)
+
+    assert.equals(85, plantaAtaque.vida())  // 100 - 15
+    assert.equals(385, plantaDefensa.vida()) // 400 - 15
+  }
+
+  test "El zombie recibe danio del lanzaguisantes y muere si vida llega a 0" {
+    const lanzaguisantes = new Lanzaguisantes()
+    const zombie = new Zombie(vida = 20)
+
+    lanzaguisantes.atacar(zombie)
+
+    assert.equals(0, zombie.vida())
+    assert.notThat(zombie.estaVivo())
+  }
+
+  test "El girasol suma soles correctamente al jardin" {
+    const girasol = new Girasol()
+    jardin.soles(50)
+
+    girasol.producirSoles(jardin)
+
+    assert.equals(75, jardin.soles())
+  }
+
+  test "Comprar una planta descuenta soles si alcanza el dinero" {
+    jardin.soles(100)
+    const nuez = new Nuez()
+
+    jardin.comprar(nuez)
+
+    assert.equals(50, jardin.soles())
+  }
+}
