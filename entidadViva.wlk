@@ -1,6 +1,10 @@
-class EntidadViva {
+import entity.Entity
+
+class EntidadViva inherits Entity{
     var property vida = self.vidaInicial()
     method vidaInicial()
+
+    override method canBeKilled() = true
 
     method recibirDanio(cantidad) {
         vida = 0.max(vida - cantidad)
@@ -9,16 +13,4 @@ class EntidadViva {
         }
     }
     method vive() = vida > 0
-
-    method image() = ""
-
-    method start(){
-        game.addVisual(self)
-    }
-
-    method tick() {}
-
-    method stop(){
-        game.removeVisual(self)
-    }
 }

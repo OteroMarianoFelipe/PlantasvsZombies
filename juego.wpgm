@@ -1,17 +1,8 @@
 import wollok.game.*
-import plantas.lanzaguisantes.*
-import plantas.girasol.*
-import plantas.nuez.*
-import plantas.planta.*
-import zombies.zombie.*
-import zombies.zombieBase.*
-import proyectiles.proyectil.*
-import config.config
-import player.*
-import entityManager.*
+import util.config.config
 
 program juego {
   config.configuracionGeneral()
-
   game.start()
+  config.startUIElements()
 }

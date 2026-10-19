@@ -1,55 +1,38 @@
 import juego.*
-import entityManager.*
-import config.*
+import entityManager.entityManager
+import util.config.config
+import util.debugger.debugger
 
 object player {
-  var property soles = 100
-  var property position = game.at(2, 2)
-  const costoPlantas = new Dictionary()
+  var property position = game.at(2, 3)
+  var property cardSelected = null
 
-  method image() = "cursor.png"
-
-  method inicializarDiccionarioDeCostes() {
-    costoPlantas.put("GIRASOL", 25)
-    costoPlantas.put("LANZAGUISANTES", 50)
-    costoPlantas.put("NUEZ", 50)
+  method deselectCard(){ 
+    self.cardSelected().deselected()
+    self.cardSelected(null) 
   }
-  method costePlanta(planta){
-    return costoPlantas.get(planta)
+  method selectCard(card){ 
+    self.cardSelected(card) 
+    card.selected()
   }
 
-  method sumarSoles(cantidad) {
-    soles += cantidad
+  method cellIsUnblocked(entities) = not entities.any({e => e.blocksOwnCell()})
+  method isInBounds(pos) {
+    const lb = config.lowerBound()
+    const ub = config.upperBound()
+    const checksX = pos.x().between(lb.x(), ub.x())
+    const checksY = pos.y().between(lb.y(), ub.y())
+    return (checksX and checksY)
   }
 
-  method gastarSoles(cantidad) {
-    soles -= cantidad
-  }
-
-  method puedePagar(coste) {
-    return soles >= coste
-  } 
-
-  method comprar(planta) {
-    const coste = self.costePlanta(planta)
-    if (self.puedePagar(coste)) {
-      self.gastarSoles(coste)
-      entityManager.spawn(planta, position)
+  method clickHandler(position){
+    const entitiesHere = entityManager.allEntitiesAt(position)
+    if( self.cardSelected()!= null){
+      if(self.isInBounds(position) and self.cellIsUnblocked(entitiesHere)){
+        self.cardSelected().use(position)
+      }
+      self.deselectCard()   
     }
-  }
-
-  method moveVertical(direction){
-    var newY = position.y() + direction
-    const upperBound = config.upperBound().y()
-    const lowerBound = config.lowerBound().y()
-    newY = newY.min(upperBound).max(lowerBound)
-    position = game.at( position.x(), newY )
-  }
-  method moveHorizontal(direction){
-    var newX = position.x() + direction
-    const upperBound = config.upperBound().x()
-    const lowerBound = config.lowerBound().x()
-    newX = newX.min(upperBound).max(lowerBound)
-    position = game.at( newX, position.y() )
+    entitiesHere.forEach({ e => e.beClicked() })
   }
 }
