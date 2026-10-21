@@ -10,7 +10,7 @@ object sunFlowerCardSelected inherits StaticAnimation( img = "sprites/cards/sunF
 object sunFlowerCardCoolDown inherits Animation{
     override method loop() = false
     override method durationInSeconds() = 7.5
-    override method framesInAnimation() = 16
+    override method framesInAnimation() = 15
     override method animationDirectory() = "cards/sunflower/coolDown"
 }
 
@@ -21,7 +21,7 @@ object wallNutCardSelected inherits StaticAnimation( img = "sprites/cards/wallNu
 object wallNutCardCoolDown inherits Animation{
     override method loop() = false
     override method durationInSeconds() = 30
-    override method framesInAnimation() = 16
+    override method framesInAnimation() = 15
     override method animationDirectory() = "cards/wallNut/coolDown"
 }
 
@@ -32,6 +32,17 @@ object peashooterCardSelected inherits StaticAnimation( img = "sprites/cards/pea
 object peashooterCardCoolDown inherits Animation{
     override method loop() = false
     override method durationInSeconds() = 7.5
-    override method framesInAnimation() = 16
+    override method framesInAnimation() = 15
     override method animationDirectory() = "cards/peashooter/coolDown"
+}
+
+object snowPeaCardAvailable inherits StaticAnimation( img = "sprites/cards/snowPea/available.png"){}
+object snowPeaCardUnavailable inherits StaticAnimation( img = "sprites/cards/snowPea/unavailable.png"){}
+object snowPeaCardSelected inherits StaticAnimation( img = "sprites/cards/snowPea/selected.png"){}
+
+object snowPeaCardCoolDown inherits Animation{
+    override method loop() = false
+    override method durationInSeconds() = 7.5
+    override method framesInAnimation() = 15
+    override method animationDirectory() = "cards/snowPea/coolDown"
 }

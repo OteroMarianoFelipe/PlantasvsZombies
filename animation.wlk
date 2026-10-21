@@ -1,9 +1,9 @@
-import util.debugger.debugger
 import util.config.*
+import assets.zombie.*
 
 class Animation{
     method loop()
-    const property ticksPerFrame = self.durationInSeconds()*config.animationTicksPerSecond()/self.framesInAnimation()
+    const property ticksPerFrame = config.secondsToAnimationTicks(self.durationInSeconds())/self.framesInAnimation()
     method durationInSeconds()
     method framesInAnimation()
     method animationDirectory()
@@ -22,22 +22,25 @@ class AnimationHandler{
     method isTimeToPassFrame() = ticksInAnimationFrame>=self.animation().ticksPerFrame()
     method changeFrameIndex(){ 
         animationFrameNumber %= self.animation().framesInAnimation()
-        if(animationFrameNumber == 0 and not self.animation().loop()){
-            owner.resumeDefaultAnimation()
+        if(animationFrameNumber == 0){
+            animationCallBack.apply()
+            self.animationCallBack({ => })
+            if(not self.animation().loop()){
+                owner.endNonLoopingAnimation()
+            }
         }
         animationFrameNumber += 1
     }
 
-    var property animationTickBehavior = {=> self.movingAnimationTick()}
+    var property animationTickBehavior = { => self.movingAnimationTick()}
+    var property animationCallBack = { => }
 
     method movingAnimationTick(){
         if(self.isTimeToPassFrame()){
             self.changeFrameIndex()
             ticksInAnimationFrame = 0
-            return true
         }else{
             self.tickUpFrameTime()
-            return false
         }
     }
     method staticAnimationTick(){}
@@ -56,15 +59,29 @@ class AnimationHandler{
 
     method getImage() = self.animation().getCurrentFrame(self.frameNumber001Format())
 
-    method changeAnimation(newAnimation){
+    method resetAnimationStateTrackers(){
         self.ticksInAnimationFrame(0)
         self.animationFrameNumber(1)
-        self.animation(newAnimation)
-        if(newAnimation.framesInAnimation() == 1){
+    }
+    method setAnimationTickBehavior(){
+        if(animation.framesInAnimation() == 1){
             self.animationTickBehavior({=>self.staticAnimationTick()})
         }else{
             self.animationTickBehavior({=>self.movingAnimationTick()})
-        }   
+        }  
+    }
+
+    method changeAnimation(newAnimation) = self.changeAnimation(newAnimation, {=>})
+    method changeAnimation(newAnimation, callback){
+        self.resetAnimationStateTrackers()
+        return self.changeAnimationSeamlessly(newAnimation, callback)
+    }
+
+    method changeAnimationSeamlessly(newAnimation) = self.changeAnimationSeamlessly(newAnimation, { => })
+    method changeAnimationSeamlessly(newAnimation, callback){
+        self.animation(newAnimation)
+        self.setAnimationTickBehavior()
+        self.animationCallBack(callback)
         return newAnimation
     }
 }

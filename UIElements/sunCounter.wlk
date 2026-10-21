@@ -1,9 +1,10 @@
 import animation.*
-import util.debugger.debugger
+import entity.*
 
 object sunCounter inherits Entity{
     var property suns =200
 
+    override method team() ="NEUTRAL"
     method canPay(cost) = suns >= cost
     method addSuns(amount) { 
         suns += amount 
@@ -14,6 +15,8 @@ object sunCounter inherits Entity{
         self.updateCount()
     }
 
+    override method tick(){}
+
     method hundreds() = (suns/100).truncate(0)
     method tens() = suns - self.hundreds()*100
 
@@ -22,7 +25,7 @@ object sunCounter inherits Entity{
         sunCounterTens.changeTens(self.tens())
     }
 
-    override method start(){
+    method start(){
         game.addVisual(sunCounterIcoWithHundreds)
         game.addVisual(sunCounterTens)
         self.updateCount()

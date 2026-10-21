@@ -1,16 +1,16 @@
 import planta.*
 import assets.wallNut.*
-import util.debugger.*
 
 class Nuez inherits Planta{
-  override method vidaInicial() = 4000
+  override method startingHealth() = 4000
   override method defaultAnimation() = wallNutIdle
+  override method damage() = 0
 
   override method tick(){}
 
   var property verificarThresholds = { => self.primerThreshold() }
-  method isHurt() = vida <= 2/3 * self.vidaInicial()
-  method isDying() =  vida <= 1/3 * self.vidaInicial()
+  method isHurt() = health <= 2/3 * self.startingHealth()
+  method isDying() =  health <= 1/3 * self.startingHealth()
 
   method primerThreshold() { 
     if(not self.isHurt()) {return}
@@ -26,7 +26,7 @@ class Nuez inherits Planta{
     return
   }
 
-  override method recibirDanio(cantidad){
+  override method takeDamage(cantidad){
     super(cantidad)
     verificarThresholds.apply()
   }

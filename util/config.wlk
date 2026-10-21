@@ -4,7 +4,6 @@ import player.*
 import plantas.girasol.*
 import plantas.lanzaguisantes.*
 import plantas.nuez.*
-import util.debugger.*
 import UIElements.plantCard.*
 import UIElements.sunCounter.*
 object config {
@@ -17,6 +16,11 @@ object config {
 
   method upperBound() = game.at(11, 5)
   method lowerBound() = game.at(2, 1)
+
+  method secondsToTicks(seconds) = (seconds * ticksPerSecond).truncate(0)
+  method secondsToAnimationTicks(seconds) = (seconds * animationTicksPerSecond).truncate(0)
+  method ticksToAnimationTicks(ticks) = (ticks * animationTicksPerSecond / ticksPerSecond).truncate(0)
+  method animationTicksToTicks(ticks) = (ticks * ticksPerSecond / animationTicksPerSecond ).truncate(0)
 
   method configuracionGeneral(){
     self.configurarVisuales()  
@@ -38,10 +42,10 @@ object config {
   }
 
   method startUIElements(){
-    debugger.info("Starting UI elements")
     entityManager.addEntity(sunFlowerCard, game.at(2,0))
     entityManager.addEntity(peashooterCard, game.at(3,0))
     entityManager.addEntity(wallNutCard, game.at(4,0))
+    entityManager.addEntity(snowPeaCard, game.at(5,0))
     sunCounter.start()
   }
 }

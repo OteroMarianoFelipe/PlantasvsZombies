@@ -18,7 +18,7 @@ object peaShot inherits StaticAnimation( img = "sprites/projectiles/pea.png" ){}
 
 object peaShotImpact inherits Animation{
     override method loop() = false
-    override method durationInSeconds() = 0.13
+    override method durationInSeconds() = 0.1
     override method framesInAnimation() = 4
     override method animationDirectory() = "projectiles/pea/impact"
 }

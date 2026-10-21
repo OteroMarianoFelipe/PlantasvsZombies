@@ -11,12 +11,12 @@ object wallNutHurtIdle inherits Animation{
     override method loop() = true
     override method durationInSeconds() = 0.5
     override method framesInAnimation() = 4
-    override method animationDirectory() = "plants/wallNut/hurtIdle"
+    override method animationDirectory() = "plants/wallNut/hurt"
 }
 
 object wallNutDyingIdle inherits Animation{
     override method loop() = true
     override method durationInSeconds() = 0.5
     override method framesInAnimation() = 4
-    override method animationDirectory() = "plants/wallNut/dyingIdle"
+    override method animationDirectory() = "plants/wallNut/dying"
 }

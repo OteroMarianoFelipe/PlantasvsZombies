@@ -1,19 +1,15 @@
 import zombies.zombieBase.*
 import zombies.zombie.*
-import plantas.planta.*
-import plantas.girasol.*
-import plantas.lanzaguisantes.*
-import plantas.nuez.*
-import proyectiles.projectile.*
+import zombies.coneHead.*
+import proyectiles.sun.*
 import util.azar.*
 import util.config.*
-import util.debugger.*
 
 object entityManager{
   const entities = []
 
   method startTicking(){
-    game.onTick(200, "tickEntities", {  
+    game.onTick(1000/config.ticksPerSecond(), "tickEntities", {  
       entities.forEach({entity => 
         entity.tick()
       })  
@@ -25,12 +21,13 @@ object entityManager{
       })
     })
 
-    game.onTick(30000, "spawnZombies",{
-      azar.numeroEntre(2, 4).times({ i =>
-        const lastColumn = config.upperBound().x()
+    game.onTick(5000, "spawnZombies",{
+      const zombies = []
+      const lastColumn = config.upperBound().x()
+      azar.numeroEntre(1, 1).times({ i=>
+        const zombie = [new Zombie(), new Zombie()].get(azar.numeroEntre(0,1))
         const randomLine = azar.numeroEntre(config.lowerBound().y(), config.upperBound().y())
-        const zombie = new Zombie()
-        self.addEntity(zombie, game.at(lastColumn, randomLine))
+        game.schedule(i*500, {=> self.addEntity(zombie, game.at(lastColumn, randomLine))})
       })
     })
 
@@ -54,9 +51,13 @@ object entityManager{
   method allEntitiesAt(pos) = entitiesMap.allEntitiesAt(pos)
   method allIntersectingEntities(entity) = entitiesMap.allEntitiesAt(entity.position()).filter({e=> e!=entity})
 
-  method deleteEntity(entity){
-    entities.remove(entity)
+  method removeEntityCollitions(entity){
     entitiesMap.remove(entity)
+  }
+
+  method removeEntity(entity){
+    entities.remove(entity)
+    self.removeEntityCollitions(entity)
   }
 }
 

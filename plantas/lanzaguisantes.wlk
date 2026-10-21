@@ -1,29 +1,20 @@
 import planta.*
-import util.debugger.*
 import assets.peaShooter.*
-import proyectiles.projectile.*
 
-class Lanzaguisantes inherits Planta {
-  override method price() = 50
-  override method vidaInicial() = 300
+class LanzaGuisantes inherits Planta {
+  override method startingHealth() = 300
   override method defaultAnimation() = peaShooterIdle
+  override method damage() = 20
 
   override method moduleUseAnimation() = peaShooterAction
 
-  override method defaultActionModule() = new ModuloDisparoDeGuisantes(
+  override method defaultActionModule() = new PeaShootingModule(
     owner=self,
     coolDownInSeconds = 1.5,
-    damage = 20
+    arePeasFrozen = false
   )
 
   override method tick(){    
     self.moduloDeAccion().use()
   }
-}
-
-class ModuloDisparoDeGuisantes inherits ModuloDeDisparo{
-  override method newProjectile() = new Guisante(
-    ownTeam = owner.team(),
-    damage = self.damage()
-  )
 }

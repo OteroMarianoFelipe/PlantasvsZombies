@@ -1,24 +1,26 @@
 import entidadViva.EntidadViva
 import entityManager.entityManager
 import animation.*
-import util.debugger.debugger
+import proyectiles.projectile.*
+import proyectiles.pea.*
 import util.config.config
 
 class Planta inherits EntidadViva {
     var property moduloDeAccion = self.defaultActionModule()
     override method team() = "PLANTAS"
     override method blocksOwnCell()=true
-    method defaultActionModule() = sinAcciones
+    override method handleOwnRemoval(){self.cleanUp()}
+    method damage()
+    method defaultActionModule() = noActions
     method moduleUseAnimation() = self.defaultAnimation()
-    method anticipateUse(){ self.changeCurrentAnimation(self.moduleUseAnimation()) }
+    method anticipateUse(){ animationHandler.changeAnimation(self.moduleUseAnimation()) }
 }
 
-class ModuloDeAccionDePlanta{
+class PlantActionModule{
     const property owner
 
     const property animationDuration = self.owner().moduleUseAnimation().durationInTicks()
-    const property animationInFTicks = self.animationTicksToFunctionalTicks(self.animationDuration())
-    method animationTicksToFunctionalTicks(ticks) = config.animationTicksPerSecond()/config.ticksPerSecond()    
+    const property animationInFTicks = config.animationTicksToTicks(self.animationDuration())
 
     const property coolDownInSeconds
     const property ticksPerUse = (self.coolDownInSeconds()*config.ticksPerSecond()).truncate(0)
@@ -42,13 +44,22 @@ class ModuloDeAccionDePlanta{
     method action(){}
 }
 
-class ModuloDeDisparo inherits ModuloDeAccionDePlanta{
-    var property damage
+class ShootingModule inherits PlantActionModule{
     method newProjectile()    
     override method action(){ entityManager.addEntity(self.newProjectile(), owner.position()) }
 }
 
-object sinAcciones inherits ModuloDeAccionDePlanta( owner = self, coolDownInSeconds = 0){
+class PeaShootingModule inherits ShootingModule{
+    var property arePeasFrozen
+    override method newProjectile() = 
+        new Pea(
+            ownTeam = owner.team(),
+            damage = owner.damage(),
+            frozen = self.arePeasFrozen()
+        )
+}
+
+object noActions inherits PlantActionModule( owner = self, coolDownInSeconds = 0){
     method moduleUseticksUntilUse() = 0
     method moduleUseAnimation() = noAnimation
     method useAnticipationInTicks() = 0

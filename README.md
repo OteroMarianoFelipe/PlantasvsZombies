@@ -36,7 +36,7 @@ Proteger el jardin en cinco filas. Cada fila tiene una planta al comienzo y un z
 
 ## Controles
 
-Por ahora no hay controles manuales: los zombies avanzan automaticamente una casilla cada 1,2 segundos. Los lanzaguisantes disparan cada 4 segundos y las plantas pierden vida cuando las alcanza un zombie.
+Por ahora no hay controles manuales: los zombies avanzan automaticamente una casilla cada 1,2 segundos. Los lanzaGuisantes disparan cada 4 segundos y las plantas pierden vida cuando las alcanza un zombie.
 
 # Explicaciones
 

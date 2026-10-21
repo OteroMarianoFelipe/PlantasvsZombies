@@ -1,7 +1,6 @@
 import juego.*
 import entityManager.entityManager
 import util.config.config
-import util.debugger.debugger
 
 object player {
   var property position = game.at(2, 3)
@@ -25,11 +24,11 @@ object player {
     return (checksX and checksY)
   }
 
-  method clickHandler(position){
-    const entitiesHere = entityManager.allEntitiesAt(position)
+  method clickHandler(pos){
+    const entitiesHere = entityManager.allEntitiesAt(pos)
     if( self.cardSelected()!= null){
-      if(self.isInBounds(position) and self.cellIsUnblocked(entitiesHere)){
-        self.cardSelected().use(position)
+      if(self.isInBounds(pos) and self.cellIsUnblocked(entitiesHere)){
+        self.cardSelected().use(pos)
       }
       self.deselectCard()   
     }

@@ -1,48 +1,48 @@
 import entityManager.*
 import animation.*
-import util.debugger.debugger
+
 
 class Entity{
     var property position = game.at(0,0)
     var property previousPosition = self.position()
 
     method blocksOwnCell()=false
+    method canBeKilled() = false
 
     method team()
-    method canBeKilled() = false
+    method tick()
+    method handleOwnRemoval()
 
     method start(pos){
         self.position(pos)
         game.addVisual(self)
     }
     method beClicked(){}
-    method tick()
-    method avanzar(){
+    method updateMapPosition(){
         entitiesMap.updatePosition(self, self.previousPosition())
         self.previousPosition(self.position())
     }
-    method stop(){
-        entityManager.deleteEntity(self)
+    method cleanUp(){
+        entityManager.removeEntity(self)
         game.removeVisual(self)
     }
-
-
-    method image() = self.animationHandler().getImage()
-
-    var property animation = self.defaultAnimation()
-    method defaultAnimation() = noAnimation
 
     const property animationHandler = self.newAnimationHandler()
     method newAnimationHandler() = new AnimationHandler(owner = self)
 
+    var property animation = self.defaultAnimation()
+    method defaultAnimation() = noAnimation
+
+    method image() = self.animationHandler().getImage()
+   
+    method useDefaultAnimation(){ animationHandler.changeAnimation(self.animation()) }
+    method changeDefaultAnimation(newAnimation) { if(newAnimation != animation){ animation = newAnimation } }
     method changeAndUseDefaultAnimation(newAnimation){
         self.changeDefaultAnimation(newAnimation)
-        self.changeCurrentAnimation(newAnimation)
+        self.useDefaultAnimation()
     }
-    method changeDefaultAnimation(newAnimation) { if(newAnimation != animation){ animation = newAnimation } }
-    method changeCurrentAnimation(newAnimation) { self.animationHandler().changeAnimation(newAnimation) }
-    method useDefaultAnimation(){ self.changeCurrentAnimation(self.animation()) }
-    method resumeDefaultAnimation() { self.useDefaultAnimation() }
+
+    method endNonLoopingAnimation() { self.useDefaultAnimation() }
 
     method animate() = animationHandler.tickAnimation()
 

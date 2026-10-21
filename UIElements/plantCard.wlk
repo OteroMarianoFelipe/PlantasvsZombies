@@ -1,10 +1,10 @@
 import entity.*
 import assets.cards.*
 import player.player
-import util.debugger.debugger
-import plantas.lanzaguisantes.Lanzaguisantes
+import plantas.lanzaguisantes.*
 import plantas.girasol.Girasol
 import plantas.nuez.Nuez
+import plantas.snowPea.SnowPea
 import entityManager.*
 import UIElements.sunCounter.sunCounter
 
@@ -37,7 +37,7 @@ class PlantCard inherits Entity{
 
     method deselected() { self.currentBehaviour({=>self.defaultTickBehavior()}) }
     method selected() { 
-        self.changeCurrentAnimation(self.cardSelectedSprite()) 
+        animationHandler.changeAnimation(self.cardSelectedSprite()) 
         self.currentBehaviour({=>})
     }
     override method tick(){ self.currentBehaviour().apply() }
@@ -49,17 +49,17 @@ class PlantCard inherits Entity{
         return
     }
 
-    method use(position){
+    method use(pos){
         self.startCoolDown()
         sunCounter.spendSuns(price)
-        entityManager.addEntity(self.plantToCreate(), position)
+        entityManager.addEntity(self.plantToCreate(), pos)
     }
 
     method startCoolDown(){
         self.plantBuyCoolDown(true)
-        self.changeCurrentAnimation(self.cardCoolDownAnimation())
+        animationHandler.changeAnimation(self.cardCoolDownAnimation())
     }
-    override method resumeDefaultAnimation(){
+    override method endNonLoopingAnimation(){
         self.plantBuyCoolDown(false)
         super()
     }
@@ -74,7 +74,7 @@ object sunFlowerCard inherits PlantCard(price = 50){
 }
 
 object peashooterCard inherits PlantCard(price = 100){
-    override method plantToCreate() = new Lanzaguisantes()
+    override method plantToCreate() = new LanzaGuisantes()
     override method cardSelectedSprite() = peashooterCardSelected
     override method cardAvailableSprite() = peashooterCardAvailable
     override method cardUnavailableSprite() = peashooterCardUnavailable
@@ -87,4 +87,12 @@ object wallNutCard inherits PlantCard(price = 50){
     override method cardAvailableSprite() = wallNutCardAvailable
     override method cardUnavailableSprite() = wallNutCardUnavailable
     override method cardCoolDownAnimation() = wallNutCardCoolDown
+}
+
+object snowPeaCard inherits PlantCard(price = 175){
+    override method plantToCreate() = new SnowPea()
+    override method cardSelectedSprite() = snowPeaCardSelected
+    override method cardAvailableSprite() = snowPeaCardAvailable
+    override method cardUnavailableSprite() = snowPeaCardUnavailable
+    override method cardCoolDownAnimation() = snowPeaCardCoolDown
 }

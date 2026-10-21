@@ -1,7 +1,7 @@
 # Explicaciones teóricas
 
 ### 1. Polimorfismo
-El polimorfismo se aplica en la interacción entre los enemigos (`Zombie`) y los defensores (`Lanzaguisantes`, `Nuez`, `Girasol`). El `Zombie` interactúa con cualquier planta enviándole el mensaje `recibirDanio(cantidad)`. No necesita conocer el tipo concreto de la planta ya que todas entienden el mismo mensaje.
+El polimorfismo se aplica en la interacción entre los enemigos (`Zombie`) y los defensores (`lanzaGuisantes`, `Nuez`, `Girasol`). El `Zombie` interactúa con cualquier planta enviándole el mensaje `recibirDanio(cantidad)`. No necesita conocer el tipo concreto de la planta ya que todas entienden el mismo mensaje.
 
 ### 2. Encapsulamiento y Estado
 El estado interno de cada entidad (como la `vida` de los personajes o la cantidad de `soles` administrados por el `jardin`) esta encapsulado. Toda modificación del estado se realiza a través de métodos con nombres expresivos (`recibirDanio`, `sumarSoles`, `gastarSoles`).
