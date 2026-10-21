@@ -1,12 +1,12 @@
 import animation.*
 import entity.*
+import UIElements.UIElement.*
 
-object sunCounter inherits Entity{
+object sunCounter inherits UIElement{
     var property suns =200
 
-    override method team() ="NEUTRAL"
     method canPay(cost) = suns >= cost
-    method addSuns(amount) { 
+    method addSuns(amount) {
         suns += amount 
         self.updateCount()
     }

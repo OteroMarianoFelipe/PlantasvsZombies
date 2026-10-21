@@ -4,6 +4,7 @@ import plantas.planta.*
 import entityManager.*
 import player.*
 import util.config.*
+import UIElements.gameOver.*
 
 class ZombieBase inherits EntidadViva{
   var property healthStage = 0
@@ -101,6 +102,7 @@ class ZombieBase inherits EntidadViva{
       self.updateMapPosition()
       self.coolDownAvance()
       if(self.crossedTheYard()){
+        gameOver.trigger()
         self.cleanUp()
       }
     }
