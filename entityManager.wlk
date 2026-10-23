@@ -34,7 +34,7 @@ object entityManager{
     game.onTick(10000, "spawnSun",{
       const randomColumn = azar.numeroEntre(config.lowerBound().x(), config.upperBound().x()-1)
       const randomLine = azar.numeroEntre(config.lowerBound().y(), config.upperBound().y())
-      const sun = new Sun(ownTeam="PLANTAS", value = 25)
+      const sun = new Sun(team="PLANTAS", value = 25)
       self.addEntity(sun, game.at(randomColumn, randomLine))
     })
   }

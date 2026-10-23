@@ -6,9 +6,12 @@ import player.*
 import util.config.*
 import UIElements.gameOver.*
 
-class ZombieBase inherits EntidadViva{
-  var property healthStage = 0
+class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES"){
+  var property damage
+  var property secondsPerCell
+  var property secondsPerAttack
 
+  var property healthStage = 0
   var property objetivoDeAtaque = null
   var property frozen = 0
   var property freezeTick = false
@@ -17,9 +20,7 @@ class ZombieBase inherits EntidadViva{
 
   var property currentBehavior = { => self.move() }
   
-  const property danio = self.danioMordida() 
-
-  override method team() = "ZOMBIES"
+  const property danio = damage 
 
   // Devuelven una lista de tres animaciónes de más vida a menos vida
   method deathAnimation()
@@ -39,8 +40,8 @@ class ZombieBase inherits EntidadViva{
     super(pos)
   }
 
-  override method takeDamage(damage){
-    super(damage)
+  override method takeDamage(incomingDamage){
+    super(incomingDamage)
     if( self.isBelowCurrentThreshold() and self.lives()){
       healthStage+=1
       self.changeDefaultAnimation(self.currentWalkingAnimation())
@@ -54,11 +55,8 @@ class ZombieBase inherits EntidadViva{
     }   
   }
 
-  method danioMordida()
-  method secondsPerCell()
-  method secondsPerAttack()
-  method ticksPerCell() = config.secondsToTicks(self.secondsPerCell())
-  method ticksPerAttack() = config.secondsToTicks(self.secondsPerAttack())
+  method ticksPerCell() = config.secondsToTicks(secondsPerCell)
+  method ticksPerAttack() = config.secondsToTicks(secondsPerAttack)
 
   method changeToAttackMode(entity){
     self.objetivoDeAtaque(entity)
@@ -131,7 +129,7 @@ class ZombieBase inherits EntidadViva{
     return
   }
 
-  override method handleOwnRemoval(){
+  override method handleDeath(){
     currentBehavior = { => }
     animationHandler.changeAnimation(self.deathAnimation(), { => self.cleanUp()})
     entityManager.removeEntityCollitions(self)

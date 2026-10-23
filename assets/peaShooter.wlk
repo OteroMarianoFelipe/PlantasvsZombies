@@ -1,24 +1,24 @@
 import animation.*
 
-object peaShooterIdle inherits Animation{
-    override method loop() = true
-    override method durationInSeconds() = 0.5
-    override method framesInAnimation() = 8
-    override method animationDirectory() = "plants/peashooter/idle"
-}
+object peaShooterIdle inherits Animation(
+    loop = true,
+    durationInSeconds = 0.5,
+    framesInAnimation = 8,
+    animationDirectory = "plants/peashooter/idle"
+){}
 
-object peaShooterAction inherits Animation{
-    override method loop() = false
-    override method durationInSeconds() = 0.4
-    override method framesInAnimation() = 4
-    override method animationDirectory() = "plants/peashooter/active"
-}
+object peaShooterAction inherits Animation(
+    loop = false,
+    durationInSeconds = 0.4,
+    framesInAnimation = 4,
+    animationDirectory = "plants/peashooter/active"
+){}
 
 object peaShot inherits StaticAnimation( img = "sprites/projectiles/pea.png" ){}
 
-object peaShotImpact inherits Animation{
-    override method loop() = false
-    override method durationInSeconds() = 0.1
-    override method framesInAnimation() = 4
-    override method animationDirectory() = "projectiles/pea/impact"
-}
+object peaShotImpact inherits Animation(
+    loop = false,
+    durationInSeconds = 0.1,
+    framesInAnimation = 4,
+    animationDirectory = "projectiles/pea/impact"
+){}

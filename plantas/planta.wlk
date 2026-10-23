@@ -5,14 +5,14 @@ import proyectiles.projectile.*
 import proyectiles.pea.*
 import util.config.config
 
-class Planta inherits EntidadViva {
+class Planta inherits EntidadViva( blocksOwnCell = true, team = "PLANTAS") {
+    var property damage
+    
     var property moduloDeAccion = self.defaultActionModule()
-    override method team() = "PLANTAS"
-    override method blocksOwnCell()=true
-    override method handleOwnRemoval(){self.cleanUp()}
-    method damage()
+
+    override method handleDeath(){self.cleanUp()}
     method defaultActionModule() = noActions
-    method moduleUseAnimation() = self.defaultAnimation()
+    method moduleUseAnimation() = animation
     method anticipateUse(){ animationHandler.changeAnimation(self.moduleUseAnimation()) }
 }
 
@@ -53,7 +53,7 @@ class PeaShootingModule inherits ShootingModule{
     var property arePeasFrozen
     override method newProjectile() = 
         new Pea(
-            ownTeam = owner.team(),
+            team = owner.team(),
             damage = owner.damage(),
             frozen = self.arePeasFrozen()
         )

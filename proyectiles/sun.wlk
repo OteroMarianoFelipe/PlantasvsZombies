@@ -3,13 +3,16 @@ import util.config.*
 import assets.sunFlower.*
 import UIElements.sunCounter.*
 
-class Sun inherits Projectile{
+class Sun inherits Projectile(
+    animation = self.getProperAnimation()
+){
+    const property value
+
     const property secondsForDesapearing = 10
     var property ticksUntilDesapearing = config.secondsToTicks(secondsForDesapearing)
-    const property value
     method isBig() = self.value() == 50
 
-    override method defaultAnimation(){
+    method getProperAnimation(){
         if(self.isBig()){
             return bigSun
         }else{
@@ -30,7 +33,7 @@ class Sun inherits Projectile{
     override method defaultCollitionHandler(entity){}
     override method beClicked(){
         sunCounter.addSuns(self.value())
-        self.handleOwnRemoval()
+        self.handleDeath()
     }
-    override method handleOwnRemoval(){ self.cleanUp() }
+    override method handleDeath(){ self.cleanUp() }
 }

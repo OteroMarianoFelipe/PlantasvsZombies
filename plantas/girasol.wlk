@@ -4,13 +4,14 @@ import util.config.*
 import entityManager.*
 import proyectiles.sun.*
 
-class Girasol inherits Planta{
-  override method startingHealth() = 300
+class Girasol inherits Planta(
+  startingHealth = 300,
+  damage = 0,
+  animation = sunFlowerIdle
+){
   const property generatedSunValue = 25
-  override method damage() = 0
 
   override method moduleUseAnimation() = sunFlowerActive
-  override method defaultAnimation() = sunFlowerIdle
 
   override method defaultActionModule() = new ModuloDeGeneracionDeSoles(owner = self, coolDownInSeconds = 24.25)
 
@@ -23,7 +24,7 @@ class ModuloDeGeneracionDeSoles inherits PlantActionModule{
     override method action(){
       entityManager.addEntity(
         new Sun(
-          ownTeam = owner.team(),
+          team = owner.team(),
           value = owner.generatedSunValue()
         ),
         owner.position()

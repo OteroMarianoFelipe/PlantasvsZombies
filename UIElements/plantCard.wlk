@@ -7,20 +7,22 @@ import plantas.nuez.Nuez
 import plantas.snowPea.SnowPea
 import entityManager.*
 import UIElements.sunCounter.sunCounter
+import UIElements.UIElement.*
 
-class PlantCard inherits Entity{
-    override method team() = "NEUTRAL"
+class PlantCard inherits UIElement{
+    const property price
+    const property createNewInstance
+    const property cardAvailableSprite
+    const property cardUnavailableSprite
+    const property cardSelectedSprite
+    const property cardCoolDownAnimation
+
     var property isAvailable = false
     var property plantBuyCoolDown = false
 
-    const property price
-    method plantToCreate()
-
     override method defaultAnimation() = self.cardAvailableSprite()
-    method cardAvailableSprite()
-    method cardUnavailableSprite()
-    method cardSelectedSprite()
-    method cardCoolDownAnimation()
+
+    method newInstance() = createNewInstance.apply()
 
     var property currentBehaviour = {=>self.defaultTickBehavior()}
     method defaultTickBehavior(){
@@ -52,7 +54,7 @@ class PlantCard inherits Entity{
     method use(pos){
         self.startCoolDown()
         sunCounter.spendSuns(price)
-        entityManager.addEntity(self.plantToCreate(), pos)
+        entityManager.addEntity(self.newInstance(), pos)
     }
 
     method startCoolDown(){
@@ -65,34 +67,38 @@ class PlantCard inherits Entity{
     }
 }
 
-object sunFlowerCard inherits PlantCard(price = 50){
-    override method plantToCreate() = new Girasol()
-    override method cardSelectedSprite() = sunFlowerCardSelected
-    override method cardAvailableSprite() = sunFlowerCardAvailable
-    override method cardUnavailableSprite() = sunFlowerCardUnavailable
-    override method cardCoolDownAnimation() = sunFlowerCardCoolDown
-}
+object sunFlowerCard inherits PlantCard(
+    price = 50,
+    cardSelectedSprite = sunFlowerCardSelected,
+    cardAvailableSprite = sunFlowerCardAvailable,
+    cardUnavailableSprite = sunFlowerCardUnavailable,
+    cardCoolDownAnimation = sunFlowerCardCoolDown,
+    createNewInstance = { => new Girasol() }
+){}
 
-object peashooterCard inherits PlantCard(price = 100){
-    override method plantToCreate() = new LanzaGuisantes()
-    override method cardSelectedSprite() = peashooterCardSelected
-    override method cardAvailableSprite() = peashooterCardAvailable
-    override method cardUnavailableSprite() = peashooterCardUnavailable
-    override method cardCoolDownAnimation() = peashooterCardCoolDown
-}
+object peashooterCard inherits PlantCard(
+    price = 100,
+    cardSelectedSprite = peashooterCardSelected,
+    cardAvailableSprite = peashooterCardAvailable,
+    cardUnavailableSprite = peashooterCardUnavailable,
+    cardCoolDownAnimation = peashooterCardCoolDown,
+    createNewInstance = { => new LanzaGuisantes()}
+){}
 
-object wallNutCard inherits PlantCard(price = 50){
-    override method plantToCreate() = new Nuez()
-    override method cardSelectedSprite() = wallNutCardSelected
-    override method cardAvailableSprite() = wallNutCardAvailable
-    override method cardUnavailableSprite() = wallNutCardUnavailable
-    override method cardCoolDownAnimation() = wallNutCardCoolDown
-}
+object wallNutCard inherits PlantCard(
+    price = 50,
+    cardSelectedSprite = wallNutCardSelected,
+    cardAvailableSprite = wallNutCardAvailable,
+    cardUnavailableSprite = wallNutCardUnavailable,
+    cardCoolDownAnimation = wallNutCardCoolDown,
+    createNewInstance = { => new Nuez()}
+){}
 
-object snowPeaCard inherits PlantCard(price = 175){
-    override method plantToCreate() = new SnowPea()
-    override method cardSelectedSprite() = snowPeaCardSelected
-    override method cardAvailableSprite() = snowPeaCardAvailable
-    override method cardUnavailableSprite() = snowPeaCardUnavailable
-    override method cardCoolDownAnimation() = snowPeaCardCoolDown
-}
+object snowPeaCard inherits PlantCard(
+    price = 175,
+    cardSelectedSprite = snowPeaCardSelected,
+    cardAvailableSprite = snowPeaCardAvailable,
+    cardUnavailableSprite = snowPeaCardUnavailable,
+    cardCoolDownAnimation = snowPeaCardCoolDown,
+    createNewInstance = { => new SnowPea()}
+){}

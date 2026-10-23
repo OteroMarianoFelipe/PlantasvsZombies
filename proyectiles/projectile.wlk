@@ -5,12 +5,11 @@ import entity.Entity
 import UIElements.sunCounter.sunCounter
 import util.config.config
 
-class Projectile inherits Entity {
+class Projectile inherits Entity(blocksOwnCell = false, canBeKilled = false) {
     var property collitionHandler = { entity => self.defaultCollitionHandler(entity)}
     var property movementBehavior = { => self.defaultMovementBehavior()}
     var property ticksPerCell = self.defaultSpeed()
     var property cellMovementCoolDown = ticksPerCell
-    var property ownTeam
 
     method defaultSpeed()
     method defaultMovementBehavior()
@@ -20,12 +19,14 @@ class Projectile inherits Entity {
     method reduceMovementCoolDown(){ cellMovementCoolDown-=1 }
 
     method inBounds() = self.position().x() <= game.width()-1
-    method isEnemy(team) = team != ownTeam and team != "NEUTRAL"
+    method isEnemy(otherTeam) = otherTeam != team and otherTeam != "NEUTRAL"
 
     method handleCollitions(){
         const intersectantes = entityManager.allIntersectingEntities(self)
         intersectantes.forEach({ e => collitionHandler.apply(e)})
     }
+
+    method handleDeath()
     
     method move(){
         if(cellMovementCoolDown == 0){
@@ -37,7 +38,6 @@ class Projectile inherits Entity {
         self.updateMapPosition()
     }
 
-    override method team() = ownTeam
     override method tick(){
         self.handleCollitions()
         self.move()

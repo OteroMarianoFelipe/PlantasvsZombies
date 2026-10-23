@@ -1,22 +1,22 @@
 import animation.Animation
 
-object wallNutIdle inherits Animation{
-    override method loop() = true
-    override method durationInSeconds() = 0.5
-    override method framesInAnimation() = 4
-    override method animationDirectory() = "plants/wallNut/idle"
-}
+object wallNutIdle inherits Animation(
+    loop = true,
+    durationInSeconds = 0.5,
+    framesInAnimation = 4,
+    animationDirectory = "plants/wallNut/idle"
+){}
 
-object wallNutHurtIdle inherits Animation{
-    override method loop() = true
-    override method durationInSeconds() = 0.5
-    override method framesInAnimation() = 4
-    override method animationDirectory() = "plants/wallNut/hurt"
-}
+object wallNutHurtIdle inherits Animation(
+    loop = true,
+    durationInSeconds = 0.5,
+    framesInAnimation = 4,
+    animationDirectory = "plants/wallNut/hurt"
+){}
 
-object wallNutDyingIdle inherits Animation{
-    override method loop() = true
-    override method durationInSeconds() = 0.5
-    override method framesInAnimation() = 4
-    override method animationDirectory() = "plants/wallNut/dying"
-}
+object wallNutDyingIdle inherits Animation(
+    loop = true,
+    durationInSeconds = 0.5,
+    framesInAnimation = 4,
+    animationDirectory = "plants/wallNut/dying"
+){}

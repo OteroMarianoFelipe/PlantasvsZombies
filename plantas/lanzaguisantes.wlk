@@ -1,11 +1,11 @@
 import planta.*
 import assets.peaShooter.*
 
-class LanzaGuisantes inherits Planta {
-  override method startingHealth() = 300
-  override method defaultAnimation() = peaShooterIdle
-  override method damage() = 20
-
+class LanzaGuisantes inherits Planta(
+  startingHealth = 300,
+  damage = 20,
+  animation = peaShooterIdle
+){
   override method moduleUseAnimation() = peaShooterAction
 
   override method defaultActionModule() = new PeaShootingModule(

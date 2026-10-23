@@ -1,10 +1,11 @@
 import planta.*
 import assets.wallNut.*
 
-class Nuez inherits Planta{
-  override method startingHealth() = 4000
+class Nuez inherits Planta(
+  startingHealth = 4000,
+  damage = 0
+){
   override method defaultAnimation() = wallNutIdle
-  override method damage() = 0
 
   override method tick(){}
 

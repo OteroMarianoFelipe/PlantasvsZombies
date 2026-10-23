@@ -5,19 +5,21 @@ import assets.peaShooter.peaShot
 import assets.snowPea.frozenPeaImpact
 import assets.snowPea.frozenPea
 
-class Pea inherits Projectile{
+class Pea inherits Projectile(
+    animation = peaShot
+){
     var property damage
-    var property objective = null
     var property frozen
+
+    var property objective = null
     var property action = { => objective.takeDamage(damage)}
     var property impactAnimation = peaShotImpact
     override method defaultSpeed() = 0
-    override method defaultAnimation() = peaShot
     override method defaultCollitionHandler(entity){
         if( self.isEnemy(entity.team()) ) { 
             self.objective(entity)
             action.apply()
-            self.handleOwnRemoval()
+            self.handleDeath()
         }
     }
     override method start(pos){
@@ -32,7 +34,7 @@ class Pea inherits Projectile{
         super()
         self.handleCollitions()
     }
-    override method handleOwnRemoval(){
+    override method handleDeath(){
         self.movementBehavior({=>})
         self.collitionHandler({entity =>})
         animationHandler.changeAnimation(impactAnimation, {=> self.cleanUp()})

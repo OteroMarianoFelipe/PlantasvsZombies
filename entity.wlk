@@ -3,15 +3,15 @@ import animation.*
 
 
 class Entity{
+    var property animation = noAnimation
+    var property blocksOwnCell
+    var property canBeKilled
+    var property team
+
     var property position = game.at(0,0)
     var property previousPosition = self.position()
 
-    method blocksOwnCell()=false
-    method canBeKilled() = false
-
-    method team()
     method tick()
-    method handleOwnRemoval()
 
     method start(pos){
         self.position(pos)
@@ -30,8 +30,6 @@ class Entity{
     const property animationHandler = self.newAnimationHandler()
     method newAnimationHandler() = new AnimationHandler(owner = self)
 
-    var property animation = self.defaultAnimation()
-    method defaultAnimation() = noAnimation
 
     method image() = self.animationHandler().getImage()
    

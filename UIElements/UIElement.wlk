@@ -1,6 +1,3 @@
 import entity.*
 
-class UIElement inherits Entity{
-    override method team() ="NEUTRAL"
-    override method handleOwnRemoval() {}
-}
+class UIElement inherits Entity(team = "NEUTRAL", canBeKilled=false, blocksOwnCell = false){}

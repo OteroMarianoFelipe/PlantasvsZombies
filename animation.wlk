@@ -2,11 +2,12 @@ import util.config.*
 import assets.zombie.*
 
 class Animation{
-    method loop()
+    const property loop
+    const property durationInSeconds
+    const property framesInAnimation
+    const property animationDirectory
+
     const property ticksPerFrame = config.secondsToAnimationTicks(self.durationInSeconds())/self.framesInAnimation()
-    method durationInSeconds()
-    method framesInAnimation()
-    method animationDirectory()
     method durationInTicks() = self.ticksPerFrame()*self.framesInAnimation()
 
     method getCurrentFrame(currentFrame001Format) = "animations/"+self.animationDirectory()+"/frame_"+currentFrame001Format+".png"
