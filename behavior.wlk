@@ -8,7 +8,7 @@ class Behavior{
     method activate(user)
     
     var property ticksInCoolDown = 0
-    var property anticipationAnimation = noAnimation
+    var property anticipationAnimation = noImageProvider
 
     method ticksPerUse() = config.secondsToTicks(secondsPerUse)
     method coolDownBehavior(){ self.ticksInCoolDown(0) }

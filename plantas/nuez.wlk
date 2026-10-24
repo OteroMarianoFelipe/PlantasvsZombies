@@ -5,7 +5,7 @@ import behavior.*
 class Nuez inherits Planta(
   startingHealth = 4000,
   damage = 0,
-  animation = new WallNutIdle(),
+  defaultImageProvider =  new WallNutIdle(),
   actionModule = noBehavior
 ){
   var property verificarThresholds = { => self.primerThreshold() }

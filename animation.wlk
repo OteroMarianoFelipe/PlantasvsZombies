@@ -75,7 +75,7 @@ class Animation inherits ImageProvider{
     override method getImage() = "animations/"+self.animationDirectory()+"/frame_"+self.frameNumber001Format()+".png"
 }
 
-object noAnimation inherits StaticAnimation(image = "sprites/missingTexture.png"){}
+object noImageProvider inherits StaticAnimation(image = "sprites/missingTexture.png"){}
 
 class AnimationHandler{
     var property imageProvider 

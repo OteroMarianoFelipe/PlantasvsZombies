@@ -6,7 +6,7 @@ import proyectiles.pea.*
 class LanzaGuisantes inherits Planta(
     startingHealth = 300,
     damage = 20,
-    animation = new PeaShooterIdle(),
+    defaultImageProvider =  new PeaShooterIdle(),
     actionModule = new ShootingBehavior(
         anticipationAnimation = new PeaShooterAction(), 
         secondsPerUse = 1.5,

@@ -4,7 +4,7 @@ import assets.peaShooter.*
 import assets.snowPea.*
 
 class Pea inherits Projectile(
-    animation = new PeaShot()
+    defaultImageProvider =  new PeaShot()
 ){
     var property damage
     var property frozen
@@ -36,7 +36,7 @@ class Pea inherits Projectile(
         self.movementBehavior( { => } )
         self.collitionHandler( {entity =>} )
         animationCallback = { => self.cleanUp()} 
-        animationHandler.changeImageProvider(impactAnimation)
+        self.changeImageProvider(impactAnimation)
     }
 
     override method defaultMovementBehavior(){ self.position(self.position().right(1)) }

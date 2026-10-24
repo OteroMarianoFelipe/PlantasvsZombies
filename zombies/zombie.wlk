@@ -7,7 +7,7 @@ class Zombie inherits ZombieBase(
   rangedDamage = 0,
   secondsPerMove = 4.7,
   secondsPerAttack = 1,
-  animation = new ZombieWalkingFH()
+  defaultImageProvider = new ZombieWalkingFH()
 ){
 
   override method walkingAnimations() = [new ZombieWalkingFH(), new ZombieWalkingHurt(), new ZombieWalkingDying()]

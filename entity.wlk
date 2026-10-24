@@ -3,11 +3,12 @@ import animation.*
 
 
 class Entity{
-    var property animation = noAnimation
     var property blocksOwnCell
     var property canBeKilled
     var property team
 
+    var property defaultImageProvider = noImageProvider
+    var property imageProvider = defaultImageProvider
     var property animationCallback = {=>}
     var property position = game.at(0,0)
     var property previousPosition = self.position()
@@ -35,22 +36,25 @@ class Entity{
         self.position(newPosition)        
         self.updateMapPosition()
     }
-
-    const property animationHandler = self.newAnimationHandler()
-    method newAnimationHandler() = new AnimationHandler(imageProvider = animation)
-
-
-    method image() = self.animationHandler().getImage()
    
-    method useDefaultImageProvider(){ animationHandler.changeImageProvider(self.animation()) }
-    method changeDefaultImageProvider(newAnimation) { if(newAnimation != animation){ animation = newAnimation } }
-    method changeAndUseDefaultImageProvider(newAnimation){
-        self.changeDefaultImageProvider(newAnimation)
-        self.useDefaultImageProvider()
+    method changeImageProviderSeamlessly(newImageProvider){
+        newImageProvider.transitionSeamlessly(imageProvider)
+        return self.changeImageProvider(newImageProvider)
+    }
+    method changeImageProvider(newImageProvider){
+        self.imageProvider(newImageProvider)
+        return newImageProvider
     }
 
     method endNonLoopingAnimation() { self.useDefaultImageProvider() }
+    method useDefaultImageProvider(){ imageProvider = defaultImageProvider }
+    method changeDefaultImageProvider(newImageProvider) { if(newImageProvider != defaultImageProvider){ defaultImageProvider =  newImageProvider } }
+    method changeAndUseDefaultImageProvider(newImageProvider){
+        self.changeDefaultImageProvider(newImageProvider)
+        self.useDefaultImageProvider()
+    }
 
-    method animate() = animationHandler.update(self)
+    method animate() = imageProvider.update(self)
 
+    method image() = imageProvider.getImage()
 }

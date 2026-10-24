@@ -9,7 +9,7 @@ import entityManager.*
 import UIElements.sunCounter.sunCounter
 import UIElements.UIElement.*
 
-class PlantCard inherits UIElement(animation = self.cardUnavailableSprite()){
+class PlantCard inherits UIElement(defaultImageProvider =  self.cardUnavailableSprite()){
     const property price
     const property createNewInstance
     const property cardAvailableSprite
@@ -37,7 +37,7 @@ class PlantCard inherits UIElement(animation = self.cardUnavailableSprite()){
 
     method deselected() { self.currentBehaviour({=>self.defaultTickBehavior()}) }
     method selected() { 
-        animationHandler.changeImageProvider(self.cardSelectedSprite()) 
+        self.changeImageProvider(self.cardSelectedSprite()) 
         self.currentBehaviour({=>})
     }
     override method tick(){ self.currentBehaviour().apply() }
@@ -57,7 +57,7 @@ class PlantCard inherits UIElement(animation = self.cardUnavailableSprite()){
 
     method startCoolDown(){
         self.plantBuyCoolDown(true)
-        animationHandler.changeImageProvider(self.cardCoolDownAnimation())
+        self.changeImageProvider(self.cardCoolDownAnimation())
     }
     override method endNonLoopingAnimation(){
         self.plantBuyCoolDown(false)

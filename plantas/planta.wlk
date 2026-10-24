@@ -9,9 +9,9 @@ import util.debugger.*
 class Planta inherits EntidadViva( blocksOwnCell = true, team = "PLANTAS") {
     var property damage
     var property actionModule
-    var property behaviorAnticipationAnimation = animation
+    var property behaviorAnticipationAnimation = imageProvider
 
     override method tick(){ actionModule.use(self) }
     override method handleDeath(){self.cleanUp()}
-    method anticipateBehavior(){ animationHandler.changeImageProvider(behaviorAnticipationAnimation)  }
+    method anticipateBehavior(){ self.changeImageProvider(behaviorAnticipationAnimation)  }
 }

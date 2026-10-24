@@ -31,7 +31,7 @@ class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES"){
     method newAttackTarget(newTarget){
         self.objetivoDeAtaque(newTarget)
         self.currentBehavior( new MeleeAttackBehavior( secondsPerUse = 1 ) )
-        animationHandler.changeImageProvider(self.currentEatingAnimation()) 
+        self.changeImageProvider(self.currentEatingAnimation()) 
     }
 
     method targetEliminated(){
@@ -65,7 +65,7 @@ class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES"){
             }else{
                 animationToUse = self.currentEatingAnimation()
             }
-            animationHandler.changeImageProviderSeamlessly(animationToUse)
+            self.changeImageProviderSeamlessly(animationToUse)
         }   
     }
 
@@ -107,7 +107,8 @@ class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES"){
 
     override method handleDeath(){
         currentBehavior = noBehavior
-        animationHandler.changeImageProvider(self.deathAnimation(), { => self.cleanUp()})
+        animationCallback = { => self.cleanUp()} 
+        self.changeImageProvider(self.deathAnimation())
         entityManager.removeEntityCollitions(self)
     }
 }
