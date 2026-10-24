@@ -3,31 +3,24 @@ import assets.sunFlower.*
 import util.config.*
 import entityManager.*
 import proyectiles.sun.*
+import behavior.*
 
 class Girasol inherits Planta(
-  startingHealth = 300,
-  damage = 0,
-  animation = sunFlowerIdle
+    startingHealth = 300,
+    damage = 0,
+    animation = sunFlowerIdle,
+    //actionModule = new ModuloDeGeneracionDeSoles(owner = self, coolDownInSeconds = 24.25),
+    actionModule = new ShootingBehavior(
+        anticipationAnimation = sunFlowerActive, 
+        secondsPerUse = 24.25,
+        createNewProyectileInstance = { user =>  
+            new Sun( 
+                team = user.team(),
+                value = user.generatedSunValue() 
+            ) 
+        } 
+    ),
+    behaviorAnticipationAnimation = sunFlowerActive
 ){
-  const property generatedSunValue = 25
-
-  override method moduleUseAnimation() = sunFlowerActive
-
-  override method defaultActionModule() = new ModuloDeGeneracionDeSoles(owner = self, coolDownInSeconds = 24.25)
-
-  override method tick(){    
-    self.moduloDeAccion().use()
-  }
-}
-
-class ModuloDeGeneracionDeSoles inherits PlantActionModule{
-    override method action(){
-      entityManager.addEntity(
-        new Sun(
-          team = owner.team(),
-          value = owner.generatedSunValue()
-        ),
-        owner.position()
-      )
-    }
+    var property generatedSunValue = 25
 }

@@ -1,21 +1,23 @@
 import planta.*
 import assets.snowPea.*
 import proyectiles.projectile.*
+import behavior.*
+import proyectiles.pea.*
 
 class SnowPea inherits Planta(
   startingHealth = 300,
   damage = 20,
-  animation = snowPeaIdle
-){  
-  override method moduleUseAnimation() = snowPeaAction
-
-  override method defaultActionModule() = new PeaShootingModule(
-    owner=self,
-    coolDownInSeconds = 1.5,
-    arePeasFrozen = true
-  )
-
-  override method tick(){    
-    self.moduloDeAccion().use()
-  }
-}
+  animation = snowPeaIdle,
+  actionModule = new ShootingBehavior(
+        anticipationAnimation = snowPeaAction, 
+        secondsPerUse = 1.5,
+        createNewProyectileInstance = { user => 
+            new Pea(
+                team = user.team(),
+                damage = user.damage(),
+                frozen = true
+            )
+        } 
+    ),
+  behaviorAnticipationAnimation = snowPeaAction
+){}

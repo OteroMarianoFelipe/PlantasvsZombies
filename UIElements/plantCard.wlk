@@ -9,7 +9,7 @@ import entityManager.*
 import UIElements.sunCounter.sunCounter
 import UIElements.UIElement.*
 
-class PlantCard inherits UIElement{
+class PlantCard inherits UIElement(animation = self.cardUnavailableSprite()){
     const property price
     const property createNewInstance
     const property cardAvailableSprite
@@ -19,8 +19,6 @@ class PlantCard inherits UIElement{
 
     var property isAvailable = false
     var property plantBuyCoolDown = false
-
-    override method defaultAnimation() = self.cardAvailableSprite()
 
     method newInstance() = createNewInstance.apply()
 

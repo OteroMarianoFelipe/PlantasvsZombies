@@ -7,8 +7,9 @@ class Animation{
     const property framesInAnimation
     const property animationDirectory
 
-    const property ticksPerFrame = config.secondsToAnimationTicks(self.durationInSeconds())/self.framesInAnimation()
-    method durationInTicks() = self.ticksPerFrame()*self.framesInAnimation()
+    const property animationTicksPerFrame = config.secondsToAnimationTicks(durationInSeconds)/framesInAnimation
+    method durationInAnimationTicks() = animationTicksPerFrame*framesInAnimation
+    method durationInTicks() = config.secondsToTicks(durationInSeconds)
 
     method getCurrentFrame(currentFrame001Format) = "animations/"+self.animationDirectory()+"/frame_"+currentFrame001Format+".png"
 }
@@ -20,7 +21,7 @@ class AnimationHandler{
     var property animationFrameNumber = 1
 
     method tickUpFrameTime() { ticksInAnimationFrame+=1 }
-    method isTimeToPassFrame() = ticksInAnimationFrame>=self.animation().ticksPerFrame()
+    method isTimeToPassFrame() = ticksInAnimationFrame>=self.animation().animationTicksPerFrame()
     method changeFrameIndex(){ 
         animationFrameNumber %= self.animation().framesInAnimation()
         if(animationFrameNumber == 0){
@@ -88,9 +89,10 @@ class AnimationHandler{
 }
 
 class StaticAnimation{
+    method durationInAnimationTicks() = 0
     method durationInTicks() = 0
     method framesInAnimation() = 1
-    const property ticksPerFrame = 0
+    const property animationTicksPerFrame = 0
     method isTimeToPassFrame() = false
     method tickAnimation() = false
     method getCurrentFrame(frameNumber) = self.image()

@@ -6,8 +6,9 @@ import entityManager.*
 
 class ConeHead inherits ZombieBase(
   startingHealth = 370,
-  damage = 100,
-  secondsPerCell = 4.7,
+  meleeDamage = 100,
+  rangedDamage = 0,
+  secondsPerMove = 4.7,
   secondsPerAttack = 1,
   animation = coneHeadWalkingFH
 ){

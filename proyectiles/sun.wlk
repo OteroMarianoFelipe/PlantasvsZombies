@@ -10,7 +10,7 @@ class Sun inherits Projectile(
 
     const property secondsForDesapearing = 10
     var property ticksUntilDesapearing = config.secondsToTicks(secondsForDesapearing)
-    method isBig() = self.value() == 50
+    method isBig() = self.value() >= 25
 
     method getProperAnimation(){
         if(self.isBig()){

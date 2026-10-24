@@ -3,8 +3,9 @@ import assets.zombie.*
 
 class Zombie inherits ZombieBase(
   startingHealth = 190,
-  damage = 100,
-  secondsPerCell = 4.7,
+  meleeDamage = 100,
+  rangedDamage = 0,
+  secondsPerMove = 4.7,
   secondsPerAttack = 1,
   animation = zombieWalkingFH
 ){

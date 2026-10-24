@@ -1,14 +1,13 @@
 import planta.*
 import assets.wallNut.*
+import behavior.*
 
 class Nuez inherits Planta(
   startingHealth = 4000,
-  damage = 0
+  damage = 0,
+  animation = wallNutIdle,
+  actionModule = noBehavior
 ){
-  override method defaultAnimation() = wallNutIdle
-
-  override method tick(){}
-
   var property verificarThresholds = { => self.primerThreshold() }
   method isHurt() = health <= 2/3 * self.startingHealth()
   method isDying() =  health <= 1/3 * self.startingHealth()

@@ -27,6 +27,12 @@ class Entity{
         game.removeVisual(self)
     }
 
+    method updatePosition(newPosition){
+        self.previousPosition(position)
+        self.position(newPosition)        
+        self.updateMapPosition()
+    }
+
     const property animationHandler = self.newAnimationHandler()
     method newAnimationHandler() = new AnimationHandler(owner = self)
 
