@@ -6,9 +6,9 @@ import proyectiles.pea.*
 class LanzaGuisantes inherits Planta(
     startingHealth = 300,
     damage = 20,
-    animation = peaShooterIdle,
+    animation = new PeaShooterIdle(),
     actionModule = new ShootingBehavior(
-        anticipationAnimation = peaShooterAction, 
+        anticipationAnimation = new PeaShooterAction(), 
         secondsPerUse = 1.5,
         createNewProyectileInstance = { user => 
             new Pea(
@@ -18,5 +18,5 @@ class LanzaGuisantes inherits Planta(
             )
         } 
     ),
-    behaviorAnticipationAnimation = peaShooterAction
+    behaviorAnticipationAnimation = new PeaShooterAction()
 ){}

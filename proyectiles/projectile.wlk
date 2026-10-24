@@ -1,5 +1,5 @@
-import assets.sunFlower.smallSun
-import assets.sunFlower.bigSun
+import assets.sunFlower.SmallSun
+import assets.sunFlower.BigSun
 import entityManager.entityManager
 import entity.Entity
 import UIElements.sunCounter.sunCounter

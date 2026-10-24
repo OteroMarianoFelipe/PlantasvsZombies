@@ -13,5 +13,5 @@ class Planta inherits EntidadViva( blocksOwnCell = true, team = "PLANTAS") {
 
     override method tick(){ actionModule.use(self) }
     override method handleDeath(){self.cleanUp()}
-    method anticipateBehavior(){ animationHandler.changeAnimation(behaviorAnticipationAnimation)  }
+    method anticipateBehavior(){ animationHandler.changeImageProvider(behaviorAnticipationAnimation)  }
 }

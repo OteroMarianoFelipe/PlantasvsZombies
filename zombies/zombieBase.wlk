@@ -31,12 +31,12 @@ class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES"){
     method newAttackTarget(newTarget){
         self.objetivoDeAtaque(newTarget)
         self.currentBehavior( new MeleeAttackBehavior( secondsPerUse = 1 ) )
-        animationHandler.changeAnimation(self.currentEatingAnimation()) 
+        animationHandler.changeImageProvider(self.currentEatingAnimation()) 
     }
 
     method targetEliminated(){
         self.objetivoDeAtaque(null)
-        self.useDefaultAnimation()
+        self.useDefaultImageProvider()
         self.currentBehavior( new MovingBehavior(secondsPerUse = 4.7, movingDirection = game.at(-1, 0)) )
     }
 
@@ -50,7 +50,7 @@ class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES"){
     method freeze(){ self.frozen(config.secondsToTicks(10)) }
 
     override method start(pos){
-        self.changeDefaultAnimation(self.currentWalkingAnimation())
+        self.changeDefaultImageProvider(self.currentWalkingAnimation())
         super(pos)
     }
 
@@ -58,14 +58,14 @@ class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES"){
         super(incomingDamage)
         if( self.isBelowCurrentThreshold() and self.lives()){
             healthStage+=1
-            self.changeDefaultAnimation(self.currentWalkingAnimation())
+            self.changeDefaultImageProvider(self.currentWalkingAnimation())
             var animationToUse = null
             if(objetivoDeAtaque == null){
                 animationToUse = self.currentWalkingAnimation()
             }else{
                 animationToUse = self.currentEatingAnimation()
             }
-            animationHandler.changeAnimationSeamlessly(animationToUse)
+            animationHandler.changeImageProviderSeamlessly(animationToUse)
         }   
     }
 
@@ -107,7 +107,7 @@ class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES"){
 
     override method handleDeath(){
         currentBehavior = noBehavior
-        animationHandler.changeAnimation(self.deathAnimation(), { => self.cleanUp()})
+        animationHandler.changeImageProvider(self.deathAnimation(), { => self.cleanUp()})
         entityManager.removeEntityCollitions(self)
     }
 }

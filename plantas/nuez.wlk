@@ -5,7 +5,7 @@ import behavior.*
 class Nuez inherits Planta(
   startingHealth = 4000,
   damage = 0,
-  animation = wallNutIdle,
+  animation = new WallNutIdle(),
   actionModule = noBehavior
 ){
   var property verificarThresholds = { => self.primerThreshold() }
@@ -14,14 +14,14 @@ class Nuez inherits Planta(
 
   method primerThreshold() { 
     if(not self.isHurt()) {return}
-    self.changeAndUseDefaultAnimation(wallNutHurtIdle) 
+    self.changeAndUseDefaultImageProvider(new WallNutHurtIdle()) 
     self.verificarThresholds({=>self.segundoThreshold()})
     self.verificarThresholds().apply()
     return
   }
   method segundoThreshold() { 
     if(not self.isDying()){return}
-    self.changeAndUseDefaultAnimation(wallNutDyingIdle)
+    self.changeAndUseDefaultImageProvider(new WallNutDyingIdle())
     self.verificarThresholds({=>})
     return
   }

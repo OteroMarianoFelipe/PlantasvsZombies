@@ -1,22 +1,11 @@
 import animation.Animation
 
-object wallNutIdle inherits Animation(
+class WallNutAnimation inherits Animation(
     loop = true,
     durationInSeconds = 0.5,
-    framesInAnimation = 4,
-    animationDirectory = "plants/wallNut/idle"
+    framesInAnimation = 4
 ){}
 
-object wallNutHurtIdle inherits Animation(
-    loop = true,
-    durationInSeconds = 0.5,
-    framesInAnimation = 4,
-    animationDirectory = "plants/wallNut/hurt"
-){}
-
-object wallNutDyingIdle inherits Animation(
-    loop = true,
-    durationInSeconds = 0.5,
-    framesInAnimation = 4,
-    animationDirectory = "plants/wallNut/dying"
-){}
+class WallNutIdle inherits WallNutAnimation( animationDirectory = "plants/wallNut/idle" ){}
+class WallNutHurtIdle inherits WallNutAnimation( animationDirectory = "plants/wallNut/hurt" ){}
+class WallNutDyingIdle inherits WallNutAnimation( animationDirectory = "plants/wallNut/dying" ){}

@@ -2,21 +2,21 @@ import animation.Animation
 
 class ZombieBehaviorAnimation inherits Animation(loop = true, durationInSeconds = 0.95, framesInAnimation = 7){}
 
-object zombieWalkingFH inherits ZombieBehaviorAnimation(animationDirectory = "zombies/basic/walkingFH"){}
-object zombieWalkingHurt inherits ZombieBehaviorAnimation(animationDirectory = "zombies/basic/walkingHurt"){}
-object zombieWalkingDying inherits ZombieBehaviorAnimation(animationDirectory = "zombies/basic/walkingDying"){}
-object zombieEatingFH inherits ZombieBehaviorAnimation(animationDirectory = "zombies/basic/eatingFH"){}
-object zombieEatingHurt inherits ZombieBehaviorAnimation(animationDirectory = "zombies/basic/eatingHurt"){}
-object zombieEatingDying inherits ZombieBehaviorAnimation(animationDirectory = "zombies/basic/eatingDying"){}
+class ZombieWalkingFH inherits ZombieBehaviorAnimation(animationDirectory = "zombies/basic/walkingFH"){}
+class ZombieWalkingHurt inherits ZombieBehaviorAnimation(animationDirectory = "zombies/basic/walkingHurt"){}
+class ZombieWalkingDying inherits ZombieBehaviorAnimation(animationDirectory = "zombies/basic/walkingDying"){}
+class ZombieEatingFH inherits ZombieBehaviorAnimation(animationDirectory = "zombies/basic/eatingFH"){}
+class ZombieEatingHurt inherits ZombieBehaviorAnimation(animationDirectory = "zombies/basic/eatingHurt"){}
+class ZombieEatingDying inherits ZombieBehaviorAnimation(animationDirectory = "zombies/basic/eatingDying"){}
 
-object coneHeadWalkingFH inherits ZombieBehaviorAnimation(animationDirectory = "zombies/coneHead/walkingFH"){}
-object coneHeadWalkingHurt inherits ZombieBehaviorAnimation(animationDirectory = "zombies/coneHead/walkingHurt"){}
-object coneHeadWalkingDying inherits ZombieBehaviorAnimation(animationDirectory = "zombies/coneHead/walkingDying"){}
-object coneHeadEatingFH inherits ZombieBehaviorAnimation(animationDirectory = "zombies/coneHead/eatingFH"){}
-object coneHeadEatingHurt inherits ZombieBehaviorAnimation(animationDirectory = "zombies/coneHead/eatingHurt"){}
-object coneHeadEatingDying inherits ZombieBehaviorAnimation(animationDirectory = "zombies/coneHead/eatingDying"){}
+class ConeHeadWalkingFH inherits ZombieBehaviorAnimation(animationDirectory = "zombies/coneHead/walkingFH"){}
+class ConeHeadWalkingHurt inherits ZombieBehaviorAnimation(animationDirectory = "zombies/coneHead/walkingHurt"){}
+class ConeHeadWalkingDying inherits ZombieBehaviorAnimation(animationDirectory = "zombies/coneHead/walkingDying"){}
+class ConeHeadEatingFH inherits ZombieBehaviorAnimation(animationDirectory = "zombies/coneHead/eatingFH"){}
+class ConeHeadEatingHurt inherits ZombieBehaviorAnimation(animationDirectory = "zombies/coneHead/eatingHurt"){}
+class ConeHeadEatingDying inherits ZombieBehaviorAnimation(animationDirectory = "zombies/coneHead/eatingDying"){}
 
-object zombieDeath inherits Animation(
+class ZombieDeath inherits Animation(
     loop = false,
     durationInSeconds = 1,
     framesInAnimation = 9,

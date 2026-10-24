@@ -7,9 +7,9 @@ import proyectiles.pea.*
 class SnowPea inherits Planta(
   startingHealth = 300,
   damage = 20,
-  animation = snowPeaIdle,
+  animation = new SnowPeaIdle(),
   actionModule = new ShootingBehavior(
-        anticipationAnimation = snowPeaAction, 
+        anticipationAnimation = new SnowPeaAction(), 
         secondsPerUse = 1.5,
         createNewProyectileInstance = { user => 
             new Pea(
@@ -19,5 +19,5 @@ class SnowPea inherits Planta(
             )
         } 
     ),
-  behaviorAnticipationAnimation = snowPeaAction
+  behaviorAnticipationAnimation = new SnowPeaAction()
 ){}

@@ -1,22 +1,22 @@
 import animation.*
 
-object peaShooterIdle inherits Animation(
+class PeaShooterIdle inherits Animation(
     loop = true,
     durationInSeconds = 0.5,
     framesInAnimation = 8,
     animationDirectory = "plants/peashooter/idle"
 ){}
 
-object peaShooterAction inherits Animation(
+class PeaShooterAction inherits Animation(
     loop = false,
-    durationInSeconds = 0.4,
+    durationInSeconds = 0.25,
     framesInAnimation = 4,
     animationDirectory = "plants/peashooter/active"
 ){}
 
-object peaShot inherits StaticAnimation( img = "sprites/projectiles/pea.png" ){}
+class PeaShot inherits StaticAnimation( image = "sprites/projectiles/pea.png" ){}
 
-object peaShotImpact inherits Animation(
+class PeaShotImpact inherits Animation(
     loop = false,
     durationInSeconds = 0.1,
     framesInAnimation = 4,

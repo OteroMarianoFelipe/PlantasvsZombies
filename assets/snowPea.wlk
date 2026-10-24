@@ -1,22 +1,22 @@
 import animation.*
 
-object snowPeaIdle inherits Animation(
+class SnowPeaIdle inherits Animation(
     loop = true,
     durationInSeconds = 0.5,
     framesInAnimation = 8,
     animationDirectory = "plants/snowPea/idle"
 ){}
 
-object snowPeaAction inherits Animation(
+class SnowPeaAction inherits Animation(
     loop = false,
-    durationInSeconds = 0.4,
+    durationInSeconds = 0.25,
     framesInAnimation = 4,
     animationDirectory = "plants/snowPea/active"
 ){}
 
-object frozenPea inherits StaticAnimation( img = "sprites/projectiles/frozenPea.png" ){}
+class FrozenPea inherits StaticAnimation( image = "sprites/projectiles/frozenPea.png" ){}
 
-object frozenPeaImpact inherits Animation(
+class FrozenPeaImpact inherits Animation(
     loop = false,
     durationInSeconds = 0.15,
     framesInAnimation = 6,

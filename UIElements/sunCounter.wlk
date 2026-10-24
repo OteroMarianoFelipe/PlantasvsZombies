@@ -33,7 +33,7 @@ object sunCounter inherits UIElement{
 
 }
 
-object sunCounterIcoWithHundreds inherits StaticAnimation( img = "sprites/sunCounter/iconWithHundreds/"){
+object sunCounterIcoWithHundreds inherits StaticAnimation( image = "sprites/sunCounter/iconWithHundreds/"){
     const property position = game.at(0,0)
     var property hundreds = 0
     method changeHundreds(newNumber){
@@ -41,10 +41,10 @@ object sunCounterIcoWithHundreds inherits StaticAnimation( img = "sprites/sunCou
             self.hundreds(newNumber)
         }
     }
-    override method image() = img + hundreds + ".png"
+    override method image() = image + hundreds + ".png"
 }
 
-object sunCounterTens inherits StaticAnimation( img = "sprites/sunCounter/tens/"){
+object sunCounterTens inherits StaticAnimation( image = "sprites/sunCounter/tens/"){
     const property position = game.at(1,0)
     var property tens = 0
     method numberHasSprite(num) = [0, 25, 50, 75].contains(num)
@@ -53,5 +53,5 @@ object sunCounterTens inherits StaticAnimation( img = "sprites/sunCounter/tens/"
             self.tens(newNumber)
         }
     }
-    override method image() = img + tens + ".png"
+    override method image() = image + tens + ".png"
 }

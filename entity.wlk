@@ -8,10 +8,13 @@ class Entity{
     var property canBeKilled
     var property team
 
+    var property animationCallback = {=>}
     var property position = game.at(0,0)
     var property previousPosition = self.position()
 
     method tick()
+
+    method animationEnded(){ animationCallback.apply() }
 
     method start(pos){
         self.position(pos)
@@ -34,20 +37,20 @@ class Entity{
     }
 
     const property animationHandler = self.newAnimationHandler()
-    method newAnimationHandler() = new AnimationHandler(owner = self)
+    method newAnimationHandler() = new AnimationHandler(imageProvider = animation)
 
 
     method image() = self.animationHandler().getImage()
    
-    method useDefaultAnimation(){ animationHandler.changeAnimation(self.animation()) }
-    method changeDefaultAnimation(newAnimation) { if(newAnimation != animation){ animation = newAnimation } }
-    method changeAndUseDefaultAnimation(newAnimation){
-        self.changeDefaultAnimation(newAnimation)
-        self.useDefaultAnimation()
+    method useDefaultImageProvider(){ animationHandler.changeImageProvider(self.animation()) }
+    method changeDefaultImageProvider(newAnimation) { if(newAnimation != animation){ animation = newAnimation } }
+    method changeAndUseDefaultImageProvider(newAnimation){
+        self.changeDefaultImageProvider(newAnimation)
+        self.useDefaultImageProvider()
     }
 
-    method endNonLoopingAnimation() { self.useDefaultAnimation() }
+    method endNonLoopingAnimation() { self.useDefaultImageProvider() }
 
-    method animate() = animationHandler.tickAnimation()
+    method animate() = animationHandler.update(self)
 
 }

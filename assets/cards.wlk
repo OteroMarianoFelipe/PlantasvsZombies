@@ -1,48 +1,45 @@
 import animation.Animation
 import animation.StaticAnimation
 
-object sunFlowerCardAvailable inherits StaticAnimation( img = "sprites/cards/sunFlower/available.png"){}
-
-object sunFlowerCardUnavailable inherits StaticAnimation( img = "sprites/cards/sunFlower/unavailable.png"){}
-
-object sunFlowerCardSelected inherits StaticAnimation( img = "sprites/cards/sunFlower/selected.png"){}
-
-object sunFlowerCardCoolDown inherits Animation(
+class CardCoolDownAnimation inherits Animation(
     loop = false,
+    framesInAnimation = 15
+){}
+
+class SunFlowerCardAvailable inherits StaticAnimation( image = "sprites/cards/sunFlower/available.png"){}
+
+class SunFlowerCardUnavailable inherits StaticAnimation( image = "sprites/cards/sunFlower/unavailable.png"){}
+
+class SunFlowerCardSelected inherits StaticAnimation( image = "sprites/cards/sunFlower/selected.png"){}
+
+class SunFlowerCardCoolDown inherits CardCoolDownAnimation(
     durationInSeconds = 7.5,
-    framesInAnimation = 15,
     animationDirectory = "cards/sunflower/coolDown"
 ){}
 
-object wallNutCardAvailable inherits StaticAnimation( img = "sprites/cards/wallNut/available.png"){}
-object wallNutCardUnavailable inherits StaticAnimation( img = "sprites/cards/wallNut/unavailable.png"){}
-object wallNutCardSelected inherits StaticAnimation( img = "sprites/cards/wallNut/selected.png"){}
+class WallNutCardAvailable inherits StaticAnimation( image = "sprites/cards/wallNut/available.png"){}
+class WallNutCardUnavailable inherits StaticAnimation( image = "sprites/cards/wallNut/unavailable.png"){}
+class WallNutCardSelected inherits StaticAnimation( image = "sprites/cards/wallNut/selected.png"){}
 
-object wallNutCardCoolDown inherits Animation(
-    loop = false,
+class WallNutCardCoolDown inherits CardCoolDownAnimation(
     durationInSeconds = 30,
-    framesInAnimation = 15,
     animationDirectory = "cards/wallNut/coolDown"
 ){}
 
-object peashooterCardAvailable inherits StaticAnimation( img = "sprites/cards/peashooter/available.png"){}
-object peashooterCardUnavailable inherits StaticAnimation( img = "sprites/cards/peashooter/unavailable.png"){}
-object peashooterCardSelected inherits StaticAnimation( img = "sprites/cards/peashooter/selected.png"){}
+class PeashooterCardAvailable inherits StaticAnimation( image = "sprites/cards/peashooter/available.png"){}
+class PeashooterCardUnavailable inherits StaticAnimation( image = "sprites/cards/peashooter/unavailable.png"){}
+class PeashooterCardSelected inherits StaticAnimation( image = "sprites/cards/peashooter/selected.png"){}
 
-object peashooterCardCoolDown inherits Animation(
-    loop = false,
+class PeashooterCardCoolDown inherits CardCoolDownAnimation(
     durationInSeconds = 7.5,
-    framesInAnimation = 15,
     animationDirectory = "cards/peashooter/coolDown"
 ){}
 
-object snowPeaCardAvailable inherits StaticAnimation( img = "sprites/cards/snowPea/available.png"){}
-object snowPeaCardUnavailable inherits StaticAnimation( img = "sprites/cards/snowPea/unavailable.png"){}
-object snowPeaCardSelected inherits StaticAnimation( img = "sprites/cards/snowPea/selected.png"){}
+class SnowPeaCardAvailable inherits StaticAnimation( image = "sprites/cards/snowPea/available.png"){}
+class SnowPeaCardUnavailable inherits StaticAnimation( image = "sprites/cards/snowPea/unavailable.png"){}
+class SnowPeaCardSelected inherits StaticAnimation( image = "sprites/cards/snowPea/selected.png"){}
 
-object snowPeaCardCoolDown inherits Animation(
-    loop = false,
+class SnowPeaCardCoolDown inherits CardCoolDownAnimation(
     durationInSeconds = 7.5,
-    framesInAnimation = 15,
     animationDirectory = "cards/snowPea/coolDown"
 ){}

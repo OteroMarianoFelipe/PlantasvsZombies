@@ -26,18 +26,18 @@ class PlantCard inherits UIElement(animation = self.cardUnavailableSprite()){
     method defaultTickBehavior(){
         self.isAvailable( sunCounter.canPay( price ) )
         if(isAvailable){
-            self.changeDefaultAnimation(self.cardAvailableSprite())
+            self.changeDefaultImageProvider(self.cardAvailableSprite())
         }else{
-            self.changeDefaultAnimation(self.cardUnavailableSprite())
+            self.changeDefaultImageProvider(self.cardUnavailableSprite())
         }
         if(not plantBuyCoolDown){
-            self.useDefaultAnimation()
+            self.useDefaultImageProvider()
         }
     }
 
     method deselected() { self.currentBehaviour({=>self.defaultTickBehavior()}) }
     method selected() { 
-        animationHandler.changeAnimation(self.cardSelectedSprite()) 
+        animationHandler.changeImageProvider(self.cardSelectedSprite()) 
         self.currentBehaviour({=>})
     }
     override method tick(){ self.currentBehaviour().apply() }
@@ -57,7 +57,7 @@ class PlantCard inherits UIElement(animation = self.cardUnavailableSprite()){
 
     method startCoolDown(){
         self.plantBuyCoolDown(true)
-        animationHandler.changeAnimation(self.cardCoolDownAnimation())
+        animationHandler.changeImageProvider(self.cardCoolDownAnimation())
     }
     override method endNonLoopingAnimation(){
         self.plantBuyCoolDown(false)
@@ -67,36 +67,36 @@ class PlantCard inherits UIElement(animation = self.cardUnavailableSprite()){
 
 object sunFlowerCard inherits PlantCard(
     price = 50,
-    cardSelectedSprite = sunFlowerCardSelected,
-    cardAvailableSprite = sunFlowerCardAvailable,
-    cardUnavailableSprite = sunFlowerCardUnavailable,
-    cardCoolDownAnimation = sunFlowerCardCoolDown,
+    cardSelectedSprite = new SunFlowerCardSelected(),
+    cardAvailableSprite = new SunFlowerCardAvailable(),
+    cardUnavailableSprite = new SunFlowerCardUnavailable(),
+    cardCoolDownAnimation = new SunFlowerCardCoolDown(),
     createNewInstance = { => new Girasol() }
 ){}
 
 object peashooterCard inherits PlantCard(
     price = 100,
-    cardSelectedSprite = peashooterCardSelected,
-    cardAvailableSprite = peashooterCardAvailable,
-    cardUnavailableSprite = peashooterCardUnavailable,
-    cardCoolDownAnimation = peashooterCardCoolDown,
+    cardSelectedSprite = new PeashooterCardSelected(),
+    cardAvailableSprite = new PeashooterCardAvailable(),
+    cardUnavailableSprite = new PeashooterCardUnavailable(),
+    cardCoolDownAnimation = new PeashooterCardCoolDown(),
     createNewInstance = { => new LanzaGuisantes()}
 ){}
 
 object wallNutCard inherits PlantCard(
     price = 50,
-    cardSelectedSprite = wallNutCardSelected,
-    cardAvailableSprite = wallNutCardAvailable,
-    cardUnavailableSprite = wallNutCardUnavailable,
-    cardCoolDownAnimation = wallNutCardCoolDown,
+    cardSelectedSprite = new WallNutCardSelected(),
+    cardAvailableSprite = new WallNutCardAvailable(),
+    cardUnavailableSprite = new WallNutCardUnavailable(),
+    cardCoolDownAnimation = new WallNutCardCoolDown(),
     createNewInstance = { => new Nuez()}
 ){}
 
 object snowPeaCard inherits PlantCard(
     price = 175,
-    cardSelectedSprite = snowPeaCardSelected,
-    cardAvailableSprite = snowPeaCardAvailable,
-    cardUnavailableSprite = snowPeaCardUnavailable,
-    cardCoolDownAnimation = snowPeaCardCoolDown,
+    cardSelectedSprite = new SnowPeaCardSelected(),
+    cardAvailableSprite = new SnowPeaCardAvailable(),
+    cardUnavailableSprite = new SnowPeaCardUnavailable(),
+    cardCoolDownAnimation = new SnowPeaCardCoolDown(),
     createNewInstance = { => new SnowPea()}
 ){}

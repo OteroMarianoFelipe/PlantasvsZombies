@@ -4,14 +4,14 @@ import util.config.*
 import entityManager.*
 import proyectiles.sun.*
 import behavior.*
+import util.debugger.*
 
 class Girasol inherits Planta(
     startingHealth = 300,
     damage = 0,
-    animation = sunFlowerIdle,
-    //actionModule = new ModuloDeGeneracionDeSoles(owner = self, coolDownInSeconds = 24.25),
+    animation = new SunFlowerIdle(),
     actionModule = new ShootingBehavior(
-        anticipationAnimation = sunFlowerActive, 
+        anticipationAnimation = new SunFlowerActive(), 
         secondsPerUse = 24.25,
         createNewProyectileInstance = { user =>  
             new Sun( 
@@ -20,7 +20,7 @@ class Girasol inherits Planta(
             ) 
         } 
     ),
-    behaviorAnticipationAnimation = sunFlowerActive
+    behaviorAnticipationAnimation = new SunFlowerActive()
 ){
     var property generatedSunValue = 25
 }

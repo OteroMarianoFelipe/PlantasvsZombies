@@ -14,9 +14,9 @@ class Sun inherits Projectile(
 
     method getProperAnimation(){
         if(self.isBig()){
-            return bigSun
+            return new BigSun()
         }else{
-            return smallSun
+            return new SmallSun()
         }
     }
 

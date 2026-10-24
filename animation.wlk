@@ -1,53 +1,66 @@
 import util.config.*
 import assets.zombie.*
 
-class Animation{
+class ImageProvider{
+    method transitionSeamlessly(previousAnimation)
+    method update(caller)
+    method getImage()
+    method durationInTicks()
+}
+
+class StaticAnimation inherits ImageProvider{
+    const property image
+
+    override method durationInTicks() = 0
+
+    override method transitionSeamlessly(previousImageProvider){}
+    override method update(caller){}
+    override method getImage() = image
+}
+
+class Animation inherits ImageProvider{
     const property loop
     const property durationInSeconds
     const property framesInAnimation
     const property animationDirectory
 
-    const property animationTicksPerFrame = config.secondsToAnimationTicks(durationInSeconds)/framesInAnimation
-    method durationInAnimationTicks() = animationTicksPerFrame*framesInAnimation
-    method durationInTicks() = config.secondsToTicks(durationInSeconds)
-
-    method getCurrentFrame(currentFrame001Format) = "animations/"+self.animationDirectory()+"/frame_"+currentFrame001Format+".png"
-}
-
-class AnimationHandler{
-    var property animation = self.changeAnimation(owner.animation())
-    var property owner
     var property ticksInAnimationFrame = 0
     var property animationFrameNumber = 1
 
-    method tickUpFrameTime() { ticksInAnimationFrame+=1 }
-    method isTimeToPassFrame() = ticksInAnimationFrame>=self.animation().animationTicksPerFrame()
-    method changeFrameIndex(){ 
-        animationFrameNumber %= self.animation().framesInAnimation()
+    const property animationTicksPerFrame = config.secondsToAnimationTicks(durationInSeconds)/framesInAnimation
+
+    method canTransitionSeamlessly(pA) = pA.framesInAnimation() != framesInAnimation && pA.ticksInAnimationFrame() <= animationTicksPerFrame
+    override method transitionSeamlessly(previousAnimation){
+        if( self.canTransitionSeamlessly(previousAnimation)){
+            ticksInAnimationFrame = previousAnimation.ticksInAnimationFrame()
+            animationFrameNumber = previousAnimation.animationFrameNumber()
+        }
+    }
+
+    method tickUpFrameTime() { ticksInAnimationFrame += 1 }
+    method isTimeToPassFrame() = ticksInAnimationFrame >= animationTicksPerFrame
+    method changeFrameIndex(caller){ 
+        animationFrameNumber %= framesInAnimation
         if(animationFrameNumber == 0){
-            animationCallBack.apply()
-            self.animationCallBack({ => })
-            if(not self.animation().loop()){
-                owner.endNonLoopingAnimation()
+            caller.animationEnded()
+            if( not loop ){
+                caller.endNonLoopingAnimation()
             }
         }
         animationFrameNumber += 1
     }
 
-    var property animationTickBehavior = { => self.movingAnimationTick()}
-    var property animationCallBack = { => }
-
-    method movingAnimationTick(){
+    override method update(caller){
         if(self.isTimeToPassFrame()){
-            self.changeFrameIndex()
+            self.changeFrameIndex(caller)
             ticksInAnimationFrame = 0
         }else{
             self.tickUpFrameTime()
         }
     }
-    method staticAnimationTick(){}
 
-    method tickAnimation() = self.animationTickBehavior().apply()
+    method durationInAnimationTicks() = animationTicksPerFrame*framesInAnimation
+    override method durationInTicks() = config.secondsToTicks(durationInSeconds)
 
     method frameNumber001Format(){
         if(animationFrameNumber<10){
@@ -59,45 +72,23 @@ class AnimationHandler{
         return animationFrameNumber
     }
 
-    method getImage() = self.animation().getCurrentFrame(self.frameNumber001Format())
+    override method getImage() = "animations/"+self.animationDirectory()+"/frame_"+self.frameNumber001Format()+".png"
+}
 
-    method resetAnimationStateTrackers(){
-        self.ticksInAnimationFrame(0)
-        self.animationFrameNumber(1)
-    }
-    method setAnimationTickBehavior(){
-        if(animation.framesInAnimation() == 1){
-            self.animationTickBehavior({=>self.staticAnimationTick()})
-        }else{
-            self.animationTickBehavior({=>self.movingAnimationTick()})
-        }  
-    }
+object noAnimation inherits StaticAnimation(image = "sprites/missingTexture.png"){}
 
-    method changeAnimation(newAnimation) = self.changeAnimation(newAnimation, {=>})
-    method changeAnimation(newAnimation, callback){
-        self.resetAnimationStateTrackers()
-        return self.changeAnimationSeamlessly(newAnimation, callback)
-    }
+class AnimationHandler{
+    var property imageProvider 
 
-    method changeAnimationSeamlessly(newAnimation) = self.changeAnimationSeamlessly(newAnimation, { => })
-    method changeAnimationSeamlessly(newAnimation, callback){
-        self.animation(newAnimation)
-        self.setAnimationTickBehavior()
-        self.animationCallBack(callback)
+    method update(user) { imageProvider.update(user) }
+    method getImage() = imageProvider.getImage()
+
+    method changeImageProviderSeamlessly(newAnimation){
+        newAnimation.transitionSeamlessly(imageProvider)
+        return self.changeImageProvider(newAnimation)
+    }
+    method changeImageProvider(newAnimation){
+        self.imageProvider(newAnimation)
         return newAnimation
     }
 }
-
-class StaticAnimation{
-    method durationInAnimationTicks() = 0
-    method durationInTicks() = 0
-    method framesInAnimation() = 1
-    const property animationTicksPerFrame = 0
-    method isTimeToPassFrame() = false
-    method tickAnimation() = false
-    method getCurrentFrame(frameNumber) = self.image()
-    const property img
-    method image() = img
-}
-
-object noAnimation inherits StaticAnimation(img = "sprites/missingTexture.png"){}

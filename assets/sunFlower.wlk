@@ -1,30 +1,25 @@
 import animation.Animation
 import animation.StaticAnimation
 
-object sunFlowerIdle inherits Animation(
-    loop = true,
+class SunFlowerAnimation inherits Animation(
     durationInSeconds = 0.6,
-    framesInAnimation = 9,
-    animationDirectory = "plants/sunFlower/idle"
+    framesInAnimation = 9
 ){}
 
-object sunFlowerActive inherits Animation(
+class SunFlowerIdle inherits SunFlowerAnimation(
+    loop = true,
+    animationDirectory = "plants/sunFlower/idle" 
+){}
+class SunFlowerActive inherits SunFlowerAnimation( 
     loop = false,
-    durationInSeconds = 0.6,
-    framesInAnimation = 9,
-    animationDirectory = "plants/sunFlower/active"
+    animationDirectory = "plants/sunFlower/active" 
 ){}
 
-object bigSun inherits Animation(
+class SunAnimation inherits Animation(
     loop = true,
     durationInSeconds = 0.4,
-    framesInAnimation = 2,
-    animationDirectory = "projectiles/sun/big"
+    framesInAnimation = 2
 ){}
 
-object smallSun inherits Animation(
-    loop = true,
-    durationInSeconds = 0.4,
-    framesInAnimation = 2,
-    animationDirectory = "projectiles/sun/small"
-){}
+class BigSun inherits SunAnimation( animationDirectory = "projectiles/sun/big" ){}
+class SmallSun inherits SunAnimation( animationDirectory = "projectiles/sun/small" ){}
