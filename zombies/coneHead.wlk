@@ -10,9 +10,11 @@ class ConeHead inherits ZombieBase(
     statBlock = new ConeHeadZombieStats(),
     defaultImageProvider = imageProviderSet.walkingImageProvider(),
     imageProviderSet = new ConeHeadImageProvidersSet(),
-    behaviorStateMachine = new StateMachine( currentState = new DefaultZombieMovementBehaviorState() ),
     deathHandler = new StateMachine( currentState = new ConeHeadDeath() ),
-    collitionBehavior = new CollitionBehavior()
+    behaviors = [
+        new CollitionBehavior(),
+        new StateMachine( currentState = new DefaultZombieMovementBehaviorState() )
+    ]
 ){}
 
 class ConeHeadZombieStats inherits ZombieStatBlock(

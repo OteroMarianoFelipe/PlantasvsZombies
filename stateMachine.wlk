@@ -2,6 +2,7 @@ class StateMachine{
     var property currentState
     
     method use(user){
+        self.evaluateAlternatives(user)
         currentState.use(user)
     }
 

@@ -10,16 +10,18 @@ class Girasol inherits Planta(
     startingHealth = 300,
     damage = 0,
     imageProviderSet = new SunFlowerImageProviderSet(),
-    actionModule = new ShootingBehavior(
-        anticipationAnimation = new SunFlowerActive(), 
-        secondsPerUse = 24.25,
-        createNewProyectileInstance = { user =>  
-            new Sun( 
-                team = user.team(),
-                value = user.generatedSunValue() 
-            ) 
-        } 
-    )
+    behaviors = [
+        new ShootingBehavior(
+            anticipationAnimation = new SunFlowerActive(), 
+            secondsPerUse = 24.25,
+            createNewProyectileInstance = { user =>  
+                new Sun( 
+                    team = user.team(),
+                    value = user.generatedSunValue() 
+                ) 
+            } 
+        )
+    ]
 ){
     var property generatedSunValue = 25
 }

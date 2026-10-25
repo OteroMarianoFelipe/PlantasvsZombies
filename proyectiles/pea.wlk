@@ -3,14 +3,18 @@ import proyectiles.projectile.*
 import assets.peaShooter.*
 import assets.snowPea.*
 import behavior.*
+import entityManager.*
 
 class Pea inherits Projectile(
     defaultImageProvider =  new PeaShot(),
-    movementBehavior = new MovingBehavior(
-        secondsPerUse = 0.1,
-        movingDirection = game.at(1, 0)
-    ),
-    collitionBehavior = new CollitionBehavior()
+    behaviors = [
+        new CollitionBehavior(),
+        new MovingBehavior(
+            secondsPerUse = 0.1,
+            movingDirection = game.at(1, 0)
+        ),
+        new CollitionBehavior()
+    ]
 ){
     var property damage
     var property frozen
@@ -18,6 +22,8 @@ class Pea inherits Projectile(
     var property objective = null
     var property action = { => objective.takeDamage(damage)}
     var property impactAnimation = new PeaShotImpact()
+
+    method isEnemy(otherTeam) = otherTeam != team and otherTeam != "NEUTRAL"
     override method collisionHandler(entity){
         if( self.isEnemy(entity.team()) ) { 
             self.objective(entity)
@@ -34,9 +40,9 @@ class Pea inherits Projectile(
         }
     }
     override method handleRemoval(){
-        self.movementBehavior( noBehavior )
-        self.collitionBehavior(noBehavior)
+        behaviors = []
         animationCallback = { => self.cleanUp()} 
         self.changeImageProvider(impactAnimation)
+        entityManager.removeEntityCollitions(self)
     }
 }

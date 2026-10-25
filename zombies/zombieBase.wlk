@@ -11,10 +11,9 @@ import util.debugger.*
 
 class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES", startingHealth = statBlock.startingHealth()){
     var property statBlock
-    var property behaviorStateMachine
     var property imageProviderSet
     var property deathHandler
-    var property collitionBehavior
+    var property behaviors
 
     var property objetivoDeAtaque = null
     var property frozen = 0
@@ -48,22 +47,18 @@ class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES", s
         }
         return
     }
-    method handleCollitions(){
-        const intersectantes = entityManager.allIntersectingEntities(self)
-        intersectantes.forEach({entity => self.collisionHandler(entity) })
-    }
   
     method crossedTheYard() = position.x() < config.lowerBound().x()
   
     override method tick(){
-        collitionBehavior.use(self)
         // if(frozen>0){
         //   frozen-=1
         //   self.invertFreezeTick()
         //   if(freezeTick){ return }
         // }
-        behaviorStateMachine.evaluateAlternatives(self)
-        behaviorStateMachine.use(self)
+        behaviors.forEach({ behavior =>
+            behavior.use(self)
+        })
         return
     }
 
@@ -131,7 +126,7 @@ class DefaultZombieDeath inherits State(
     paths = []
 ){
     override method use(user){
-        user.behaviorStateMachine().forceStateChange(new ZombieDeathBehaviorState())
+        user.behaviors([ new ZombieDeathBehaviorState() ])
         user.animationCallback({ => user.cleanUp()}) 
         user.changeImageProvider(user.imageProviderSet().deathAnimation())
         entityManager.removeEntityCollitions(user)

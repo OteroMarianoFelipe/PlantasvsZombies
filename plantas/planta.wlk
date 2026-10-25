@@ -13,9 +13,14 @@ class Planta inherits EntidadViva(
 ){
     var property damage
     var property imageProviderSet
-    var property actionModule
 
-    override method tick(){ actionModule.use(self) }
+    var property behaviors
+
+    override method tick(){ 
+        behaviors.forEach({ behavior => 
+            behavior.use(self) 
+        })
+    }
     override method handleDeath(){self.cleanUp()}
     method anticipateBehavior(){ self.changeImageProvider(imageProviderSet.actionAnticipation())  }
 }

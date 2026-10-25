@@ -38,11 +38,15 @@ class CollitionBehavior inherits Behavior( secondsPerUse=0 ){
 class MovingBehavior inherits Behavior{
     var property movingDirection
 
+    method inBounds(user) = user.position().x() <= game.width()-1
     method newPosition(user) = user.position().right(movingDirection.x()).up(movingDirection.y())
 
     override method activate(user){
         const newPosition = self.newPosition(user)
         user.updatePosition(newPosition)
+        if(not self.inBounds(user)){
+            user.cleanUp()
+        }
     }
 }
 

@@ -7,7 +7,7 @@ class Nuez inherits Planta(
     startingHealth = 4000,
     damage = 0,
     imageProviderSet =  new WallNutImageProviderSet(),
-    actionModule = noBehavior
+    behaviors = [noBehavior]
 ){}
 
 class WallNutImageProviderSet inherits PlantImageProviderSet(

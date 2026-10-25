@@ -6,8 +6,7 @@ import behavior.*
 
 class Sun inherits Projectile(
     defaultImageProvider =  self.getProperAnimation(),
-    movementBehavior = noBehavior,
-    collitionBehavior = noBehavior
+    behaviors = []
 ){
     const property value
 

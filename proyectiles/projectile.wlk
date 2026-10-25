@@ -6,26 +6,17 @@ import UIElements.sunCounter.sunCounter
 import util.config.config
 
 class Projectile inherits Entity(blocksOwnCell = false, canBeKilled = false) {
-    var property movementBehavior
-    var property collitionBehavior
+    var property behaviors
     
     method inBounds() = self.position().x() <= game.width()-1
-    method isEnemy(otherTeam) = otherTeam != team and otherTeam != "NEUTRAL"
 
     method collisionHandler(entity)
-    method handleCollitions(){
-        const intersectantes = entityManager.allIntersectingEntities(self)
-        intersectantes.forEach({ e => self.collisionHandler(e)})
-    }
 
     method handleRemoval()
 
     override method tick(){
-        collitionBehavior.use(self)
-        movementBehavior.use(self)
-        if(not self.inBounds()){
-            self.cleanUp()
-        }
+        behaviors.forEach({ behavior =>
+            behavior.use(self)
+        })
     }
 }
-
