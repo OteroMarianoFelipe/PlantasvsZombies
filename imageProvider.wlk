@@ -1,5 +1,6 @@
 import util.config.*
 import assets.zombie.*
+import util.debugger.*
 
 class ImageProvider{
     method transitionSeamlessly(previousAnimation)
@@ -73,6 +74,26 @@ class Animation inherits ImageProvider{
     }
 
     override method getImage() = "animations/"+self.animationDirectory()+"/frame_"+self.frameNumber001Format()+".png"
+}
+
+class HealthBasedImageProvider inherits ImageProvider{
+    var property imageProviderSet
+    var property currentProviderIndex = 0
+ 
+    override method transitionSeamlessly(previousAnimation){}
+    override method update(caller){
+        var imageProvider = imageProviderSet.get(currentProviderIndex)
+        const updatedProviderIndex = (caller.health()/caller.startingHealth()*imageProviderSet.size()).roundUp(0)-1
+        if(updatedProviderIndex != currentProviderIndex){
+            const previousImageProvider = imageProviderSet.get(currentProviderIndex)
+            imageProvider = imageProviderSet.get(updatedProviderIndex)
+            imageProvider.transitionSeamlessly(previousImageProvider)
+            currentProviderIndex = updatedProviderIndex
+        }
+        imageProvider.update(caller)
+    }
+    override method getImage() = imageProviderSet.get(currentProviderIndex).getImage() 
+    override method durationInTicks(){ imageProviderSet.get(currentProviderIndex).durationInTicks() }
 }
 
 object noImageProvider inherits StaticAnimation(image = "sprites/missingTexture.png"){}
