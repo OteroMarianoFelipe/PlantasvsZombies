@@ -11,7 +11,17 @@ class ConeHead inherits ZombieBase(
     rangedDamage = 0,
     secondsPerCell = 4.7,
     secondsPerAttack = 1,
-    defaultImageProvider =  walkingImageProvider,
+    defaultImageProvider = imageProviderSet.walkingImageProvider(),
+    imageProviderSet = new ConeHeadImageProvidersSet(),
+    behaviorStateMachine = new BehavioralStateMachine( currentState = new DefaultZombieMovementBehaviorState() )
+){
+    override method handleDeath(){
+        entityManager.addEntity(new Zombie(), self.position())
+        self.cleanUp()
+    }
+}
+
+class ConeHeadImageProvidersSet inherits ZombieImageProviderSet(
     walkingImageProvider = new HealthBasedImageProvider(
         imageProviderSet = [
             new ConeHeadWalkingDying(),
@@ -26,11 +36,5 @@ class ConeHead inherits ZombieBase(
             new ConeHeadEatingFH()
         ]
     ),
-    behaviorStateMachine = new BehavioralStateMachine( currentState = new DefaultZombieMovementBehaviorState() ),
     deathAnimation = noImageProvider
-){
-    override method handleDeath(){
-        entityManager.addEntity(new Zombie(), self.position())
-        self.cleanUp()
-    }
-}
+){} 

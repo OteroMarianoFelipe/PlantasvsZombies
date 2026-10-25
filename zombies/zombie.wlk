@@ -9,7 +9,12 @@ class Zombie inherits ZombieBase(
     rangedDamage = 0,
     secondsPerCell = 4.7,
     secondsPerAttack = 1,
-    defaultImageProvider = walkingImageProvider,
+    defaultImageProvider = imageProviderSet.walkingImageProvider(),
+    imageProviderSet = new PlaneZombieImageProvidersSet(),
+    behaviorStateMachine = new BehavioralStateMachine( currentState = new DefaultZombieMovementBehaviorState() )
+){}
+
+class PlaneZombieImageProvidersSet inherits ZombieImageProviderSet(
     walkingImageProvider = new HealthBasedImageProvider( 
         imageProviderSet=[
             new ZombieWalkingDying(),
@@ -24,7 +29,5 @@ class Zombie inherits ZombieBase(
             new ZombieEatingFH()
         ]
     ),
-    behaviorStateMachine = new BehavioralStateMachine( currentState = new DefaultZombieMovementBehaviorState() ),
     deathAnimation = new ZombieDeath()
-){
-}
+){} 

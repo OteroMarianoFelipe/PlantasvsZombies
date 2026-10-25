@@ -13,12 +13,11 @@ class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES"){
     var property rangedDamage
     var property secondsPerCell
     var property secondsPerAttack
-    var property behaviorStateMachine
-    var property walkingImageProvider
-    var property eatingImageProvider
-    var property deathAnimation
 
-    var property healthStage = 0
+    var property behaviorStateMachine
+
+    var property imageProviderSet
+
     var property objetivoDeAtaque = null
     var property frozen = 0
     var property freezeTick = false
@@ -27,19 +26,19 @@ class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES"){
 
     method newAttackTarget(newTarget){
         self.objetivoDeAtaque(newTarget)
-        self.changeImageProvider(eatingImageProvider) 
+        self.changeImageProvider(imageProviderSet.eatingImageProvider()) 
     }
 
     method targetEliminated(){
         self.objetivoDeAtaque(null)
-        self.changeImageProvider(walkingImageProvider)
+        self.changeImageProvider(imageProviderSet.walkingImageProvider())
     }
 
     method invertFreezeTick(){ freezeTick = not freezeTick }
     method freeze(){ self.frozen(config.secondsToTicks(10)) }
 
     override method start(pos){
-        self.changeDefaultImageProvider(walkingImageProvider)
+        self.changeDefaultImageProvider(imageProviderSet.walkingImageProvider())
         super(pos)
     }
 
@@ -82,9 +81,15 @@ class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES"){
     override method handleDeath(){
         behaviorStateMachine.forceStateChange(new ZombieDeathBehaviorState())
         animationCallback = { => self.cleanUp()} 
-        self.changeImageProvider(self.deathAnimation())
+        self.changeImageProvider(imageProviderSet.deathAnimation())
         entityManager.removeEntityCollitions(self)
     }
+}
+
+class ZombieImageProviderSet{
+    var property walkingImageProvider
+    var property eatingImageProvider
+    var property deathAnimation
 }
 
 ////////////////////////////////////////////////////////////////////////////
