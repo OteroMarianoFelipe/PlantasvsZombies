@@ -3,14 +3,16 @@ import zombieBase.*
 import assets.zombie.*
 import zombies.zombie.*
 import entityManager.*
+import stateMachine.*
 
 class ConeHead inherits ZombieBase(
   startingHealth = 370,
   meleeDamage = 100,
   rangedDamage = 0,
-  secondsPerMove = 4.7,
+  secondsPerCell = 4.7,
   secondsPerAttack = 1,
-  defaultImageProvider =  new ConeHeadWalkingFH()
+  defaultImageProvider =  new ConeHeadWalkingFH(),
+  behaviorStateMachine = new BehavioralStateMachine( currentState = new DefaultZombieMovementBehaviorState() )
 ){
   override method walkingAnimations() = [new ConeHeadWalkingFH(), new ConeHeadWalkingHurt(), new ConeHeadWalkingDying()]
   override method eatingAnimations() =  [new ConeHeadEatingFH(), new ConeHeadEatingHurt(), new ConeHeadEatingDying()]

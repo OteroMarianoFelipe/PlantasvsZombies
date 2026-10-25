@@ -6,38 +6,38 @@ import player.*
 import util.config.*
 import UIElements.gameOver.*
 import behavior.*
+import stateMachine.*
 
 class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES"){
     var property meleeDamage
     var property rangedDamage
-    var property secondsPerMove
+    var property secondsPerCell
     var property secondsPerAttack
+    var property behaviorStateMachine
 
     var property healthStage = 0
     var property objetivoDeAtaque = null
     var property frozen = 0
     var property freezeTick = false
 
-    method ticksPerMove() = config.secondsToTicks(secondsPerMove)
+    method ticksPerMove() = config.secondsToTicks(secondsPerCell)
     method ticksPerAttack() = config.secondsToTicks(secondsPerAttack)
-
-    var property currentBehavior = new MovingBehavior( secondsPerUse = 4.7, movingDirection = game.at(-1, 0) )
 
     // Devuelven una lista de tres animaciónes de más vida a menos vida
     method deathAnimation()
     method walkingAnimations()
     method eatingAnimations()
 
+    method hasAttackTarget() = objetivoDeAtaque != null
+
     method newAttackTarget(newTarget){
         self.objetivoDeAtaque(newTarget)
-        self.currentBehavior( new MeleeAttackBehavior( secondsPerUse = 1 ) )
         self.changeImageProvider(self.currentEatingAnimation()) 
     }
 
     method targetEliminated(){
         self.objetivoDeAtaque(null)
         self.useDefaultImageProvider()
-        self.currentBehavior( new MovingBehavior(secondsPerUse = 4.7, movingDirection = game.at(-1, 0)) )
     }
 
     method currentWalkingAnimation() = self.walkingAnimations().get(healthStage)
@@ -72,7 +72,7 @@ class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES"){
     method collisionHandler(otherEntity){
         // Si es planta ataca a la entidad, caso contrario la ignora
         if(otherEntity.team()==self.team() or otherEntity.team()=="NEUTRAL") {return}
-        if(not self.tieneObjetivo() and otherEntity.canBeKilled()){
+        if(not self.hasAttackTarget() and otherEntity.canBeKilled()){
             self.newAttackTarget(otherEntity)
         }
         return
@@ -83,8 +83,6 @@ class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES"){
     }
   
     method crossedTheYard() = position.x() < config.lowerBound().x()
-
-    method tieneObjetivo() = self.objetivoDeAtaque() != null
   
     override method tick(){
         self.handleCollitions()
@@ -93,7 +91,9 @@ class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES"){
         //   self.invertFreezeTick()
         //   if(freezeTick){ return }
         // }
-        currentBehavior.use(self)
+        // currentBehavior.use(self)
+        behaviorStateMachine.evaluateAlternatives(self)
+        behaviorStateMachine.use(self)
         return
     }
 
@@ -106,9 +106,48 @@ class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES"){
     }
 
     override method handleDeath(){
-        currentBehavior = noBehavior
+        behaviorStateMachine.forceStateChange(new ZombieDeathBehaviorState())
         animationCallback = { => self.cleanUp()} 
         self.changeImageProvider(self.deathAnimation())
         entityManager.removeEntityCollitions(self)
     }
 }
+
+
+////////////////////////////////////////////////////////////////////////////
+//                         ZOMBIES BEHAVIOR STATES                        //
+////////////////////////////////////////////////////////////////////////////
+
+class ZombieDeathBehaviorState inherits BehavioralState(
+    paths = [],
+    behaviors = []
+){}
+
+class DefaultZombieAttackBehaviorState inherits BehavioralState(
+    paths = [
+        new Path(
+            proposedState = new DefaultZombieMovementBehaviorState(),
+            condition = { user => not user.hasAttackTarget() }
+        )
+    ],
+    behaviors = [ 
+        new MeleeAttackBehavior(
+            secondsPerUse = 1 
+        ) 
+    ]
+){}
+
+class DefaultZombieMovementBehaviorState inherits BehavioralState(
+    paths = [
+        new Path(
+            proposedState = new DefaultZombieAttackBehaviorState(),
+            condition = { user => user.hasAttackTarget() }
+        )
+    ],
+    behaviors = [ 
+        new MovingBehavior(
+            secondsPerUse = 4.7,
+            movingDirection = game.at(-1, 0)
+        ) 
+    ]
+){}
