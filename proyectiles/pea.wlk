@@ -1,4 +1,4 @@
-import animation.*
+import imageProvider.*
 import proyectiles.projectile.*
 import assets.peaShooter.*
 import assets.snowPea.*

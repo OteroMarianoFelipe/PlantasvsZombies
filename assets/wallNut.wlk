@@ -1,4 +1,4 @@
-import animation.Animation
+import imageProvider.Animation
 
 class WallNutAnimation inherits Animation(
     loop = true,

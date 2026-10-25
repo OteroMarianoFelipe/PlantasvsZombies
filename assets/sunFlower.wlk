@@ -1,5 +1,5 @@
-import animation.Animation
-import animation.StaticAnimation
+import imageProvider.Animation
+import imageProvider.StaticAnimation
 
 class SunFlowerAnimation inherits Animation(
     durationInSeconds = 0.6,

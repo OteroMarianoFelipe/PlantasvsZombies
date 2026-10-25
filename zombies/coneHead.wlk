@@ -1,4 +1,4 @@
-import animation.*
+import imageProvider.*
 import zombieBase.*
 import assets.zombie.*
 import zombies.zombie.*

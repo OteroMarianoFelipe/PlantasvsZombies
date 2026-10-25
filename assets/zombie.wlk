@@ -1,4 +1,4 @@
-import animation.Animation
+import imageProvider.Animation
 
 class ZombieBehaviorAnimation inherits Animation(loop = true, durationInSeconds = 0.95, framesInAnimation = 7){}
 

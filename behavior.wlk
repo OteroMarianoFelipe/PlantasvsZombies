@@ -1,6 +1,6 @@
 import util.config.*
 import entityManager.*
-import animation.*
+import imageProvider.*
 
 class Behavior{
     var property secondsPerUse

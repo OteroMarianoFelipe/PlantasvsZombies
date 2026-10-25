@@ -76,19 +76,3 @@ class Animation inherits ImageProvider{
 }
 
 object noImageProvider inherits StaticAnimation(image = "sprites/missingTexture.png"){}
-
-class AnimationHandler{
-    var property imageProvider 
-
-    method update(user) { imageProvider.update(user) }
-    method getImage() = imageProvider.getImage()
-
-    method changeImageProviderSeamlessly(newAnimation){
-        newAnimation.transitionSeamlessly(imageProvider)
-        return self.changeImageProvider(newAnimation)
-    }
-    method changeImageProvider(newAnimation){
-        self.imageProvider(newAnimation)
-        return newAnimation
-    }
-}

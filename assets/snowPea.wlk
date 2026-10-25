@@ -1,4 +1,4 @@
-import animation.*
+import imageProvider.*
 
 class SnowPeaIdle inherits Animation(
     loop = true,

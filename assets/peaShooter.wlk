@@ -1,4 +1,4 @@
-import animation.*
+import imageProvider.*
 
 class PeaShooterIdle inherits Animation(
     loop = true,

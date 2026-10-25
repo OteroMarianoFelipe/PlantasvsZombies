@@ -1,6 +1,6 @@
 import entidadViva.EntidadViva
 import entityManager.entityManager
-import animation.*
+import imageProvider.*
 import proyectiles.projectile.*
 import proyectiles.pea.*
 import util.config.config

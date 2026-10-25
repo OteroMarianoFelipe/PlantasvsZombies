@@ -1,4 +1,4 @@
-import animation.*
+import imageProvider.*
 import entity.*
 import UIElements.UIElement.*
 

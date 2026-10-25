@@ -1,5 +1,5 @@
-import animation.Animation
-import animation.StaticAnimation
+import imageProvider.Animation
+import imageProvider.StaticAnimation
 
 class CardCoolDownAnimation inherits Animation(
     loop = false,

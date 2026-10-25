@@ -1,5 +1,5 @@
 import entityManager.*
-import animation.*
+import imageProvider.*
 
 
 class Entity{
