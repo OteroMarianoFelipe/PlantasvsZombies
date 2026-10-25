@@ -7,7 +7,7 @@ import proyectiles.pea.*
 class SnowPea inherits Planta(
   startingHealth = 300,
   damage = 20,
-  defaultImageProvider =  new SnowPeaIdle(),
+  imageProviderSet = new SnowPeaImageProviderSet(),
   actionModule = new ShootingBehavior(
         anticipationAnimation = new SnowPeaAction(), 
         secondsPerUse = 1.5,
@@ -18,6 +18,10 @@ class SnowPea inherits Planta(
                 frozen = true
             )
         } 
-    ),
-  behaviorAnticipationAnimation = new SnowPeaAction()
+    )
+){}
+
+class SnowPeaImageProviderSet inherits PlantImageProviderSet(
+    idle = new SnowPeaIdle(),
+    actionAnticipation = new SnowPeaAction()
 ){}

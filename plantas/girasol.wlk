@@ -9,7 +9,7 @@ import util.debugger.*
 class Girasol inherits Planta(
     startingHealth = 300,
     damage = 0,
-    defaultImageProvider =  new SunFlowerIdle(),
+    imageProviderSet = new SunFlowerImageProviderSet(),
     actionModule = new ShootingBehavior(
         anticipationAnimation = new SunFlowerActive(), 
         secondsPerUse = 24.25,
@@ -19,8 +19,12 @@ class Girasol inherits Planta(
                 value = user.generatedSunValue() 
             ) 
         } 
-    ),
-    behaviorAnticipationAnimation = new SunFlowerActive()
+    )
 ){
     var property generatedSunValue = 25
 }
+
+class SunFlowerImageProviderSet inherits PlantImageProviderSet(
+    idle = new SunFlowerIdle(),
+    actionAnticipation = new SunFlowerActive()
+){}

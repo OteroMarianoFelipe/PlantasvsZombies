@@ -6,12 +6,16 @@ import behavior.*
 class Nuez inherits Planta(
     startingHealth = 4000,
     damage = 0,
-    defaultImageProvider =  new HealthBasedImageProvider( 
+    imageProviderSet =  new WallNutImageProviderSet(),
+    actionModule = noBehavior
+){}
+
+class WallNutImageProviderSet inherits PlantImageProviderSet(
+    idle = new HealthBasedImageProvider( 
         imageProviderSet=[
             new WallNutDyingIdle(),
             new WallNutHurtIdle(),
             new WallNutIdle()
         ]
-    ),
-    actionModule = noBehavior
+    )
 ){}

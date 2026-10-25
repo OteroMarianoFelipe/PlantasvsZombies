@@ -78,19 +78,11 @@ class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES", s
     override method handleDeath(){ deathHandler.use(self) }
 }
 
-////////////////////////////////////////////////////////////////////////////
-//                       ZOMBIES IMAGE PROVIDER SET                       //
-////////////////////////////////////////////////////////////////////////////
-
 class ZombieImageProviderSet{
     var property walkingImageProvider
     var property eatingImageProvider
     var property deathAnimation
 }
-
-////////////////////////////////////////////////////////////////////////////
-//                           ZOMBIES STAT BLOCK                           //
-////////////////////////////////////////////////////////////////////////////
 
 class ZombieStatBlock{
     var property startingHealth
@@ -99,10 +91,6 @@ class ZombieStatBlock{
     var property secondsPerCell
     var property secondsPerAttack
 }
-
-////////////////////////////////////////////////////////////////////////////
-//                         ZOMBIES BEHAVIOR STATES                        //
-////////////////////////////////////////////////////////////////////////////
 
 class ZombieDeathBehaviorState inherits BehavioralState(
     paths = [],
@@ -137,10 +125,6 @@ class DefaultZombieMovementBehaviorState inherits BehavioralState(
         ) 
     ]
 ){}
-
-////////////////////////////////////////////////////////////////////////////
-//                      ZOMBIES DEATH HANDLER STATE                       //
-////////////////////////////////////////////////////////////////////////////
 
 class DefaultZombieDeath inherits State(
     paths = []
