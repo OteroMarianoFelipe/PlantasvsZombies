@@ -6,11 +6,7 @@ import entityManager.*
 import stateMachine.*
 
 class ConeHead inherits ZombieBase(
-    startingHealth = 370,
-    meleeDamage = 100,
-    rangedDamage = 0,
-    secondsPerCell = 4.7,
-    secondsPerAttack = 1,
+    statBlock = new ConeHeadZombieStats(),
     defaultImageProvider = imageProviderSet.walkingImageProvider(),
     imageProviderSet = new ConeHeadImageProvidersSet(),
     behaviorStateMachine = new BehavioralStateMachine( currentState = new DefaultZombieMovementBehaviorState() )
@@ -20,6 +16,15 @@ class ConeHead inherits ZombieBase(
         self.cleanUp()
     }
 }
+
+class ConeHeadZombieStats inherits ZombieStatBlock(
+    startingHealth = 370,
+    meleeDamage = 100,
+    rangedDamage = 0,
+    secondsPerCell = 4.7,
+    secondsPerAttack = 1
+){}
+
 
 class ConeHeadImageProvidersSet inherits ZombieImageProviderSet(
     walkingImageProvider = new HealthBasedImageProvider(

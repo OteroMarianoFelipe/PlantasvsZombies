@@ -4,14 +4,18 @@ import stateMachine.*
 import imageProvider.*
 
 class Zombie inherits ZombieBase(
+    statBlock = new PlaneZombieStats(),
+    defaultImageProvider = imageProviderSet.walkingImageProvider(),
+    imageProviderSet = new PlaneZombieImageProvidersSet(),
+    behaviorStateMachine = new BehavioralStateMachine( currentState = new DefaultZombieMovementBehaviorState() )
+){}
+
+class PlaneZombieStats inherits ZombieStatBlock(
     startingHealth = 190,
     meleeDamage = 100,
     rangedDamage = 0,
     secondsPerCell = 4.7,
-    secondsPerAttack = 1,
-    defaultImageProvider = imageProviderSet.walkingImageProvider(),
-    imageProviderSet = new PlaneZombieImageProvidersSet(),
-    behaviorStateMachine = new BehavioralStateMachine( currentState = new DefaultZombieMovementBehaviorState() )
+    secondsPerAttack = 1
 ){}
 
 class PlaneZombieImageProvidersSet inherits ZombieImageProviderSet(

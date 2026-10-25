@@ -8,19 +8,19 @@ import UIElements.gameOver.*
 import behavior.*
 import stateMachine.*
 
-class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES"){
-    var property meleeDamage
-    var property rangedDamage
-    var property secondsPerCell
-    var property secondsPerAttack
-
+class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES", startingHealth = statBlock.startingHealth()){
+    var property statBlock
     var property behaviorStateMachine
-
     var property imageProviderSet
 
     var property objetivoDeAtaque = null
     var property frozen = 0
     var property freezeTick = false
+
+    method meleeDamage() = statBlock.meleeDamage()
+    method rangedDamage() = statBlock.rangedDamage()
+    method secondsPerCell() = statBlock.secondsPerCell()
+    method secondsPerAttack() = statBlock.secondsPerAttack()
 
     method hasAttackTarget() = objetivoDeAtaque != null
 
@@ -36,11 +36,6 @@ class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES"){
 
     method invertFreezeTick(){ freezeTick = not freezeTick }
     method freeze(){ self.frozen(config.secondsToTicks(10)) }
-
-    override method start(pos){
-        self.changeDefaultImageProvider(imageProviderSet.walkingImageProvider())
-        super(pos)
-    }
 
     method collisionHandler(otherEntity){
         // Si es planta ataca a la entidad, caso contrario la ignora
@@ -64,7 +59,6 @@ class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES"){
         //   self.invertFreezeTick()
         //   if(freezeTick){ return }
         // }
-        // currentBehavior.use(self)
         behaviorStateMachine.evaluateAlternatives(self)
         behaviorStateMachine.use(self)
         return
@@ -86,10 +80,26 @@ class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES"){
     }
 }
 
+////////////////////////////////////////////////////////////////////////////
+//                       ZOMBIES IMAGE PROVIDER SET                       //
+////////////////////////////////////////////////////////////////////////////
+
 class ZombieImageProviderSet{
     var property walkingImageProvider
     var property eatingImageProvider
     var property deathAnimation
+}
+
+////////////////////////////////////////////////////////////////////////////
+//                           ZOMBIES STAT BLOCK                           //
+////////////////////////////////////////////////////////////////////////////
+
+class ZombieStatBlock{
+    var property startingHealth
+    var property meleeDamage
+    var property rangedDamage
+    var property secondsPerCell
+    var property secondsPerAttack
 }
 
 ////////////////////////////////////////////////////////////////////////////
