@@ -7,11 +7,13 @@ import util.config.*
 import UIElements.gameOver.*
 import behavior.*
 import stateMachine.*
+import util.debugger.*
 
 class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES", startingHealth = statBlock.startingHealth()){
     var property statBlock
     var property behaviorStateMachine
     var property imageProviderSet
+    var property deathHandler
 
     var property objetivoDeAtaque = null
     var property frozen = 0
@@ -72,12 +74,8 @@ class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES", s
         }
     }
 
-    override method handleDeath(){
-        behaviorStateMachine.forceStateChange(new ZombieDeathBehaviorState())
-        animationCallback = { => self.cleanUp()} 
-        self.changeImageProvider(imageProviderSet.deathAnimation())
-        entityManager.removeEntityCollitions(self)
-    }
+    method updateDeathHandler(){ deathHandler.evaluateAlternatives(self) }
+    override method handleDeath(){ deathHandler.use(self) }
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -139,3 +137,18 @@ class DefaultZombieMovementBehaviorState inherits BehavioralState(
         ) 
     ]
 ){}
+
+////////////////////////////////////////////////////////////////////////////
+//                      ZOMBIES DEATH HANDLER STATE                       //
+////////////////////////////////////////////////////////////////////////////
+
+class DefaultZombieDeath inherits State(
+    paths = []
+){
+    override method use(user){
+        user.behaviorStateMachine().forceStateChange(new ZombieDeathBehaviorState())
+        user.animationCallback({ => user.cleanUp()}) 
+        user.changeImageProvider(user.imageProviderSet().deathAnimation())
+        entityManager.removeEntityCollitions(user)
+    }
+}

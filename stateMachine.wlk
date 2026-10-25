@@ -1,8 +1,11 @@
 class StateMachine{
     var property currentState
     
-    method forceStateChange(newState){ currentState = newState }
+    method use(user){
+        currentState.use(user)
+    }
 
+    method forceStateChange(newState){ currentState = newState }
     method evaluateAlternatives(user){ 
         const newState = currentState.evaluatePaths(user) 
         if(newState != currentState){
@@ -25,6 +28,7 @@ class State{
         }
         return stateToChangeTo
     }   
+    method use(user)
 }
 
 class Path{
@@ -33,13 +37,9 @@ class Path{
     const property transition = { previousState, nextState, user => }
 }
 
-class BehavioralStateMachine inherits StateMachine{ 
-    method use(user){ currentState.useBehaviors(user) }
-}
-
 class BehavioralState inherits State{
     const property behaviors
-    method useBehaviors(user){
+    override method use(user){
         behaviors.forEach({ behavior => behavior.use(user) })
     }
 }

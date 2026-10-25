@@ -9,13 +9,9 @@ class ConeHead inherits ZombieBase(
     statBlock = new ConeHeadZombieStats(),
     defaultImageProvider = imageProviderSet.walkingImageProvider(),
     imageProviderSet = new ConeHeadImageProvidersSet(),
-    behaviorStateMachine = new BehavioralStateMachine( currentState = new DefaultZombieMovementBehaviorState() )
-){
-    override method handleDeath(){
-        entityManager.addEntity(new Zombie(), self.position())
-        self.cleanUp()
-    }
-}
+    behaviorStateMachine = new StateMachine( currentState = new DefaultZombieMovementBehaviorState() ),
+    deathHandler = new StateMachine( currentState = new ConeHeadDeath() )
+){}
 
 class ConeHeadZombieStats inherits ZombieStatBlock(
     startingHealth = 370,
@@ -43,3 +39,26 @@ class ConeHeadImageProvidersSet inherits ZombieImageProviderSet(
     ),
     deathAnimation = noImageProvider
 ){} 
+
+class ConeHeadDeath inherits State(
+    paths = [
+        new Path(
+            proposedState = new DefaultZombieDeath(),
+            condition = { user => return true}
+        )
+    ]
+){
+    override method use(user){
+        user.startingHealth(190)
+        user.health(190)
+        user.statBlock( new PlaneZombieStats() )
+        user.imageProviderSet( new PlaneZombieImageProvidersSet() )
+        if(user.hasAttackTarget()){
+            user.defaultImageProvider( user.imageProviderSet().eatingImageProvider() )
+        }else{
+            user.defaultImageProvider( user.imageProviderSet().walkingImageProvider() )
+        }
+        user.useDefaultImageProvider()
+        user.updateDeathHandler()
+    }
+}

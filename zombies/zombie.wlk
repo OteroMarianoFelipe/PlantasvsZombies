@@ -7,7 +7,8 @@ class Zombie inherits ZombieBase(
     statBlock = new PlaneZombieStats(),
     defaultImageProvider = imageProviderSet.walkingImageProvider(),
     imageProviderSet = new PlaneZombieImageProvidersSet(),
-    behaviorStateMachine = new BehavioralStateMachine( currentState = new DefaultZombieMovementBehaviorState() )
+    behaviorStateMachine = new StateMachine( currentState = new DefaultZombieMovementBehaviorState() ),
+    deathHandler = new StateMachine( currentState = new DefaultZombieDeath() )
 ){}
 
 class PlaneZombieStats inherits ZombieStatBlock(
