@@ -14,6 +14,7 @@ class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES", s
     var property behaviorStateMachine
     var property imageProviderSet
     var property deathHandler
+    var property collitionBehavior
 
     var property objetivoDeAtaque = null
     var property frozen = 0
@@ -55,7 +56,7 @@ class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES", s
     method crossedTheYard() = position.x() < config.lowerBound().x()
   
     override method tick(){
-        self.handleCollitions()
+        collitionBehavior.use(self)
         // if(frozen>0){
         //   frozen-=1
         //   self.invertFreezeTick()

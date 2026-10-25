@@ -12,10 +12,10 @@ class Projectile inherits Entity(blocksOwnCell = false, canBeKilled = false) {
     method inBounds() = self.position().x() <= game.width()-1
     method isEnemy(otherTeam) = otherTeam != team and otherTeam != "NEUTRAL"
 
-    method collitionHandler(entity)
+    method collisionHandler(entity)
     method handleCollitions(){
         const intersectantes = entityManager.allIntersectingEntities(self)
-        intersectantes.forEach({ e => self.collitionHandler(e)})
+        intersectantes.forEach({ e => self.collisionHandler(e)})
     }
 
     method handleRemoval()

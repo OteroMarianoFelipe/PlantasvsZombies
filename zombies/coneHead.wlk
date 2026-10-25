@@ -4,13 +4,15 @@ import assets.zombie.*
 import zombies.zombie.*
 import entityManager.*
 import stateMachine.*
+import behavior.*
 
 class ConeHead inherits ZombieBase(
     statBlock = new ConeHeadZombieStats(),
     defaultImageProvider = imageProviderSet.walkingImageProvider(),
     imageProviderSet = new ConeHeadImageProvidersSet(),
     behaviorStateMachine = new StateMachine( currentState = new DefaultZombieMovementBehaviorState() ),
-    deathHandler = new StateMachine( currentState = new ConeHeadDeath() )
+    deathHandler = new StateMachine( currentState = new ConeHeadDeath() ),
+    collitionBehavior = new CollitionBehavior()
 ){}
 
 class ConeHeadZombieStats inherits ZombieStatBlock(

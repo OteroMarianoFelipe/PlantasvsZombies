@@ -18,7 +18,7 @@ class Pea inherits Projectile(
     var property objective = null
     var property action = { => objective.takeDamage(damage)}
     var property impactAnimation = new PeaShotImpact()
-    override method collitionHandler(entity){
+    override method collisionHandler(entity){
         if( self.isEnemy(entity.team()) ) { 
             self.objective(entity)
             action.apply()
@@ -35,7 +35,7 @@ class Pea inherits Projectile(
     }
     override method handleRemoval(){
         self.movementBehavior( noBehavior )
-        self.collitionHandler( {entity =>} )
+        self.collitionBehavior(noBehavior)
         animationCallback = { => self.cleanUp()} 
         self.changeImageProvider(impactAnimation)
     }

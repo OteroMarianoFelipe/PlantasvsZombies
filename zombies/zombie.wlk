@@ -2,13 +2,15 @@ import zombieBase.*
 import assets.zombie.*
 import stateMachine.*
 import imageProvider.*
+import behavior.*
 
 class Zombie inherits ZombieBase(
     statBlock = new PlaneZombieStats(),
     defaultImageProvider = imageProviderSet.walkingImageProvider(),
     imageProviderSet = new PlaneZombieImageProvidersSet(),
     behaviorStateMachine = new StateMachine( currentState = new DefaultZombieMovementBehaviorState() ),
-    deathHandler = new StateMachine( currentState = new DefaultZombieDeath() )
+    deathHandler = new StateMachine( currentState = new DefaultZombieDeath() ),
+    collitionBehavior = new CollitionBehavior()
 ){}
 
 class PlaneZombieStats inherits ZombieStatBlock(
