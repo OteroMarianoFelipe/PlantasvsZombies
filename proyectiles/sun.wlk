@@ -2,9 +2,12 @@ import proyectiles.projectile.*
 import util.config.*
 import assets.sunFlower.*
 import UIElements.sunCounter.*
+import behavior.*
 
 class Sun inherits Projectile(
-    defaultImageProvider =  self.getProperAnimation()
+    defaultImageProvider =  self.getProperAnimation(),
+    movementBehavior = noBehavior,
+    collitionBehavior = noBehavior
 ){
     const property value
 
@@ -20,7 +23,6 @@ class Sun inherits Projectile(
         }
     }
 
-    override method defaultMovementBehavior(){}
     override method tick(){
         if(ticksUntilDesapearing == 0){
             self.cleanUp()
@@ -29,11 +31,10 @@ class Sun inherits Projectile(
         }
     }
 
-    override method defaultSpeed() {return 0}
-    override method defaultCollitionHandler(entity){}
+    override method collitionHandler(entity){}
     override method beClicked(){
         sunCounter.addSuns(self.value())
-        self.handleDeath()
+        self.handleRemoval()
     }
-    override method handleDeath(){ self.cleanUp() }
+    override method handleRemoval(){ self.cleanUp() }
 }

@@ -28,6 +28,13 @@ class Behavior{
     }
 }
 
+class CollitionBehavior inherits Behavior( secondsPerUse=0 ){
+    override method activate(user){
+        const intersectantes = entityManager.allIntersectingEntities(user)
+        intersectantes.forEach({ e => user.collitionHandler(e)})
+    }
+}
+
 class MovingBehavior inherits Behavior{
     var property movingDirection
 

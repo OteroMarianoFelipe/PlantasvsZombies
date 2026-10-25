@@ -2,9 +2,15 @@ import imageProvider.*
 import proyectiles.projectile.*
 import assets.peaShooter.*
 import assets.snowPea.*
+import behavior.*
 
 class Pea inherits Projectile(
-    defaultImageProvider =  new PeaShot()
+    defaultImageProvider =  new PeaShot(),
+    movementBehavior = new MovingBehavior(
+        secondsPerUse = 0.1,
+        movingDirection = game.at(1, 0)
+    ),
+    collitionBehavior = new CollitionBehavior()
 ){
     var property damage
     var property frozen
@@ -12,12 +18,11 @@ class Pea inherits Projectile(
     var property objective = null
     var property action = { => objective.takeDamage(damage)}
     var property impactAnimation = new PeaShotImpact()
-    override method defaultSpeed() = 0
-    override method defaultCollitionHandler(entity){
+    override method collitionHandler(entity){
         if( self.isEnemy(entity.team()) ) { 
             self.objective(entity)
             action.apply()
-            self.handleDeath()
+            self.handleRemoval()
         }
     }
     override method start(pos){
@@ -28,16 +33,10 @@ class Pea inherits Projectile(
             impactAnimation = new FrozenPeaImpact()
         }
     }
-    override method tick(){
-        super()
-        self.handleCollitions()
-    }
-    override method handleDeath(){
-        self.movementBehavior( { => } )
+    override method handleRemoval(){
+        self.movementBehavior( noBehavior )
         self.collitionHandler( {entity =>} )
         animationCallback = { => self.cleanUp()} 
         self.changeImageProvider(impactAnimation)
     }
-
-    override method defaultMovementBehavior(){ self.position(self.position().right(1)) }
 }
