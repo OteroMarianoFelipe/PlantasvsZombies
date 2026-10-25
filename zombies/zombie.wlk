@@ -1,19 +1,30 @@
 import zombieBase.*
 import assets.zombie.*
 import stateMachine.*
+import imageProvider.*
 
 class Zombie inherits ZombieBase(
-  startingHealth = 190,
-  meleeDamage = 100,
-  rangedDamage = 0,
-  secondsPerCell = 4.7,
-  secondsPerAttack = 1,
-  defaultImageProvider = new ZombieWalkingFH(),
-  behaviorStateMachine = new BehavioralStateMachine( currentState = new DefaultZombieMovementBehaviorState() )
+    startingHealth = 190,
+    meleeDamage = 100,
+    rangedDamage = 0,
+    secondsPerCell = 4.7,
+    secondsPerAttack = 1,
+    defaultImageProvider = walkingImageProvider,
+    walkingImageProvider = new HealthBasedImageProvider( 
+        imageProviderSet=[
+            new ZombieWalkingDying(),
+            new ZombieWalkingHurt(),
+            new ZombieWalkingFH()
+        ]
+    ),
+    eatingImageProvider = new HealthBasedImageProvider(
+        imageProviderSet=[
+            new ZombieEatingDying(),
+            new ZombieEatingHurt(),
+            new ZombieEatingFH()
+        ]
+    ),
+    behaviorStateMachine = new BehavioralStateMachine( currentState = new DefaultZombieMovementBehaviorState() ),
+    deathAnimation = new ZombieDeath()
 ){
-
-  override method walkingAnimations() = [new ZombieWalkingFH(), new ZombieWalkingHurt(), new ZombieWalkingDying()]
-  override method eatingAnimations() = [new ZombieEatingFH(), new ZombieEatingHurt(), new ZombieEatingDying()]
-
-  override method deathAnimation() = new ZombieDeath()
 }

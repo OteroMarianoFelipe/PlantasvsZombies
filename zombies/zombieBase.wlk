@@ -14,59 +14,33 @@ class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES"){
     var property secondsPerCell
     var property secondsPerAttack
     var property behaviorStateMachine
+    var property walkingImageProvider
+    var property eatingImageProvider
+    var property deathAnimation
 
     var property healthStage = 0
     var property objetivoDeAtaque = null
     var property frozen = 0
     var property freezeTick = false
 
-    method ticksPerMove() = config.secondsToTicks(secondsPerCell)
-    method ticksPerAttack() = config.secondsToTicks(secondsPerAttack)
-
-    // Devuelven una lista de tres animaciónes de más vida a menos vida
-    method deathAnimation()
-    method walkingAnimations()
-    method eatingAnimations()
-
     method hasAttackTarget() = objetivoDeAtaque != null
 
     method newAttackTarget(newTarget){
         self.objetivoDeAtaque(newTarget)
-        self.changeImageProvider(self.currentEatingAnimation()) 
+        self.changeImageProvider(eatingImageProvider) 
     }
 
     method targetEliminated(){
         self.objetivoDeAtaque(null)
-        self.useDefaultImageProvider()
+        self.changeImageProvider(walkingImageProvider)
     }
-
-    method currentWalkingAnimation() = self.walkingAnimations().get(healthStage)
-    method currentEatingAnimation() = self.eatingAnimations().get(healthStage)
-    
-    method damageThresholds() = [self.startingHealth()*2/3, self.startingHealth()*1/3, 0]
-    method isBelowCurrentThreshold() = health < self.damageThresholds().get(healthStage)
 
     method invertFreezeTick(){ freezeTick = not freezeTick }
     method freeze(){ self.frozen(config.secondsToTicks(10)) }
 
     override method start(pos){
-        self.changeDefaultImageProvider(self.currentWalkingAnimation())
+        self.changeDefaultImageProvider(walkingImageProvider)
         super(pos)
-    }
-
-    override method takeDamage(incomingDamage){
-        super(incomingDamage)
-        if( self.isBelowCurrentThreshold() and self.lives()){
-            healthStage+=1
-            self.changeDefaultImageProvider(self.currentWalkingAnimation())
-            var animationToUse = null
-            if(objetivoDeAtaque == null){
-                animationToUse = self.currentWalkingAnimation()
-            }else{
-                animationToUse = self.currentEatingAnimation()
-            }
-            self.changeImageProviderSeamlessly(animationToUse)
-        }   
     }
 
     method collisionHandler(otherEntity){
@@ -112,7 +86,6 @@ class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES"){
         entityManager.removeEntityCollitions(self)
     }
 }
-
 
 ////////////////////////////////////////////////////////////////////////////
 //                         ZOMBIES BEHAVIOR STATES                        //
