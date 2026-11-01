@@ -5,7 +5,7 @@ import entity.Entity
 import UIElements.sunCounter.sunCounter
 import util.config.config
 
-class Projectile inherits Entity(blocksOwnCell = false, canBeKilled = false) {
+class Projectile inherits Entity(blocksOwnCell = false) {
     var property behaviors
     
     method inBounds() = self.position().x() <= game.width()-1

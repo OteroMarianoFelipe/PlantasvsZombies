@@ -1,0 +1,16 @@
+import zombies.coneHead.*
+import zombies.zombie.*
+import plantas.girasol.*
+import plantas.lanzaguisantes.*
+import plantas.nuez.*
+import plantas.snowPea.*
+
+describe "Se puede instanciar distintas entidades" {
+
+  test "Instanciar un Zombie normal" { new Zombie() }
+  test "Instanciar un Zombie con cono" { new ConeHead() }
+  test "Instanciar un girasol" { new Girasol() }
+  test "Instanciar una nuez" { new Nuez() }
+  test "Instanciar un snowPea" { new SnowPea() }
+  test "Instanciar un lanza guisantes" { new LanzaGuisantes() }
+}

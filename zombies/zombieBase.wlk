@@ -1,5 +1,5 @@
 import assets.zombie.*
-import entidadViva.*
+import entity.*
 import plantas.planta.*
 import entityManager.*
 import player.*
@@ -9,7 +9,7 @@ import behavior.*
 import stateMachine.*
 import util.debugger.*
 
-class ZombieBase inherits EntidadViva(blocksOwnCell = false, team = "ZOMBIES", startingHealth = statBlock.startingHealth()){
+class ZombieBase inherits Alive and Entity(blocksOwnCell = false, team = "ZOMBIES", startingHealth = statBlock.startingHealth()){
     var property statBlock
     var property imageProviderSet
     var property deathHandler

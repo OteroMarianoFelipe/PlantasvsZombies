@@ -4,7 +4,6 @@ import imageProvider.*
 
 class Entity{
     var property blocksOwnCell
-    var property canBeKilled
     var property team
 
     var property defaultImageProvider = noImageProvider
@@ -15,6 +14,7 @@ class Entity{
 
     method tick()
 
+    method canBeKilled() = false
     method animationEnded(){ animationCallback.apply() }
 
     method start(pos){
@@ -57,4 +57,21 @@ class Entity{
     method animate() = imageProvider.update(self)
 
     method image() = imageProvider.getImage()
+}
+
+mixin Alive{
+    var property startingHealth
+    var property health = startingHealth
+
+    method handleDeath()
+
+    override method canBeKilled() = true
+
+    method lives() = health > 0
+    method takeDamage(damage) {
+        health = 0.max(health - damage)
+        if(not self.lives()){
+            self.handleDeath()
+        }
+    }
 }

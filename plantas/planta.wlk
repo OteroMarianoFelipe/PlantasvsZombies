@@ -1,4 +1,4 @@
-import entidadViva.EntidadViva
+import entity.*
 import entityManager.entityManager
 import imageProvider.*
 import proyectiles.projectile.*
@@ -6,7 +6,7 @@ import proyectiles.pea.*
 import util.config.config
 import util.debugger.*
 
-class Planta inherits EntidadViva(
+class Planta inherits Alive and Entity(
     blocksOwnCell = true,
     team = "PLANTAS",
     defaultImageProvider = imageProviderSet.idle()

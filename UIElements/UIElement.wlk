@@ -1,3 +1,3 @@
 import entity.*
 
-class UIElement inherits Entity(team = "NEUTRAL", canBeKilled=false, blocksOwnCell = false){}
+class UIElement inherits Entity(team = "NEUTRAL", blocksOwnCell = false){}

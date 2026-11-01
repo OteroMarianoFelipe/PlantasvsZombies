@@ -21,7 +21,7 @@ object entityManager{
       })
     })
 
-    game.onTick(30000, "spawnZombies",{
+    game.onTick(5000, "spawnZombies",{
       const zombies = []
       const lastColumn = config.upperBound().x()
       azar.numeroEntre(2, 4).times({ i=>
