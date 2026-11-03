@@ -15,8 +15,6 @@ object sunCounter inherits UIElement{
         self.updateCount()
     }
 
-    override method tick(){}
-
     method hundreds() = (suns/100).truncate(0)
     method tens() = suns - self.hundreds()*100
 

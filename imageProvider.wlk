@@ -1,5 +1,5 @@
 import util.config.*
-import assets.zombie.*
+import assets.zombies.*
 import util.debugger.*
 
 class ImageProvider{

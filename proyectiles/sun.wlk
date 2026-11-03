@@ -2,7 +2,6 @@ import proyectiles.projectile.*
 import util.config.*
 import assets.sunFlower.*
 import UIElements.sunCounter.*
-import behavior.*
 
 class Sun inherits Projectile(
     defaultImageProvider =  self.getProperAnimation(),

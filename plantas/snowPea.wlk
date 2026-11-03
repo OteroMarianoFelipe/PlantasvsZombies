@@ -2,7 +2,6 @@ import planta.*
 import entity.*
 import assets.snowPea.*
 import proyectiles.projectile.*
-import behavior.*
 import proyectiles.pea.*
 
 class SnowPea inherits ActiveEntity and Planta(

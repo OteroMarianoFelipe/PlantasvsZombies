@@ -2,7 +2,7 @@ import zombies.zombie.*
 import zombies.zombieBasico.*
 import zombies.coneHead.*
 import proyectiles.sun.*
-import util.azar.*
+import util.random.*
 import util.config.*
 
 object entityManager{
@@ -20,31 +20,12 @@ object entityManager{
         entity.animate()
       })
     })
-
-    game.onTick(5000, "spawnZombies",{
-      const zombies = []
-      const lastColumn = config.upperBound().x()
-      azar.numeroEntre(1, 2).times({ i=>
-        const zombie = [new ZombieBasico(), new ConeHead()].get(azar.numeroEntre(0,1))
-        const randomLine = azar.numeroEntre(config.lowerBound().y(), config.upperBound().y())
-        game.schedule(i*500, {=> self.addEntity(zombie, game.at(lastColumn, randomLine))})
-      })
-    })
-
-    game.onTick(10000, "spawnSun",{
-      const randomColumn = azar.numeroEntre(config.lowerBound().x(), config.upperBound().x()-1)
-      const randomLine = azar.numeroEntre(config.lowerBound().y(), config.upperBound().y())
-      const sun = new Sun(team="PLANTAS", value = 25)
-      self.addEntity(sun, game.at(randomColumn, randomLine))
-    })
   }
 
   method cantidadDeEntidades() = entities.size()
 
-  method addEntity(entity, position){
-    entity.start(position)
+  method add(entity){
     entities.add(entity)
-    entitiesMap.add(entity)
   }  
   method allEntitiesThat(condicion) = entities.filter(condicion)
 

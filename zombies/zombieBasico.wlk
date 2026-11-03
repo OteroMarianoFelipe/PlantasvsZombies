@@ -1,6 +1,6 @@
 import zombie.*
 import entity.*
-import assets.zombie.*
+import assets.zombies.*
 import imageProvider.*
 
 class ZombieBasico inherits Zombie(

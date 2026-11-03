@@ -68,7 +68,7 @@ class ShootingBehavior inherits Behavior{
 
     override method activate(user){
         const newProyectile = createNewProyectileInstance.apply(user)
-        entityManager.addEntity(newProyectile, user.position())
+        newProyectile.start(user.position())
     }
 }
 

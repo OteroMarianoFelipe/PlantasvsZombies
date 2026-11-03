@@ -9,7 +9,7 @@ import entityManager.*
 import UIElements.sunCounter.sunCounter
 import UIElements.UIElement.*
 
-class PlantCard inherits UIElement(defaultImageProvider =  self.cardUnavailableSprite()){
+class PlantCard inherits Ticks and Collides and UIElement(defaultImageProvider =  self.cardUnavailableSprite()){
     const property price
     const property createNewInstance
     const property cardAvailableSprite
@@ -52,7 +52,7 @@ class PlantCard inherits UIElement(defaultImageProvider =  self.cardUnavailableS
     method use(pos){
         self.startCoolDown()
         sunCounter.spendSuns(price)
-        entityManager.addEntity(self.newInstance(), pos)
+        self.newInstance().start(pos)
     }
 
     method startCoolDown(){

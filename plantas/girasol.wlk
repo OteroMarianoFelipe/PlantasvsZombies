@@ -4,7 +4,6 @@ import assets.sunFlower.*
 import util.config.*
 import entityManager.*
 import proyectiles.sun.*
-import behavior.*
 import util.debugger.*
 
 class Girasol inherits ActiveEntity and Planta(

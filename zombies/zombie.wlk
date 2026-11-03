@@ -1,14 +1,13 @@
-import assets.zombie.*
+import assets.zombies.*
 import entity.*
 import plantas.planta.*
 import entityManager.*
 import player.*
 import util.config.*
 import UIElements.gameOver.*
-import behavior.*
 import util.debugger.*
 
-class Zombie inherits Alive and ActiveEntity and Entity(
+class Zombie inherits Alive and Ticks and Collides and ActiveEntity and Entity(
     team = "ZOMBIES"
 ){
     var property imageProviderSet
@@ -27,14 +26,6 @@ class Zombie inherits Alive and ActiveEntity and Entity(
             gameOver.trigger()
             self.cleanUp()
         }
-    }
-
-    override method tick(){
-        // if(frozen>0){
-        //   frozen-=1
-        //   self.invertFreezeTick()
-        //   if(freezeTick){ return }
-        // }
     }
 }
 

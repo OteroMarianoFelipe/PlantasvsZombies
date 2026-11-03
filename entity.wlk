@@ -1,7 +1,6 @@
 import zombies.zombie.*
 import imageProvider.*
 import entityManager.*
-import imageProvider.*
 import behavior.*
 import util.debugger.*
 
@@ -12,7 +11,6 @@ class Entity{
     var property position = game.at(0,0)
     var property previousPosition = self.position()
 
-    method tick(){}
     method blocksPlantPlacement() = false
     method blocksEnemyEntitiesMovement() = false
     method canBeKilled() = false
@@ -38,6 +36,7 @@ class Entity{
         self.position(pos)
         game.addVisual(self)
     }
+
     method beClicked(){}
     method cleanUp(){
         entityManager.removeEntity(self)
@@ -86,6 +85,22 @@ mixin Alive{
         if(not self.lives()){
             deathHandler.apply(self)
         }
+    }
+}
+
+mixin Ticks{
+    method tick(){}
+
+    override method start(pos){
+        super(pos)
+        entityManager.add(self)
+    }
+}
+
+mixin Collides{
+    override method start(pos){
+        super(pos)
+        entitiesMap.add(self)
     }
 }
 
@@ -173,6 +188,8 @@ mixin Mobile{
         super(user)
         if(not self.hasObstacle(user)){
             movingBehavior.use(user)
+        }else{
+            debugger.info("Se determino que hay un obstaculo")
         }
     }
 }

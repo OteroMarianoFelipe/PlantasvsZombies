@@ -1,7 +1,6 @@
 import imageProvider.*
 import planta.*
 import assets.wallNut.*
-import behavior.*
 
 class Nuez inherits Planta(
     startingHealth = 4000,

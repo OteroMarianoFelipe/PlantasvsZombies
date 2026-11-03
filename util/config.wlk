@@ -1,11 +1,10 @@
 import wollok.game.*
 import entityManager.*
 import player.*
-import plantas.girasol.*
-import plantas.lanzaguisantes.*
-import plantas.nuez.*
 import UIElements.plantCard.*
 import UIElements.sunCounter.*
+import spawningManager.*
+
 object config {
   const property height = 7
   const property width = 12
@@ -27,6 +26,7 @@ object config {
     self.configurarControles()
     entityManager.startTicking()
     entitiesMap.initializeEntitiesMap()
+    spawningManager.startSpawning()
   }
 
   method configurarVisuales(){
@@ -42,10 +42,10 @@ object config {
   }
 
   method startUIElements(){
-    entityManager.addEntity(sunFlowerCard, game.at(2,0))
-    entityManager.addEntity(peashooterCard, game.at(3,0))
-    entityManager.addEntity(wallNutCard, game.at(4,0))
-    entityManager.addEntity(snowPeaCard, game.at(5,0))
+    sunFlowerCard.start(game.at(2,0))
+    peashooterCard.start(game.at(3,0))
+    wallNutCard.start(game.at(4,0))
+    snowPeaCard.start(game.at(5,0))
     sunCounter.start()
   }
 }

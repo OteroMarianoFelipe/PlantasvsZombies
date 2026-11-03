@@ -1,7 +1,6 @@
 import planta.*
 import entity.*
 import assets.peaShooter.*
-import behavior.*
 import proyectiles.pea.*
 
 class LanzaGuisantes inherits ActiveEntity and Planta(
