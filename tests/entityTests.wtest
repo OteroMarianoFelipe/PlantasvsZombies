@@ -64,3 +64,22 @@ describe "Manejo de proveedores de imagen"{
         assert.equals(entidadPlana.imageProvider(), entidadPlana.defaultImageProvider())
     }    
 }
+describe "Entidad viva"{
+    const entidadViva = 
+        object inherits Alive and Entity(
+            deathHandler = { user => user.dead(true) },
+            team = "NEUTRAL"
+        ){ var property dead = false }
+
+    test "Recibe la cantidad correcta de daño"{
+        entidadViva.health(200)
+        entidadViva.takeDamage(100)
+        assert.equals(100, entidadViva.health())
+    }
+
+    test "Al morir llama a su death handler"{
+        entidadViva.health(1)
+        entidadViva.takeDamage(1)
+        assert.that(entidadViva.dead())
+    }
+}

@@ -76,7 +76,7 @@ mixin Alive{
     var property startingHealth
     var property health = startingHealth
 
-    method handleDeath()
+    var property deathHandler
 
     override method canBeKilled() = true
 
@@ -84,7 +84,7 @@ mixin Alive{
     method takeDamage(damage) {
         health = 0.max(health - damage)
         if(not self.lives()){
-            self.handleDeath()
+            deathHandler.apply(self)
         }
     }
 }

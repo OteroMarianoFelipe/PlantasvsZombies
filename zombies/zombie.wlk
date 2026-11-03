@@ -8,12 +8,13 @@ import UIElements.gameOver.*
 import behavior.*
 import util.debugger.*
 
-class Zombie inherits Alive and ActiveEntity and Entity( team = "ZOMBIES"){
+class Zombie inherits Alive and ActiveEntity and Entity(
+    team = "ZOMBIES"
+){
     var property imageProviderSet
 
     var property frozen = 0
     var property freezeTick = false
-    var property deathHandler = defaultZombieDeathHandler
 
     method invertFreezeTick(){ freezeTick = not freezeTick }
     method freeze(){ self.frozen(config.secondsToTicks(10)) }
@@ -35,8 +36,6 @@ class Zombie inherits Alive and ActiveEntity and Entity( team = "ZOMBIES"){
         //   if(freezeTick){ return }
         // }
     }
-
-    override method handleDeath(){ deathHandler.apply(self) }
 }
 
 object defaultZombieDeathHandler{
