@@ -24,7 +24,7 @@ object entityManager{
     game.onTick(5000, "spawnZombies",{
       const zombies = []
       const lastColumn = config.upperBound().x()
-      azar.numeroEntre(2, 4).times({ i=>
+      azar.numeroEntre(1, 2).times({ i=>
         const zombie = [new Zombie(), new ConeHead()].get(azar.numeroEntre(0,1))
         const randomLine = azar.numeroEntre(config.lowerBound().y(), config.upperBound().y())
         game.schedule(i*500, {=> self.addEntity(zombie, game.at(lastColumn, randomLine))})
@@ -45,11 +45,8 @@ object entityManager{
     entity.start(position)
     entities.add(entity)
     entitiesMap.add(entity)
-  }
-
+  }  
   method allEntitiesThat(condicion) = entities.filter(condicion)
-  method allEntitiesAt(pos) = entitiesMap.allEntitiesAt(pos)
-  method allIntersectingEntities(entity) = entitiesMap.allEntitiesAt(entity.position()).filter({e=> e!=entity})
 
   method removeEntityCollitions(entity){
     entitiesMap.remove(entity)
@@ -85,6 +82,16 @@ object entitiesMap{
   }
 
   method allEntitiesAt(pos) = spatialGrid.get(pos.x()).get(pos.y()) 
+  method allIntersectingEntities(entity) = self.allEntitiesAt(entity.position()).filter({e=> e!=entity})
+  method allEntitiesAtLine(yLevel){
+    const entitiesAtYLevel = []
+    spatialGrid.forEach({ x =>
+      x.get(yLevel).forEach({ e =>
+        entitiesAtYLevel.add(e)
+      })
+    })
+    return entitiesAtYLevel
+  }
   method add(entity){
     self.allEntitiesAt(entity.position()).add(entity)
   }
@@ -92,9 +99,9 @@ object entitiesMap{
     self.allEntitiesAt(entity.position()).remove(entity)
   }
 
-  method updatePosition(entity, previousPos){
-    if(entity.position() == previousPos) {return}
-    self.allEntitiesAt(previousPos).remove(entity)
+  method updatePosition(entity){
+    if(entity.position() == entity.previousPosition()) {return}
+    self.allEntitiesAt(entity.previousPosition()).remove(entity)
     self.add(entity)
     return
   }

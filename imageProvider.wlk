@@ -7,12 +7,16 @@ class ImageProvider{
     method update(caller)
     method getImage()
     method durationInTicks()
+    method durationInSeconds()
+    method durationInAnimationTicks()
 }
 
 class StaticAnimation inherits ImageProvider{
     const property image
 
     override method durationInTicks() = 0
+    override method durationInSeconds() = 0
+    override method durationInAnimationTicks() = 0
 
     override method transitionSeamlessly(previousImageProvider){}
     override method update(caller){}
@@ -30,7 +34,7 @@ class Animation inherits ImageProvider{
 
     const property animationTicksPerFrame = config.secondsToAnimationTicks(durationInSeconds)/framesInAnimation
 
-    method canTransitionSeamlessly(pA) = pA.framesInAnimation() != framesInAnimation && pA.ticksInAnimationFrame() <= animationTicksPerFrame
+    method canTransitionSeamlessly(previousAnimation) = previousAnimation.framesInAnimation() == framesInAnimation && previousAnimation.animationTicksPerFrame() <= animationTicksPerFrame
     override method transitionSeamlessly(previousAnimation){
         if( self.canTransitionSeamlessly(previousAnimation)){
             ticksInAnimationFrame = previousAnimation.ticksInAnimationFrame()
@@ -60,7 +64,7 @@ class Animation inherits ImageProvider{
         }
     }
 
-    method durationInAnimationTicks() = animationTicksPerFrame*framesInAnimation
+    override method durationInAnimationTicks() = animationTicksPerFrame*framesInAnimation
     override method durationInTicks() = config.secondsToTicks(durationInSeconds)
 
     method frameNumber001Format(){
@@ -70,7 +74,7 @@ class Animation inherits ImageProvider{
         if(animationFrameNumber<100){
             return "0"+animationFrameNumber
         }
-        return animationFrameNumber
+        return ""+animationFrameNumber
     }
 
     override method getImage() = "animations/"+self.animationDirectory()+"/frame_"+self.frameNumber001Format()+".png"
@@ -80,12 +84,14 @@ class HealthBasedImageProvider inherits ImageProvider{
     var property imageProviderSet
     var property currentProviderIndex = 0
  
+    method currentImageProvider() = imageProviderSet.get(currentProviderIndex)
+
     override method transitionSeamlessly(previousAnimation){}
     override method update(caller){
-        var imageProvider = imageProviderSet.get(currentProviderIndex)
+        var imageProvider = self.currentImageProvider()
         const updatedProviderIndex = (caller.health()/caller.startingHealth()*imageProviderSet.size()).roundUp(0)-1
         if(updatedProviderIndex != currentProviderIndex){
-            const previousImageProvider = imageProviderSet.get(currentProviderIndex)
+            const previousImageProvider = self.currentImageProvider()
             imageProvider = imageProviderSet.get(updatedProviderIndex)
             imageProvider.transitionSeamlessly(previousImageProvider)
             currentProviderIndex = updatedProviderIndex
@@ -93,7 +99,9 @@ class HealthBasedImageProvider inherits ImageProvider{
         imageProvider.update(caller)
     }
     override method getImage() = imageProviderSet.get(currentProviderIndex).getImage() 
-    override method durationInTicks(){ imageProviderSet.get(currentProviderIndex).durationInTicks() }
+    override method durationInTicks() = self.currentImageProvider().durationInTicks() 
+    override method durationInSeconds() = self.currentImageProvider().durationInSeconds()
+    override method durationInAnimationTicks() = self.currentImageProvider().durationInAnimationTicks()
 }
 
 object noImageProvider inherits StaticAnimation(image = "sprites/missingTexture.png"){}

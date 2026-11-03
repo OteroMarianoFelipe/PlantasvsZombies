@@ -5,9 +5,7 @@ import behavior.*
 
 class Nuez inherits Planta(
     startingHealth = 4000,
-    damage = 0,
-    imageProviderSet =  new WallNutImageProviderSet(),
-    behaviors = [noBehavior]
+    imageProviderSet =  new WallNutImageProviderSet()
 ){}
 
 class WallNutImageProviderSet inherits PlantImageProviderSet(

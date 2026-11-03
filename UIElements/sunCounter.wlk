@@ -3,7 +3,7 @@ import entity.*
 import UIElements.UIElement.*
 
 object sunCounter inherits UIElement{
-    var property suns =200
+    var property suns = 200
 
     method canPay(cost) = suns >= cost
     method addSuns(amount) {

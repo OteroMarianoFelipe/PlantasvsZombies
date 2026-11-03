@@ -1,26 +1,26 @@
 import planta.*
+import entity.*
 import assets.snowPea.*
 import proyectiles.projectile.*
 import behavior.*
 import proyectiles.pea.*
 
-class SnowPea inherits Planta(
+class SnowPea inherits ActiveEntity and Planta(
     startingHealth = 300,
-    damage = 20,
     imageProviderSet = new SnowPeaImageProviderSet(),
-    behaviors = [
-        new ShootingBehavior(
-            anticipationAnimation = new SnowPeaAction(), 
-            secondsPerUse = 1.5,
-            createNewProyectileInstance = { user => 
+    actionModule = { caller =>
+        object inherits ConditionedShooter(
+            shotsPerSecond = 2/3,     
+            proyectileGenerator = { user => 
                 new Pea(
                     team = user.team(),
-                    damage = user.damage(),
+                    damage = 20,
                     frozen = true
                 )
-            } 
-        )
-    ]
+            },
+            shootingAnticipationAnimation = caller.imageProviderSet().actionAnticipation()
+        ) and ActionModule{}
+    }.apply(self)
 ){}
 
 class SnowPeaImageProviderSet inherits PlantImageProviderSet(

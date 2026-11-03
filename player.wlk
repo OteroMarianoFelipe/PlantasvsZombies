@@ -1,5 +1,5 @@
 import juego.*
-import entityManager.entityManager
+import entityManager.*
 import util.config.config
 
 object player {
@@ -15,7 +15,7 @@ object player {
     card.selected()
   }
 
-  method cellIsUnblocked(entities) = not entities.any({e => e.blocksOwnCell()})
+  method cellIsUnblocked(entities) = not entities.any({e => e.blocksPlantPlacement()})
   method isInBounds(pos) {
     const lb = config.lowerBound()
     const ub = config.upperBound()
@@ -25,7 +25,7 @@ object player {
   }
 
   method clickHandler(pos){
-    const entitiesHere = entityManager.allEntitiesAt(pos)
+    const entitiesHere = entitiesMap.allEntitiesAt(pos)
     if( self.cardSelected()!= null){
       if(self.isInBounds(pos) and self.cellIsUnblocked(entitiesHere)){
         self.cardSelected().use(pos)

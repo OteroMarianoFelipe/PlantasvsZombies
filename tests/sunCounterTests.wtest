@@ -1,0 +1,80 @@
+import UIElements.sunCounter.*
+
+describe "Agregado de soles correctamente"{
+    test "Agrega correctamente 25 soles"{
+        const valorInicial = sunCounter.suns()
+        sunCounter.addSuns(25)
+        assert.equals(valorInicial, sunCounter.suns()-25)
+    }
+    test "Agrega correctamente 50 soles"{
+        const valorInicial = sunCounter.suns()
+        sunCounter.addSuns(50)
+        assert.equals(valorInicial, sunCounter.suns()-50)
+    }
+    test "Agrega correctamente 0 soles"{
+        const valorInicial = sunCounter.suns()
+        sunCounter.addSuns(0)
+        assert.equals(valorInicial, sunCounter.suns())
+    }
+}
+
+describe "Puede gastar soles correctamente"{
+    test "Gastar correctamente 25 soles"{
+        const valorInicial = sunCounter.suns()
+        sunCounter.spendSuns(25)
+        assert.equals(valorInicial, sunCounter.suns()+25)
+    }
+    test "Gastar correctamente 50 soles"{
+        const valorInicial = sunCounter.suns()
+        sunCounter.spendSuns(50)
+        assert.equals(valorInicial, sunCounter.suns()+50)
+    }
+    test "Gastar correctamente 0 soles"{
+        const valorInicial = sunCounter.suns()
+        sunCounter.spendSuns(0)
+        assert.equals(valorInicial, sunCounter.suns())
+    }
+}
+
+describe "Determinar correctamente si puede pagar"{
+    test "Si no tiene soles no puede pagar nada mayor a cero"{
+        sunCounter.suns(0)
+        assert.that(not sunCounter.canPay(1))
+    }
+    test "Incluso sin soles puede pagar por lo menos 0"{
+        sunCounter.suns(0)
+        assert.that(sunCounter.canPay(0))
+    }
+    test "Puede pagar un precio igual a los soles"{
+        sunCounter.suns(1000)
+        assert.that(sunCounter.canPay(1000))
+    }
+}
+
+describe "Devuelve las centenas y decenas correctas"{
+    test "Devuelve 0 en caso de estar por debajo de 100"{
+        sunCounter.suns(99)
+        assert.equals(0, sunCounter.hundreds())
+    }
+    test "Devuelve el numero correcto para cada centenar entre 100 a 900"{
+        const centenasEnCadaIteracion = []
+        9.times({ i =>
+            sunCounter.suns(100*i)
+            centenasEnCadaIteracion.add( sunCounter.hundreds() )
+        })
+        assert.equals([1,2,3,4,5,6,7,8,9], centenasEnCadaIteracion)
+    }
+
+    test "Para todo numero entre 100 y 200 devuelve las decenas ignorando las centenas"{
+        const listaDeReferencia = []
+        const listaDeResultados = []
+
+        99.times({ i =>
+            listaDeReferencia.add(i)
+            sunCounter.suns(i+100)
+            listaDeResultados.add(sunCounter.tens())
+        })
+
+        assert.equals(listaDeReferencia, listaDeResultados)
+    }
+}

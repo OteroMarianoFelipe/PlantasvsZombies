@@ -21,7 +21,7 @@ class Behavior{
             self.coolDownBehavior()
         }else{
             if( ticksUntilUse == anticipationAnimation.durationInTicks() ){
-                user.anticipateBehavior()
+                user.anticipateBehavior(self.anticipationAnimation())
             }
             self.tickUpInCoolDownTime()
         }
@@ -30,7 +30,7 @@ class Behavior{
 
 class CollitionBehavior inherits Behavior( secondsPerUse=0 ){
     override method activate(user){
-        const intersectantes = entityManager.allIntersectingEntities(user)
+        const intersectantes = entitiesMap.allIntersectingEntities(user)
         intersectantes.forEach({ e => user.collisionHandler(e)})
     }
 }

@@ -9,7 +9,7 @@ import behavior.*
 import stateMachine.*
 import util.debugger.*
 
-class ZombieBase inherits Alive and Entity(blocksOwnCell = false, team = "ZOMBIES", startingHealth = statBlock.startingHealth()){
+class ZombieBase inherits Alive and Entity( team = "ZOMBIES", startingHealth = statBlock.startingHealth()){
     var property statBlock
     var property imageProviderSet
     var property deathHandler
@@ -41,7 +41,7 @@ class ZombieBase inherits Alive and Entity(blocksOwnCell = false, team = "ZOMBIE
 
     method collisionHandler(otherEntity){
         // Si es planta ataca a la entidad, caso contrario la ignora
-        if(otherEntity.team()==self.team() or otherEntity.team()=="NEUTRAL") {return}
+        if(not self.isEnemy(otherEntity)) {return}
         if(not self.hasAttackTarget() and otherEntity.canBeKilled()){
             self.newAttackTarget(otherEntity)
         }

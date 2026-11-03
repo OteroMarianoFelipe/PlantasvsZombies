@@ -2,7 +2,7 @@ import imageProvider.Animation
 import imageProvider.StaticAnimation
 
 class SunFlowerAnimation inherits Animation(
-    durationInSeconds = 0.6,
+    durationInSeconds = 0.5,
     framesInAnimation = 9
 ){}
 

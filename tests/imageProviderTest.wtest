@@ -1,0 +1,179 @@
+import imageProvider.*
+import util.config.*
+
+describe "Animation"{
+    const caller = object{
+        var property endedNonLoopingAnimation = false
+        var property endedAnimation = false
+
+        method endNonLoopingAnimation(){ self.endedNonLoopingAnimation(true) }
+        method animationEnded(){ self.endedAnimation(true) }
+    }
+    const loopingAnimation = new Animation(
+        loop = true,
+        durationInSeconds = 9,
+        framesInAnimation = 7,
+        animationDirectory = "zombies/basic/walkingFH" 
+    )
+    const loopingAnimationSecondStage = new Animation(
+        loop = not loopingAnimation.loop(),
+        durationInSeconds = loopingAnimation.durationInSeconds()-1,
+        framesInAnimation = loopingAnimation.framesInAnimation(),
+        animationDirectory = ""
+    )
+    const nonLoopingAnimation = new Animation(
+        loop = false,
+        durationInSeconds = 3,
+        framesInAnimation = 4,
+        animationDirectory = "cards/peashooter/coolDown" 
+    )
+
+    method setInLastFrame(animation){ animation.animationFrameNumber(animation.framesInAnimation()) }
+
+    method animationTicksPerFrame(animation) = config.secondsToAnimationTicks(loopingAnimation.durationInSeconds())/loopingAnimation.framesInAnimation()
+
+    test "Cambia de frame correctamente dentro del rango"{
+        loopingAnimation.changeFrameIndex(caller)
+        assert.equals(2, loopingAnimation.animationFrameNumber())
+    }
+    test "Cambia de frame a 1 una vez llega al limite"{
+        self.setInLastFrame(loopingAnimation)
+        loopingAnimation.changeFrameIndex(caller)
+        assert.equals(1, loopingAnimation.animationFrameNumber())
+    }
+    test "Envía la señal una vez terminada la animación"{
+        self.setInLastFrame(loopingAnimation)
+        loopingAnimation.changeFrameIndex(caller)
+        assert.that(caller.endedAnimation())
+    }
+    test "Envía la señal una vez termina una animación sin loop"{
+        self.setInLastFrame(nonLoopingAnimation)
+        nonLoopingAnimation.changeFrameIndex(caller)
+        assert.that(caller.endedNonLoopingAnimation())
+    }
+
+    test "Determina correctamente la cantidad de ticks por frame"{
+        const ticksPerFrame = self.animationTicksPerFrame(loopingAnimation)
+        assert.equals(ticksPerFrame, loopingAnimation.animationTicksPerFrame())
+    }
+    //method isTimeToPassFrame() = ticksInAnimationFrame >= animationTicksPerFrame
+    test "Cambia de frame llegado al ultimo tick de un frame"{
+        loopingAnimation.ticksInAnimationFrame(self.animationTicksPerFrame(loopingAnimation))
+        assert.that(loopingAnimation.isTimeToPassFrame())
+    }
+    test "No cambia de frame en caso de no llegar al ultimo ticks de un frame"{
+        loopingAnimation.ticksInAnimationFrame(1)
+        assert.that(not loopingAnimation.isTimeToPassFrame())
+    }
+    test "Cambia correctamente los ticks en frame"{
+        loopingAnimation.ticksInAnimationFrame(1)
+        loopingAnimation.tickUpFrameTime()
+        assert.equals(2, loopingAnimation.ticksInAnimationFrame())
+    }
+    test "Puede transicionar fluidamente a una animación similar"{
+        assert.that(loopingAnimation.canTransitionSeamlessly(loopingAnimationSecondStage))
+    }
+    test "No puede transicionar fluidamente a una transicion diferente"{
+        assert.that(not loopingAnimation.canTransitionSeamlessly(nonLoopingAnimation))
+    }
+    test "Logra transicionar de forma fluida"{
+        loopingAnimation.ticksInAnimationFrame(-1)
+        loopingAnimation.animationFrameNumber(-1)
+
+        loopingAnimation.transitionSeamlessly(loopingAnimationSecondStage)
+
+        assert.that(
+            loopingAnimation.ticksInAnimationFrame() == loopingAnimationSecondStage.ticksInAnimationFrame() &&
+            loopingAnimation.animationFrameNumber() == loopingAnimationSecondStage.animationFrameNumber()
+        )
+    }
+
+    test "Devuelve los indices en formato 001 de forma correcta"{
+        const resultadosDeReferencia = ["001", "002", "003", "004", "005", "006", "007", "008", "009", "010", "101"]
+        const resultadosReales = []
+        10.times({ i => 
+            nonLoopingAnimation.animationFrameNumber(i)
+            resultadosReales.add(nonLoopingAnimation.frameNumber001Format())
+        })
+        nonLoopingAnimation.animationFrameNumber(101)
+        resultadosReales.add(nonLoopingAnimation.frameNumber001Format())
+        assert.equals(resultadosDeReferencia, resultadosReales)
+    }
+
+    test "Devuelve la dirección correcta a la imagen"{
+        const direcciónEsperada = "animations/cards/peashooter/coolDown/frame_909.png"
+        nonLoopingAnimation.animationFrameNumber(909)
+        assert.equals(direcciónEsperada, nonLoopingAnimation.getImage())
+    }
+}
+
+describe "Animacion Estatica"{
+    test "Devuelve como dirección a la imagen la dirección asignada"{
+        const newImage = new StaticAnimation( image = "Esta es una dirección muy real")
+        assert.equals(newImage.image(), newImage.getImage())
+    }
+}
+
+describe "Proveedor de imagen basado en vida"{
+    const caller = object{
+        var property startingHealth = 300
+        var property health = 300
+
+        method endNonLoopingAnimation(){}
+        method animationEnded(){}
+    }
+
+    const imageProviderSet = [
+            new Animation(
+                loop = true,
+                durationInSeconds = 3.14,
+                framesInAnimation = 14.5,
+                animationDirectory = "AlgunaDirecciónInventada" 
+            ),
+            new Animation(
+                loop = false,
+                durationInSeconds = 16000000,
+                framesInAnimation = 324000,
+                animationDirectory = "Alfasdfoaishdnaksjd" 
+            ),
+            new Animation(
+                loop = false,
+                durationInSeconds = 0.1,
+                framesInAnimation = 0.1,
+                animationDirectory = "/gamemode creative" 
+            )
+        ]
+
+    const healthBasedImageProvider = new HealthBasedImageProvider( imageProviderSet=imageProviderSet )
+
+    method testNewHealthPercentage(percentage, user, imageProvider){
+        user.health(user.startingHealth()*percentage)
+        imageProvider.update(user)
+        return imageProvider.currentProviderIndex()
+    }
+
+    test "Devuelve la duración en ticks de la animación actual"{
+        healthBasedImageProvider.currentProviderIndex(0)
+        assert.equals(imageProviderSet.head().durationInTicks(), healthBasedImageProvider.durationInTicks())
+    }
+
+    test "Devuelve la imagen del proveedor de imagen correcto"{
+        const resultadosEsperados = []
+        const resultadosObtenidos = []
+        imageProviderSet.size().times({ i =>
+            resultadosEsperados.add(imageProviderSet.get(i-1).getImage())
+            healthBasedImageProvider.currentProviderIndex(i-1)
+            resultadosObtenidos.add(healthBasedImageProvider.getImage())
+        })
+        assert.equals(resultadosEsperados, resultadosObtenidos)
+    }
+
+    test "Cambia de indice según la vida de manera correcta"{
+        const resultadosEsperados = [2, 0, 1]
+        const resultadosObtenidos = []
+        resultadosObtenidos.add(self.testNewHealthPercentage(100 /100, caller, healthBasedImageProvider))
+        resultadosObtenidos.add(self.testNewHealthPercentage(33.3/100, caller, healthBasedImageProvider))
+        resultadosObtenidos.add(self.testNewHealthPercentage(66.6/100, caller, healthBasedImageProvider))
+        assert.equals(resultadosEsperados, resultadosObtenidos)
+    }
+}

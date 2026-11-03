@@ -7,22 +7,21 @@ import util.config.config
 import util.debugger.*
 
 class Planta inherits Alive and Entity(
-    blocksOwnCell = true,
     team = "PLANTAS",
     defaultImageProvider = imageProviderSet.idle()
 ){
-    var property damage
     var property imageProviderSet
 
-    var property behaviors
+    override method blocksPlantPlacement() = true
+    override method blocksEnemyEntitiesMovement() = true
 
-    override method tick(){ 
-        behaviors.forEach({ behavior => 
-            behavior.use(self) 
-        })
-    }
+    override method tick(){}
+    //override method tick(){ 
+    //    behaviors.forEach({ behavior => 
+    //        behavior.use(self) 
+    //    })
+    //}
     override method handleDeath(){self.cleanUp()}
-    method anticipateBehavior(){ self.changeImageProvider(imageProviderSet.actionAnticipation())  }
 }
 
 class PlantImageProviderSet{

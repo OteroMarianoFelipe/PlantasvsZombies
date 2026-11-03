@@ -5,8 +5,7 @@ import plantas.lanzaguisantes.*
 import plantas.nuez.*
 import plantas.snowPea.*
 
-describe "Se puede instanciar distintas entidades" {
-
+describe "No hay errores en la instanciación" {
   test "Instanciar un Zombie normal" { new Zombie() }
   test "Instanciar un Zombie con cono" { new ConeHead() }
   test "Instanciar un girasol" { new Girasol() }
