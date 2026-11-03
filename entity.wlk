@@ -8,8 +8,6 @@ import util.debugger.*
 class Entity{
     var property team
 
-    var property defaultImageProvider = noImageProvider
-    var property imageProvider = defaultImageProvider
     var property animationCallback = {=>}
     var property position = game.at(0,0)
     var property previousPosition = self.position()
@@ -18,6 +16,21 @@ class Entity{
     method blocksPlantPlacement() = false
     method blocksEnemyEntitiesMovement() = false
     method canBeKilled() = false
+
+    var defaultImageProvider = noImageProvider
+    method defaultImageProvider() = defaultImageProvider
+    method defaultImageProvider(newImageProvider){
+        if(newImageProvider != defaultImageProvider){
+            defaultImageProvider =  newImageProvider 
+        }
+    }
+
+    var imageProvider = defaultImageProvider
+    method imageProvider() = imageProvider
+    method imageProvider(newImageProvider){
+        imageProvider = newImageProvider
+        return newImageProvider
+    }
 
     method isEnemy(other) = other.team()!=self.team() && other.team()!="NEUTRAL"
 
@@ -41,21 +54,16 @@ class Entity{
         self.previousPosition(self.position())
     }
    
-    method changeImageProviderSeamlessly(newImageProvider){
+    method imageProviderSeamlessly(newImageProvider){
         newImageProvider.transitionSeamlessly(imageProvider)
-        return self.changeImageProvider(newImageProvider)
-    }
-    method changeImageProvider(newImageProvider){
-        self.imageProvider(newImageProvider)
-        return newImageProvider
+        return self.imageProvider(newImageProvider)
     }
 
     method animationEnded(){ animationCallback.apply() }
     method endNonLoopingAnimation() { self.useDefaultImageProvider() }
     method useDefaultImageProvider(){ imageProvider = defaultImageProvider }
-    method changeDefaultImageProvider(newImageProvider) { if(newImageProvider != defaultImageProvider){ defaultImageProvider =  newImageProvider } }
     method changeAndUseDefaultImageProvider(newImageProvider){
-        self.changeDefaultImageProvider(newImageProvider)
+        self.defaultImageProvider(newImageProvider)
         self.useDefaultImageProvider()
     }
 
@@ -84,9 +92,9 @@ mixin Alive{
 mixin ActiveEntity{
     var property actionModule 
 
-    method changeImageProvider(newImageProvider)
+    method imageProvider(newImageProvider)
 
-    method anticipateBehavior(behaviorImageProvider){ self.changeImageProvider(behaviorImageProvider) }
+    method anticipateBehavior(behaviorImageProvider){ self.imageProvider(behaviorImageProvider) }
     override method tick(){
         super()
         actionModule.use(self)

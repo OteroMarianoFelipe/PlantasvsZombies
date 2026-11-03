@@ -26,9 +26,9 @@ class PlantCard inherits UIElement(defaultImageProvider =  self.cardUnavailableS
     method defaultTickBehavior(){
         self.isAvailable( sunCounter.canPay( price ) )
         if(isAvailable){
-            self.changeDefaultImageProvider(self.cardAvailableSprite())
+            self.defaultImageProvider(self.cardAvailableSprite())
         }else{
-            self.changeDefaultImageProvider(self.cardUnavailableSprite())
+            self.defaultImageProvider(self.cardUnavailableSprite())
         }
         if(not plantBuyCoolDown){
             self.useDefaultImageProvider()
@@ -37,7 +37,7 @@ class PlantCard inherits UIElement(defaultImageProvider =  self.cardUnavailableS
 
     method deselected() { self.currentBehaviour({=>self.defaultTickBehavior()}) }
     method selected() { 
-        self.changeImageProvider(self.cardSelectedSprite()) 
+        self.imageProvider(self.cardSelectedSprite()) 
         self.currentBehaviour({=>})
     }
     override method tick(){ self.currentBehaviour().apply() }
@@ -57,7 +57,7 @@ class PlantCard inherits UIElement(defaultImageProvider =  self.cardUnavailableS
 
     method startCoolDown(){
         self.plantBuyCoolDown(true)
-        self.changeImageProvider(self.cardCoolDownAnimation())
+        self.imageProvider(self.cardCoolDownAnimation())
     }
     override method endNonLoopingAnimation(){
         self.plantBuyCoolDown(false)

@@ -42,7 +42,7 @@ class Zombie inherits Alive and ActiveEntity and Entity( team = "ZOMBIES"){
 object defaultZombieDeathHandler{
     method apply(user){
         user.animationCallback({ => user.cleanUp()}) 
-        user.changeImageProvider(user.imageProviderSet().deathAnimation())
+        user.imageProvider(user.imageProviderSet().deathAnimation())
         entityManager.removeEntityCollitions(user)
     }
 }

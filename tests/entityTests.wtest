@@ -43,23 +43,23 @@ describe "Manejo de proveedores de imagen"{
 
     test "Logra cambiar de proveedor de imagen" {
         const newImgProv = noImageProvider
-        entidadPlana.changeImageProvider(newImgProv)
+        entidadPlana.imageProvider(newImgProv)
         assert.equals(newImgProv, entidadPlana.imageProvider())
     }
     test "Logra cambiar correctamente al proveedor de imagen default"{
-        entidadPlana.changeImageProvider(null)
-        entidadPlana.changeDefaultImageProvider(null)
+        entidadPlana.imageProvider(null)
+        entidadPlana.defaultImageProvider(null)
         entidadPlana.useDefaultImageProvider()
         assert.equals(entidadPlana.defaultImageProvider(), entidadPlana.imageProvider())
     }
     test "Logra cambiar el proveedor de imagen default"{
-        entidadPlana.changeDefaultImageProvider(null)
+        entidadPlana.defaultImageProvider(null)
         assert.equals(null, entidadPlana.defaultImageProvider())
     }
 
     test "Logra cambiar de proveedor de image default y cambia al mismo"{
         entidadPlana.imageProvider(1)
-        entidadPlana.changeDefaultImageProvider(2)
+        entidadPlana.defaultImageProvider(2)
         entidadPlana.changeAndUseDefaultImageProvider(3)
         assert.equals(entidadPlana.imageProvider(), entidadPlana.defaultImageProvider())
     }    
