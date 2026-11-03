@@ -1,0 +1,66 @@
+import imageProvider.*
+import entity.*
+import entityManager.*
+
+describe "Manejo propio"{
+    const entidadPlana = object inherits Entity(team = "NEUTRAL"){}
+
+    test "Logra iniciar correctamente"{
+        entidadPlana.start(game.at(-33, 99))
+        assert.that(game.hasVisual(entidadPlana) && entidadPlana.position() == game.at(-33, 99))
+    }
+    test "Logra eliminarse correctamente"{
+        entitiesMap.initializeEntitiesMap()
+        entidadPlana.start(game.at(0, 0))
+        entidadPlana.cleanUp()
+        assert.that(not game.hasVisual(entidadPlana))
+    }
+    test "Logra cambiar su posición correctamente"{
+        entitiesMap.initializeEntitiesMap()
+        entidadPlana.position(game.at(3, 3))
+        entitiesMap.add(entidadPlana)
+        entidadPlana.updatePosition(game.at(2, 2))
+        assert.that(entidadPlana.position() == game.at(2, 2) && entitiesMap.allEntitiesAt(game.at(2, 2)).contains(entidadPlana))
+    }
+}
+describe "Mensajes de consulta"{
+    const entidadPlana = object inherits Entity(team = "NEUTRAL"){}
+    test "Logra determinar correctamente si una entidad es o no enemiga"{
+        const resultadosEsperados = [false, true, false, true, false, false, true, true, false]
+        const resultadosObtenidos = []
+        const equiposAProbar=["PLANTAS", "ZOMBIES", "NEUTRAL"]
+        equiposAProbar.forEach({ i =>
+            entidadPlana.team(i)
+            equiposAProbar.forEach({ j =>
+                resultadosObtenidos.add(entidadPlana.isEnemy(new Entity(team = j)))
+            })
+        })
+        assert.equals(resultadosEsperados, resultadosObtenidos)
+    }
+}
+describe "Manejo de proveedores de imagen"{
+    const entidadPlana = object inherits Entity(team = "NEUTRAL"){}
+
+    test "Logra cambiar de proveedor de imagen" {
+        const newImgProv = noImageProvider
+        entidadPlana.changeImageProvider(newImgProv)
+        assert.equals(newImgProv, entidadPlana.imageProvider())
+    }
+    test "Logra cambiar correctamente al proveedor de imagen default"{
+        entidadPlana.changeImageProvider(null)
+        entidadPlana.changeDefaultImageProvider(null)
+        entidadPlana.useDefaultImageProvider()
+        assert.equals(entidadPlana.defaultImageProvider(), entidadPlana.imageProvider())
+    }
+    test "Logra cambiar el proveedor de imagen default"{
+        entidadPlana.changeDefaultImageProvider(null)
+        assert.equals(null, entidadPlana.defaultImageProvider())
+    }
+
+    test "Logra cambiar de proveedor de image default y cambia al mismo"{
+        entidadPlana.imageProvider(1)
+        entidadPlana.changeDefaultImageProvider(2)
+        entidadPlana.changeAndUseDefaultImageProvider(3)
+        assert.equals(entidadPlana.imageProvider(), entidadPlana.defaultImageProvider())
+    }    
+}

@@ -1,4 +1,5 @@
-import zombies.zombieBase.*
+import zombies.zombie.*
+import imageProvider.*
 import entityManager.*
 import imageProvider.*
 import behavior.*
@@ -13,12 +14,10 @@ class Entity{
     var property position = game.at(0,0)
     var property previousPosition = self.position()
 
-    method tick()
-
+    method tick(){}
     method blocksPlantPlacement() = false
     method blocksEnemyEntitiesMovement() = false
     method canBeKilled() = false
-    method animationEnded(){ animationCallback.apply() }
 
     method isEnemy(other) = other.team()!=self.team() && other.team()!="NEUTRAL"
 
@@ -51,6 +50,7 @@ class Entity{
         return newImageProvider
     }
 
+    method animationEnded(){ animationCallback.apply() }
     method endNonLoopingAnimation() { self.useDefaultImageProvider() }
     method useDefaultImageProvider(){ imageProvider = defaultImageProvider }
     method changeDefaultImageProvider(newImageProvider) { if(newImageProvider != defaultImageProvider){ defaultImageProvider =  newImageProvider } }

@@ -1,0 +1,74 @@
+import zombies.coneHead.*
+import zombies.zombie.*
+import imageProvider.*
+import entity.*
+import util.config.*
+import entityManager.*
+
+describe "ZombieBasico"{
+
+    const spy = object {
+        var hasBeenCalled = false
+        method reciveCall(){ hasBeenCalled = true }
+        method hasReceivedCall() = hasBeenCalled
+    }
+
+    const imgProvSet = 
+        new ZombieImageProviderSet(
+            walkingImageProvider = noImageProvider,
+            eatingImageProvider = noImageProvider,
+            deathAnimation = noImageProvider
+        )
+
+    const zombie = object inherits Zombie(
+        startingHealth = 370,
+        imageProviderSet = imgProvSet,
+        defaultImageProvider = imageProviderSet.walkingImageProvider(),
+        deathHandler = { user => spy.reciveCall() },
+        actionModule = { caller =>
+            object inherits Mobile(
+                cellsPerSecond = 1/4.7,
+                movingDirection = game.at(-1, 0)
+            ) and MeleeAttack(
+                meleeDamage = 100,
+                meleeAttacksPerSecond = 1
+            ) and ActionModule{}
+        }.apply(self)
+    ){
+        override method updatePosition(newPos){
+            super(newPos)
+            spy.reciveCall()
+        }
+    }
+
+    test "Un zombie puede ser congelado"{
+        assert.fail("Un Zombie no tiene forma de ser congelado todavía")
+    }
+
+    test "Cuando un zombie cruza el patio se pierde la partida"{
+        entitiesMap.initializeEntitiesMap()
+        zombie.updatePosition(game.at(config.lowerBound().x()-1, 2))
+        assert.that(spy.hasReceivedCall())
+    }
+
+    test "Cuando su vida cae a 0 manejan su propia muerte"{
+        zombie.takeDamage(zombie.health())
+        assert.that(spy.hasReceivedCall())
+    }
+
+    test "Cuando un zombie con cono muere cambia correctamente su vida"{
+        zombie.deathHandler(coneHeadDeathHandler)
+        zombie.takeDamage(zombie.health())
+        assert.equals(190, zombie.startingHealth())
+    }
+    test "Cuando un zombie con cono muere cambia correctamente su set de proveedores de imagen"{
+        zombie.deathHandler(coneHeadDeathHandler)
+        zombie.takeDamage(zombie.health())
+        assert.that(zombie.imageProviderSet() != imgProvSet)
+    }
+    test "Cuando un zombie con cono muere cambia correctamente su death handler"{
+        zombie.deathHandler(coneHeadDeathHandler)
+        zombie.takeDamage(zombie.health())
+        assert.equals(defaultZombieDeathHandler, zombie.deathHandler())
+    }
+}

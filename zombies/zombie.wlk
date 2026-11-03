@@ -1,44 +1,54 @@
-import zombieBase.*
 import assets.zombie.*
-import stateMachine.*
-import imageProvider.*
+import entity.*
+import plantas.planta.*
+import entityManager.*
+import player.*
+import util.config.*
+import UIElements.gameOver.*
 import behavior.*
+import util.debugger.*
 
-class Zombie inherits ZombieBase(
-    statBlock = new PlaneZombieStats(),
-    defaultImageProvider = imageProviderSet.walkingImageProvider(),
-    imageProviderSet = new PlaneZombieImageProvidersSet(),
-    deathHandler = new StateMachine( currentState = new DefaultZombieDeath() ),
-    behaviors = [
-        new CollitionBehavior(),
-        new StateMachine( 
-            currentState = new DefaultZombieMovementBehaviorState() 
-        )
-    ]
-){}
+class Zombie inherits Alive and ActiveEntity and Entity( team = "ZOMBIES"){
+    var property imageProviderSet
 
-class PlaneZombieStats inherits ZombieStatBlock(
-    startingHealth = 190,
-    meleeDamage = 100,
-    rangedDamage = 0,
-    secondsPerCell = 4.7,
-    secondsPerAttack = 1
-){}
+    var property frozen = 0
+    var property freezeTick = false
+    var property deathHandler = defaultZombieDeathHandler
 
-class PlaneZombieImageProvidersSet inherits ZombieImageProviderSet(
-    walkingImageProvider = new HealthBasedImageProvider( 
-        imageProviderSet=[
-            new ZombieWalkingDying(),
-            new ZombieWalkingHurt(),
-            new ZombieWalkingFH()
-        ]
-    ),
-    eatingImageProvider = new HealthBasedImageProvider(
-        imageProviderSet=[
-            new ZombieEatingDying(),
-            new ZombieEatingHurt(),
-            new ZombieEatingFH()
-        ]
-    ),
-    deathAnimation = new ZombieDeath()
-){} 
+    method invertFreezeTick(){ freezeTick = not freezeTick }
+    method freeze(){ self.frozen(config.secondsToTicks(10)) }
+  
+    method crossedTheYard() = position.x() < config.lowerBound().x()
+
+    override method updatePosition(newPosition){
+        super(newPosition)
+        if(self.crossedTheYard()){
+            gameOver.trigger()
+            self.cleanUp()
+        }
+    }
+
+    override method tick(){
+        // if(frozen>0){
+        //   frozen-=1
+        //   self.invertFreezeTick()
+        //   if(freezeTick){ return }
+        // }
+    }
+
+    override method handleDeath(){ deathHandler.apply(self) }
+}
+
+object defaultZombieDeathHandler{
+    method apply(user){
+        user.animationCallback({ => user.cleanUp()}) 
+        user.changeImageProvider(user.imageProviderSet().deathAnimation())
+        entityManager.removeEntityCollitions(user)
+    }
+}
+
+class ZombieImageProviderSet{
+    var property walkingImageProvider
+    var property eatingImageProvider
+    var property deathAnimation
+}

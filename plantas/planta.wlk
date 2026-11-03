@@ -16,11 +16,6 @@ class Planta inherits Alive and Entity(
     override method blocksEnemyEntitiesMovement() = true
 
     override method tick(){}
-    //override method tick(){ 
-    //    behaviors.forEach({ behavior => 
-    //        behavior.use(self) 
-    //    })
-    //}
     override method handleDeath(){self.cleanUp()}
 }
 

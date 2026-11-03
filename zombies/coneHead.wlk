@@ -1,30 +1,26 @@
 import imageProvider.*
-import zombieBase.*
+import entity.*
 import assets.zombie.*
 import zombies.zombie.*
+import zombies.zombieBasico.*
 import entityManager.*
-import stateMachine.*
 import behavior.*
 
-class ConeHead inherits ZombieBase(
-    statBlock = new ConeHeadZombieStats(),
-    defaultImageProvider = imageProviderSet.walkingImageProvider(),
-    imageProviderSet = new ConeHeadImageProvidersSet(),
-    deathHandler = new StateMachine( currentState = new ConeHeadDeath() ),
-    behaviors = [
-        new CollitionBehavior(),
-        new StateMachine( currentState = new DefaultZombieMovementBehaviorState() )
-    ]
-){}
-
-class ConeHeadZombieStats inherits ZombieStatBlock(
+class ConeHead inherits Zombie(
     startingHealth = 370,
-    meleeDamage = 100,
-    rangedDamage = 0,
-    secondsPerCell = 4.7,
-    secondsPerAttack = 1
+    imageProviderSet = new ConeHeadImageProvidersSet(),
+    defaultImageProvider = imageProviderSet.walkingImageProvider(),
+    deathHandler = coneHeadDeathHandler,
+    actionModule = { caller =>
+        object inherits Mobile(
+            cellsPerSecond = 1/4.7,
+            movingDirection = game.at(-1, 0)
+        ) and MeleeAttack(
+            meleeDamage = 100,
+            meleeAttacksPerSecond = 1
+        ) and ActionModule{}
+    }.apply(self)
 ){}
-
 
 class ConeHeadImageProvidersSet inherits ZombieImageProviderSet(
     walkingImageProvider = new HealthBasedImageProvider(
@@ -44,25 +40,18 @@ class ConeHeadImageProvidersSet inherits ZombieImageProviderSet(
     deathAnimation = noImageProvider
 ){} 
 
-class ConeHeadDeath inherits State(
-    paths = [
-        new Path(
-            proposedState = new DefaultZombieDeath(),
-            condition = { user => return true}
-        )
-    ]
-){
-    override method use(user){
+object coneHeadDeathHandler{
+    method changeUsersHealth(user){
         user.startingHealth(190)
         user.health(190)
-        user.statBlock( new PlaneZombieStats() )
-        user.imageProviderSet( new PlaneZombieImageProvidersSet() )
-        if(user.hasAttackTarget()){
-            user.defaultImageProvider( user.imageProviderSet().eatingImageProvider() )
-        }else{
-            user.defaultImageProvider( user.imageProviderSet().walkingImageProvider() )
-        }
-        user.useDefaultImageProvider()
-        user.updateDeathHandler()
+    }
+    method changeUsersImageProviderSet(user){
+        user.imageProviderSet( new BasicZombieImageProvidersSet() )
+    }
+
+    method apply(user){
+        self.changeUsersHealth(user)
+        self.changeUsersImageProviderSet(user)
+        user.deathHandler(defaultZombieDeathHandler)
     }
 }

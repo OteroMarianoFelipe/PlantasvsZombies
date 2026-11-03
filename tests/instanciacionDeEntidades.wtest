@@ -1,12 +1,12 @@
 import zombies.coneHead.*
-import zombies.zombie.*
+import zombies.zombieBasico.*
 import plantas.girasol.*
 import plantas.lanzaguisantes.*
 import plantas.nuez.*
 import plantas.snowPea.*
 
 describe "No hay errores en la instanciación" {
-  test "Instanciar un Zombie normal" { new Zombie() }
+  test "Instanciar un Zombie normal" { new ZombieBasico() }
   test "Instanciar un Zombie con cono" { new ConeHead() }
   test "Instanciar un girasol" { new Girasol() }
   test "Instanciar una nuez" { new Nuez() }

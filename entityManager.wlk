@@ -1,5 +1,5 @@
-import zombies.zombieBase.*
 import zombies.zombie.*
+import zombies.zombieBasico.*
 import zombies.coneHead.*
 import proyectiles.sun.*
 import util.azar.*
@@ -25,7 +25,7 @@ object entityManager{
       const zombies = []
       const lastColumn = config.upperBound().x()
       azar.numeroEntre(1, 2).times({ i=>
-        const zombie = [new Zombie(), new ConeHead()].get(azar.numeroEntre(0,1))
+        const zombie = [new ZombieBasico(), new ConeHead()].get(azar.numeroEntre(0,1))
         const randomLine = azar.numeroEntre(config.lowerBound().y(), config.upperBound().y())
         game.schedule(i*500, {=> self.addEntity(zombie, game.at(lastColumn, randomLine))})
       })
