@@ -3,9 +3,7 @@ import entity.*
 import assets.peaShooter.*
 import proyectiles.pea.*
 
-class LanzaGuisantes inherits ActiveEntity and Planta(
-    startingHealth = 300,
-    imageProviderSet = new PeaShooterImageProviderSet(),
+class LanzaGuisantes inherits ActiveEntity(
     actionModule = {caller => 
         object inherits ConditionedShooter(
             shotsPerSecond = 2/3,     
@@ -19,6 +17,9 @@ class LanzaGuisantes inherits ActiveEntity and Planta(
             shootingAnticipationAnimation = caller.imageProviderSet().actionAnticipation()
         ) and ActionModule{}
     }.apply(self)
+) and Planta(
+    startingHealth = 300,
+    imageProviderSet = new PeaShooterImageProviderSet()
 ){}
 
 class PeaShooterImageProviderSet inherits PlantImageProviderSet(

@@ -7,7 +7,7 @@ import util.config.*
 import UIElements.gameOver.*
 import util.debugger.*
 
-class Zombie inherits Alive and Ticks and Collides and ActiveEntity and Entity(
+class Zombie inherits Alive and Collides and ActiveEntity and Ticks and Entity(
     team = "ZOMBIES"
 ){
     var property imageProviderSet

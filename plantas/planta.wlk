@@ -6,10 +6,11 @@ import proyectiles.pea.*
 import util.config.config
 import util.debugger.*
 
-class Planta inherits Alive and Ticks and Collides and Entity(
+class Planta inherits Alive( 
+    deathHandler = { user => user.cleanUp() } 
+) and Collides and Ticks and Entity(
     team = "PLANTAS",
-    defaultImageProvider = imageProviderSet.idle(),
-    deathHandler = { user => user.cleanUp() }
+    defaultImageProvider = imageProviderSet.idle()
 ){
     var property imageProviderSet
 

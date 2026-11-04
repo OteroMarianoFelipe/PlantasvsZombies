@@ -6,9 +6,7 @@ import entityManager.*
 import proyectiles.sun.*
 import util.debugger.*
 
-class Girasol inherits ActiveEntity and Planta(
-    startingHealth = 300,
-    imageProviderSet = new SunFlowerImageProviderSet(),
+class Girasol inherits ActiveEntity(
     actionModule = { caller =>
         object inherits UnconditionalShooter(
             shotsPerSecond = 1/24.25,
@@ -21,6 +19,9 @@ class Girasol inherits ActiveEntity and Planta(
             shootingAnticipationAnimation = caller.imageProviderSet().actionAnticipation()
         ) and ActionModule{}
     }.apply(self)
+) and Planta(
+    startingHealth = 300,
+    imageProviderSet = new SunFlowerImageProviderSet()
 ){}
 
 class SunFlowerImageProviderSet inherits PlantImageProviderSet(

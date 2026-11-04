@@ -66,8 +66,10 @@ describe "Manejo de proveedores de imagen"{
 }
 describe "Entidad viva"{
     const entidadViva = 
-        object inherits Alive and Entity(
+        object inherits Alive(
             deathHandler = { user => user.dead(true) },
+            startingHealth = 200
+        ) and Entity(
             team = "NEUTRAL"
         ){ var property dead = false }
 
