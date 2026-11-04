@@ -1,8 +1,7 @@
 import imageProvider.*
 import entity.*
-import UIElements.UIElement.*
 
-object sunCounter inherits UIElement{
+object sunCounter inherits Entity(team = "NEUTRAL"){
     var property suns = 200
 
     method canPay(cost) = suns >= cost

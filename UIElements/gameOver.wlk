@@ -1,7 +1,7 @@
-import UIElements.UIElement.*
 import entityManager.*
+import entity.*
 
-object gameOver inherits UIElement(position = game.at(1,1)){
+object gameOver inherits Entity(team = "NEUTRAL", position = game.at(1,1)){
     override method image() = "sprites/gameOver.png"
 
     method trigger(){
