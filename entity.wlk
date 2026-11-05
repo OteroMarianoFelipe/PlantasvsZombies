@@ -156,13 +156,21 @@ mixin MeleeAttack{
     var property meleeDamage
     var property meleeAttacksPerSecond
 
-    var property meleeAttackingBehavior = new MeleeAttackBehavior( secondsPerUse = 1/meleeAttacksPerSecond ) 
+    var property meleeAttackingBehavior =
+        new MeleeAttackBehavior(
+            secondsPerUse = 1/meleeAttacksPerSecond,
+            damage = meleeDamage
+        )
 
-    method hasAttackObjective(user) = entitiesMap.allEntitiesAt(user.position()).any({ e => user.isEnemy(e) && e.canBeKilled()})
+    // De todos los que están en su celda, el objetivo es el primer enemigo que se puede matar
+    method attackObjective(user) =
+        entitiesMap.allEntitiesAt(user.position()).findOrDefault({ e => user.isEnemy(e) && e.canBeKilled() }, null)
 
     override method use(user){
         super(user)
-        if(self.hasAttackObjective(user)){
+        const objective = self.attackObjective(user)
+        if(objective != null){
+            meleeAttackingBehavior.objective(objective)
             meleeAttackingBehavior.use(user)
         }
     }

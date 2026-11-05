@@ -51,15 +51,11 @@ class MovingBehavior inherits Behavior{
 }
 
 class MeleeAttackBehavior inherits Behavior{
-    override method use(user){
-        super(user)
-        if(not user.objetivoDeAtaque().lives()){ 
-            user.targetEliminated()
-        }
-    }
+    var property damage
+    var property objective = null
 
     override method activate(user){
-        user.objetivoDeAtaque().takeDamage(user.meleeDamage())
+        objective.takeDamage(damage)
     }
 }
 
