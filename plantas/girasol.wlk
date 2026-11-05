@@ -20,7 +20,7 @@ class Girasol inherits ActiveEntity(
         ) and ActionModule{}
     }.apply(self)
 ) and Planta(
-    startingHealth = 300,
+    maxHealth = 300,
     imageProviderSet = new SunFlowerImageProviderSet()
 ){}
 

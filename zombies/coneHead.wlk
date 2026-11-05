@@ -6,7 +6,7 @@ import zombies.zombieBasico.*
 import entityManager.*
 
 class ConeHead inherits Zombie(
-    startingHealth = 370,
+    maxHealth = 370,
     imageProviderSet = new ConeHeadImageProvidersSet(),
     defaultImageProvider = imageProviderSet.walkingImageProvider(),
     deathHandler = coneHeadDeathHandler,
@@ -37,11 +37,11 @@ class ConeHeadImageProvidersSet inherits ZombieImageProviderSet(
         ]
     ),
     deathAnimation = noImageProvider
-){} 
+){}
 
 object coneHeadDeathHandler{
     method changeUsersHealth(user){
-        user.startingHealth(190)
+        user.maxHealth(190)
         user.health(190)
     }
     method changeUsersImageProviderSet(user){

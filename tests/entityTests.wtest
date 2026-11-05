@@ -68,7 +68,7 @@ describe "Entidad viva"{
     const entidadViva = 
         object inherits Alive(
             deathHandler = { user => user.dead(true) },
-            startingHealth = 200
+            maxHealth = 200
         ) and Entity(
             team = "NEUTRAL"
         ){ var property dead = false }

@@ -8,7 +8,7 @@ import plantas.snowPea.SnowPea
 import entityManager.*
 import UIElements.sunCounter.sunCounter
 
-class PlantCard inherits Ticks and Collides and Entity(team = "NEUTRAL", defaultImageProvider =  self.cardUnavailableSprite()){
+class PlantCard inherits Collides and Ticks and Entity(team = "NEUTRAL", defaultImageProvider =  self.cardUnavailableSprite()){
     const property price
     const property createNewInstance
     const property cardAvailableSprite

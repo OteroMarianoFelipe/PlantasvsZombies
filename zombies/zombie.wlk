@@ -33,7 +33,7 @@ object defaultZombieDeathHandler{
     method apply(user){
         user.animationCallback({ => user.cleanUp()}) 
         user.imageProvider(user.imageProviderSet().deathAnimation())
-        entityManager.removeEntityCollitions(user)
+        entitiesMap.remove(user)
     }
 }
 

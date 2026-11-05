@@ -42,6 +42,6 @@ class Pea inherits Projectile(
         behaviors = []
         animationCallback = { => self.cleanUp()} 
         self.imageProvider(impactAnimation)
-        entityManager.removeEntityCollitions(self)
+        entitiesMap.remove(self)        
     }
 }

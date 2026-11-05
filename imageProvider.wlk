@@ -89,7 +89,7 @@ class HealthBasedImageProvider inherits ImageProvider{
     override method transitionSeamlessly(previousAnimation){}
     override method update(caller){
         var imageProvider = self.currentImageProvider()
-        const updatedProviderIndex = (caller.health()/caller.startingHealth()*imageProviderSet.size()).roundUp(0)-1
+        const updatedProviderIndex = (caller.health()/caller.maxHealth()*imageProviderSet.size()).roundUp(0)-1
         if(updatedProviderIndex != currentProviderIndex){
             const previousImageProvider = self.currentImageProvider()
             imageProvider = imageProviderSet.get(updatedProviderIndex)

@@ -21,7 +21,7 @@ describe "ZombieBasico"{
         )
 
     const zombie = object inherits Zombie(
-        startingHealth = 370,
+        maxHealth = 370,
         imageProviderSet = imgProvSet,
         defaultImageProvider = imageProviderSet.walkingImageProvider(),
         deathHandler = { user => spy.reciveCall() },
@@ -59,7 +59,7 @@ describe "ZombieBasico"{
     test "Cuando un zombie con cono muere cambia correctamente su vida"{
         zombie.deathHandler(coneHeadDeathHandler)
         zombie.takeDamage(zombie.health())
-        assert.equals(190, zombie.startingHealth())
+        assert.equals(190, zombie.maxHealth())
     }
     test "Cuando un zombie con cono muere cambia correctamente su set de proveedores de imagen"{
         zombie.deathHandler(coneHeadDeathHandler)

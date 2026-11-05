@@ -39,7 +39,6 @@ class Entity{
 
     method beClicked(){}
     method cleanUp(){
-        entityManager.removeEntity(self)
         game.removeVisual(self)
     }
 
@@ -72,8 +71,8 @@ class Entity{
 }
 
 mixin Alive{
-    var property startingHealth
-    var property health = startingHealth
+    var property maxHealth
+    var property health = maxHealth
 
     var property deathHandler
 
@@ -95,12 +94,20 @@ mixin Ticks{
         super(pos)
         entityManager.add(self)
     }
+    override method cleanUp(){
+        super()
+        entityManager.remove(self)
+    }
 }
 
 mixin Collides{
     override method start(pos){
         super(pos)
         entitiesMap.add(self)
+    }
+    override method cleanUp(){
+        super()
+        entitiesMap.remove(self)
     }
 }
 

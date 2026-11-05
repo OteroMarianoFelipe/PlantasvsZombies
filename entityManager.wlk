@@ -27,20 +27,15 @@ object entityManager{
   method add(entity){
     entities.add(entity)
   }  
-  method allEntitiesThat(condicion) = entities.filter(condicion)
-
-  method removeEntityCollitions(entity){
-    entitiesMap.remove(entity)
-  }
-
-  method removeEntity(entity){
-    self.removeEntityCollitions(entity)
+  method remove(entity){
     entities.remove(entity)
   }
 
+  method allEntitiesThat(condicion) = entities.filter(condicion)
+
   method clear(){
     entities.forEach({ e =>
-      self.removeEntity(e)
+      self.remove(e)
     })
     game.removeTickEvent("tickEntities")
     game.removeTickEvent("AnimateEntities")

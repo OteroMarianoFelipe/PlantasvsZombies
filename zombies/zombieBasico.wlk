@@ -4,7 +4,7 @@ import assets.zombies.*
 import imageProvider.*
 
 class ZombieBasico inherits Zombie(
-    startingHealth = 190,
+    maxHealth = 190,
     imageProviderSet = new BasicZombieImageProvidersSet(),
     defaultImageProvider = imageProviderSet.walkingImageProvider(),
     deathHandler = defaultZombieDeathHandler,

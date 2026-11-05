@@ -1,10 +1,9 @@
+import util.debugger.*
 import zombies.zombie.*
 import zombies.zombieBasico.*
 import zombies.coneHead.*
 import util.config.*
 import util.random.*
-import assets.zombies.*
-import imageProvider.*
 import entity.*
 import proyectiles.sun.*
 
@@ -51,11 +50,11 @@ class Spawner{
 }
 class ZombieSpawner inherits Spawner{
     const allLines = (config.lowerBound().y() .. config.upperBound().y()).map({ i => i }).asList()
-    var linesAvailable = allLines
+    var linesAvailable = [allLines].flatten()
 
     method getRandomLine(){
         if(linesAvailable.size() == 0){
-            linesAvailable = allLines
+            linesAvailable = [allLines].flatten()
         }
         const selectedLine = linesAvailable.get(random.numberBetween(0, linesAvailable.size()-1))
         linesAvailable.remove(selectedLine)

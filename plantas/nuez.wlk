@@ -3,7 +3,7 @@ import planta.*
 import assets.wallNut.*
 
 class Nuez inherits Planta(
-    startingHealth = 4000,
+    maxHealth = 4000,
     imageProviderSet =  new WallNutImageProviderSet()
 ){}
 

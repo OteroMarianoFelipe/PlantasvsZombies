@@ -116,7 +116,7 @@ describe "Animacion Estatica"{
 
 describe "Proveedor de imagen basado en vida"{
     const caller = object{
-        var property startingHealth = 300
+        var property maxHealth = 300
         var property health = 300
 
         method endNonLoopingAnimation(){}
@@ -147,7 +147,7 @@ describe "Proveedor de imagen basado en vida"{
     const healthBasedImageProvider = new HealthBasedImageProvider( imageProviderSet=imageProviderSet )
 
     method testNewHealthPercentage(percentage, user, imageProvider){
-        user.health(user.startingHealth()*percentage)
+        user.health(user.maxHealth()*percentage)
         imageProvider.update(user)
         return imageProvider.currentProviderIndex()
     }
