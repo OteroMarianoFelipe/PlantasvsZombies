@@ -117,8 +117,15 @@ mixin ActiveEntity{
 }
 
 class ActionModule{
+    var stopped = false
+
+    method stop(){ stopped = true }
+    method isStopped() = stopped
+
     method use(user){
-        self.act(user, entitiesMap.allIntersectingEntities(user))
+        if(not stopped){
+            self.act(user, entitiesMap.allIntersectingEntities(user))
+        }
     }
 
     method act(user, touching){}
