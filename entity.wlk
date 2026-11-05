@@ -117,7 +117,11 @@ mixin ActiveEntity{
 }
 
 class ActionModule{
-    method use(user){}
+    method use(user){
+        self.act(user, entitiesMap.allIntersectingEntities(user))
+    }
+
+    method act(user, touching){}
 }
 
 mixin Shooter {
@@ -138,16 +142,16 @@ mixin Shooter {
     }
 }
 mixin ConditionedShooter inherits Shooter{
-    override method use(user){
-        super(user)
+    override method act(user, touching){
+        super(user, touching)
         if(self.hasEnemyInSight(user)){
             shootingBehavior.use(user)
         }
     }
 }
 mixin UnconditionalShooter inherits Shooter{
-    override method use(user){
-        super(user)
+    override method act(user, touching){
+        super(user, touching)
         shootingBehavior.use(user)
     }
 }
@@ -162,13 +166,13 @@ mixin MeleeAttack{
             damage = meleeDamage
         )
 
-    // De todos los que están en su celda, el objetivo es el primer enemigo que se puede matar
-    method attackObjective(user) =
-        entitiesMap.allEntitiesAt(user.position()).findOrDefault({ e => user.isEnemy(e) && e.canBeKilled() }, null)
+        // De todas las entidades con las que choca, el objetivo es el primer enemigo que se puede matar
+    method attackObjective(user, touching) =
+        touching.findOrDefault({ e => user.isEnemy(e) && e.canBeKilled() }, null)
 
-    override method use(user){
-        super(user)
-        const objective = self.attackObjective(user)
+    override method act(user, touching){
+        super(user, touching)
+        const objective = self.attackObjective(user, touching)
         if(objective != null){
             meleeAttackingBehavior.objective(objective)
             meleeAttackingBehavior.use(user)
@@ -186,18 +190,18 @@ mixin Mobile{
             movingDirection = movingDirection
         )
     
-    method hasObstacle(user){
-        return entitiesMap.allEntitiesAt(user.position()).any({ entity =>
+    method hasObstacle(user, touching){
+        return touching.any({ entity =>
             user.isEnemy(entity) && entity.blocksEnemyEntitiesMovement()
         })
     }
 
-    override method use(user){
-        super(user)
-        if(not self.hasObstacle(user)){
+    override method act(user, touching){
+        super(user, touching)
+        if(not self.hasObstacle(user, touching)){
             movingBehavior.use(user)
         }else{
-            debugger.info("Se determino que hay un obstaculo")
+            debugger.info("Hay un obstaculo")
         }
     }
 }
