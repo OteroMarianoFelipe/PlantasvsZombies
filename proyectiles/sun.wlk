@@ -4,8 +4,7 @@ import assets.sunFlower.*
 import UIElements.sunCounter.*
 
 class Sun inherits Projectile(
-    defaultImageProvider =  self.getProperAnimation(),
-    behaviors = []
+    defaultImageProvider =  self.getProperAnimation()
 ){
     const property value
 
