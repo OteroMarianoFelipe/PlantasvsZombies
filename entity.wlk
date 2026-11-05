@@ -214,13 +214,16 @@ mixin Mobile{
 }
 
 
-// Para que logre usarse tanto al inicio como al final debe ser como primer mixin
-mixin Collide{
-    const property collitionBehavior = new CollitionBehavior()
+// Opcional: solo lo usan las entidades que tienen que reaccionar al chocar como las arvejas
+mixin HandlesCollisions{
+    method isStopped()
 
-    override method use(user){
-        collitionBehavior.use(user)
-        super(user)
-        collitionBehavior.use(user)
+    override method act(user, touching){
+        touching.forEach({ entity =>
+            if(not self.isStopped()){ user.collisionHandler(entity) }
+        })
+        if(not self.isStopped()){
+            super(user, touching)
+        }
     }
 }
