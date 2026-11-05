@@ -16,7 +16,7 @@ class Behavior{
 
     method use(user){
         const ticksUntilUse = self.ticksPerUse() - ticksInCoolDown 
-        if( ticksUntilUse == 0 ){
+        if( ticksUntilUse <= 0 ){
             self.activate(user)
             self.coolDownBehavior()
         }else{
@@ -25,13 +25,6 @@ class Behavior{
             }
             self.tickUpInCoolDownTime()
         }
-    }
-}
-
-class CollitionBehavior inherits Behavior( secondsPerUse=0 ){
-    override method activate(user){
-        const intersectantes = entitiesMap.allIntersectingEntities(user)
-        intersectantes.forEach({ e => user.collisionHandler(e)})
     }
 }
 
