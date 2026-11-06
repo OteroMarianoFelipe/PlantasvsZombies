@@ -4,7 +4,6 @@ import plantas.planta.*
 import entityManager.*
 import player.*
 import util.config.*
-import UIElements.gameOver.*
 import util.debugger.*
 
 class Zombie inherits Alive and Collides and ActiveEntity and Ticks and Entity(
@@ -31,8 +30,7 @@ class Zombie inherits Alive and Collides and ActiveEntity and Ticks and Entity(
     override method updatePosition(newPosition){
         super(newPosition)
         if(self.crossedTheYard()){
-            gameOver.trigger()
-            self.cleanUp()
+            config.perderPartida()
         }
     }
 }

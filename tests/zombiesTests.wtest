@@ -4,6 +4,8 @@ import imageProvider.*
 import entity.*
 import util.config.*
 import entityManager.*
+import plantas.nuez.*
+import UIElements.gameOver.*
 
 describe "ZombieBasico"{
 
@@ -35,10 +37,7 @@ describe "ZombieBasico"{
             ) and ActionModule{}
         }.apply(self)
     ){
-        override method updatePosition(newPos){
-            super(newPos)
-            spy.reciveCall()
-        }
+        override method updatePosition(newPos){}
     }
 
     test "Un zombie puede ser congelado"{
@@ -48,8 +47,13 @@ describe "ZombieBasico"{
 
     test "Cuando un zombie cruza el patio se pierde la partida"{
         entitiesMap.initializeEntitiesMap()
+        const planta = new Nuez()
+        planta.start(game.at(3, 2))
+
         zombie.updatePosition(game.at(config.lowerBound().x()-1, 2))
-        assert.that(spy.hasReceivedCall())
+
+        assert.that(game.hasVisual(gameOver))
+        assert.notThat(game.hasVisual(planta))
     }
 
     test "Cuando su vida cae a 0 manejan su propia muerte"{
