@@ -170,6 +170,49 @@ describe "Módulo de acción: HandlesCollisions"{
 }
 
 
+
+describe "Módulo de acción: ralentizar"{
+
+    method initialize(){
+        game.width(config.width())
+        game.height(config.height())
+    }
+
+    method tickear(entidad, veces){ veces.times({ i => entidad.tick() }) }
+
+    method nuevoZombie(pos){
+        const zombie = new ZombieBasico()
+        zombie.start(pos)
+        return zombie
+    }
+
+    test "Un módulo ralentizado se mueve más lento"{
+        entitiesMap.initializeEntitiesMap()
+        const zombie = self.nuevoZombie(game.at(8, 2))
+        zombie.actionModule().slowDown(2)
+
+        self.tickear(zombie, 30)
+        assert.equals(game.at(8, 2), zombie.position())
+
+        self.tickear(zombie, 20)
+        assert.equals(game.at(7, 2), zombie.position())
+    }
+
+    test "Al restaurar la velocidad el módulo se mueve a su ritmo normal sin perder el tiempo acumulado"{
+        entitiesMap.initializeEntitiesMap()
+        const zombie = self.nuevoZombie(game.at(8, 2))
+        zombie.actionModule().slowDown(2)
+        self.tickear(zombie, 10)
+
+        zombie.actionModule().restoreSpeed()
+
+        self.tickear(zombie, 13)
+        assert.equals(game.at(8, 2), zombie.position())
+        self.tickear(zombie, 1)
+        assert.equals(game.at(7, 2), zombie.position())
+    }
+}
+
 describe "Proyectiles: arvejas"{
 
     method initialize(){

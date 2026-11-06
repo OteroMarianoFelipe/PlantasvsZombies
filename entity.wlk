@@ -129,6 +129,8 @@ class ActionModule{
     }
 
     method act(user, touching){}
+    method slowDown(factor){}
+    method restoreSpeed(){}
 }
 
 mixin Shooter {
@@ -211,6 +213,16 @@ mixin Mobile{
             debugger.info("Hay un obstaculo")
         }
     }
+
+    override method slowDown(factor){
+        super(factor)
+        movingBehavior.slowDown(factor)
+    }
+
+    override method restoreSpeed(){
+        super()
+        movingBehavior.restoreSpeed()
+    }    
 }
 
 
