@@ -229,8 +229,6 @@ mixin Mobile{
         super(user, touching)
         if(not self.hasObstacle(user, touching)){
             movingBehavior.use(user)
-        }else{
-            debugger.info("Hay un obstaculo")
         }
     }
 
