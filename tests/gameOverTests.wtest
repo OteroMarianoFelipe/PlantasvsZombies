@@ -1,0 +1,50 @@
+import entityManager.*
+import spawningManager.*
+import zombies.zombieBasico.*
+import plantas.nuez.*
+import UIElements.gameOver.*
+import util.config.*
+
+describe "Perder la partida"{
+
+    method initialize(){
+        game.width(config.width())
+        game.height(config.height())
+    }
+
+    test "Al perder se eliminan las visuales de todas las entidades y se vacía el administrador"{
+        entitiesMap.initializeEntitiesMap()
+        const zombie = new ZombieBasico()
+        zombie.start(game.at(5, 2))
+        const planta = new Nuez()
+        planta.start(game.at(3, 2))
+
+        config.perderPartida()
+
+        assert.notThat(game.hasVisual(zombie))
+        assert.notThat(game.hasVisual(planta))
+        assert.equals(0, entityManager.cantidadDeEntidades())
+    }
+
+    test "Al perder aparece la pantalla de game over"{
+        entitiesMap.initializeEntitiesMap()
+
+        config.perderPartida()
+
+        assert.that(game.hasVisual(gameOver))
+    }
+
+    test "Al perder se frenan los ticks de las entidades y los spawners"{
+        entitiesMap.initializeEntitiesMap()
+        entityManager.startTicking()
+        spawningManager.startSpawning()
+
+        config.perderPartida()
+
+        assert.notThat(io.containsTimeEvent("tickEntities"))
+        assert.notThat(io.containsTimeEvent("AnimateEntities"))
+        assert.notThat(io.containsTimeEvent(basicZombieSpawner.wavesEventName()))
+        assert.notThat(io.containsTimeEvent(coneHeadZombieSpawner.wavesEventName()))
+        assert.notThat(io.containsTimeEvent(sunSpawner.wavesEventName()))
+    }
+}

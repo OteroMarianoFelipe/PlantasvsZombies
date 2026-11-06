@@ -4,6 +4,7 @@ import player.*
 import UIElements.plantCard.*
 import UIElements.sunCounter.*
 import spawningManager.*
+import UIElements.gameOver.*
 
 object config {
   const property height = 7
@@ -47,5 +48,11 @@ object config {
     wallNutCard.start(game.at(4,0))
     snowPeaCard.start(game.at(5,0))
     sunCounter.start()
+  }
+
+  method perderPartida(){
+    game.clear()
+    entityManager.clear()
+    game.addVisual(gameOver)
   }
 }
