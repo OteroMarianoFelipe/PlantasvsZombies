@@ -4,15 +4,18 @@ import imageProvider.*
 
 class Behavior{
     var property secondsPerUse
+    var property slowDownFactor = 1
 
     method activate(user)
     
     var property ticksInCoolDown = 0
     var property anticipationAnimation = noImageProvider
 
-    method ticksPerUse() = config.secondsToTicks(secondsPerUse)
+    method ticksPerUse() = config.secondsToTicks(secondsPerUse * slowDownFactor)
     method coolDownBehavior(){ self.ticksInCoolDown(0) }
     method tickUpInCoolDownTime(){ ticksInCoolDown += 1 }
+    method slowDown(factor){ slowDownFactor = factor }
+    method restoreSpeed(){ slowDownFactor = 1 }
 
     method use(user){
         const ticksUntilUse = self.ticksPerUse() - ticksInCoolDown 
