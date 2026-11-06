@@ -36,9 +36,7 @@ describe "ZombieBasico"{
                 meleeAttacksPerSecond = 1
             ) and ActionModule{}
         }.apply(self)
-    ){
-        override method updatePosition(newPos){}
-    }
+    ){}
 
     test "Un zombie puede ser congelado"{
         zombie.freeze()
