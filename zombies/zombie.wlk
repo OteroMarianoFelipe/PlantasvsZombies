@@ -11,12 +11,20 @@ class Zombie inherits Alive and Collides and ActiveEntity and Ticks and Entity(
     team = "ZOMBIES"
 ){
     var property imageProviderSet
-
     var property frozen = 0
-    var property freezeTick = false
 
-    method invertFreezeTick(){ freezeTick = not freezeTick }
-    method freeze(){ self.frozen(config.secondsToTicks(10)) }
+    method freeze(){
+        self.actionModule().slowDown(2)
+        frozen = config.secondsToTicks(10)
+    }
+
+    override method tick(){
+        super()
+        if(frozen > 0){
+            frozen -= 1
+            if(frozen == 0){ self.actionModule().restoreSpeed() }
+        }
+    }
   
     method crossedTheYard() = position.x() < config.lowerBound().x()
 

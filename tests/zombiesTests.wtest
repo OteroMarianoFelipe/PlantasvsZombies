@@ -42,7 +42,8 @@ describe "ZombieBasico"{
     }
 
     test "Un zombie puede ser congelado"{
-        assert.fail("Un Zombie no tiene forma de ser congelado todavía")
+        zombie.freeze()
+        assert.that(zombie.frozen() > 0)
     }
 
     test "Cuando un zombie cruza el patio se pierde la partida"{

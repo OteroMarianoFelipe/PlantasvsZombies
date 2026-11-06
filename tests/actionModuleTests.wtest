@@ -351,3 +351,67 @@ describe "Proyectiles: arvejas"{
         assert.equals(planta.startingHealth(), planta.health())
     }
 }
+
+
+describe "Zombies: congelamiento"{
+
+    method initialize(){
+        game.width(config.width())
+        game.height(config.height())
+    }
+
+    method tickear(entidad, veces){ veces.times({ i => entidad.tick() }) }
+
+    method nuevoZombie(pos){
+        const zombie = new ZombieBasico()
+        zombie.start(pos)
+        return zombie
+    }
+
+    test "Un zombie congelado avanza más lento"{
+        entitiesMap.initializeEntitiesMap()
+        const zombie = self.nuevoZombie(game.at(8, 2))
+        zombie.freeze()
+
+        self.tickear(zombie, 30)
+        assert.equals(game.at(8, 2), zombie.position())
+
+        self.tickear(zombie, 20)
+        assert.equals(game.at(7, 2), zombie.position())
+    }
+
+    test "Cuando termina el congelamiento el zombie vuelve a su velocidad normal"{
+        entitiesMap.initializeEntitiesMap()
+        const zombie = self.nuevoZombie(game.at(8, 2))
+        zombie.freeze()
+
+        self.tickear(zombie, 50)                              // dura 10 segundos
+        assert.equals(0, zombie.frozen())
+        assert.equals(game.at(7, 2), zombie.position())       // en ese tiempo avanzó una celda, lento
+
+        self.tickear(zombie, 24)
+        assert.equals(game.at(6, 2), zombie.position())       // ahora avanza otra a su ritmo normal
+    }
+
+    test "Volver a congelar a un zombie ya congelado reinicia el tiempo de congelamiento"{
+        entitiesMap.initializeEntitiesMap()
+        const zombie = self.nuevoZombie(game.at(8, 2))
+        zombie.freeze()
+        self.tickear(zombie, 20)
+
+        zombie.freeze()
+
+        assert.equals(config.secondsToTicks(10), zombie.frozen())
+    }
+
+    test "Una arveja de hielo congela al zombie que golpea"{
+        entitiesMap.initializeEntitiesMap()
+        const zombie = self.nuevoZombie(game.at(5, 2))
+        const arveja = new Pea(team = "PLANTAS", damage = 20, frozen = true)
+        arveja.start(game.at(4, 2))
+
+        self.tickear(arveja, 2)
+
+        assert.that(zombie.frozen() > 0)
+    }
+}
