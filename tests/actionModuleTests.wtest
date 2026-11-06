@@ -1,5 +1,6 @@
 import entity.*
 import entityManager.*
+import imageProvider.*
 import zombies.zombieBasico.*
 import plantas.nuez.*
 import plantas.girasol.*
@@ -169,8 +170,6 @@ describe "Módulo de acción: HandlesCollisions"{
     }
 }
 
-
-
 describe "Módulo de acción: ralentizar"{
 
     method initialize(){
@@ -210,6 +209,71 @@ describe "Módulo de acción: ralentizar"{
         assert.equals(game.at(8, 2), zombie.position())
         self.tickear(zombie, 1)
         assert.equals(game.at(7, 2), zombie.position())
+    }
+
+    
+    method nuevoModuloDeDisparo(disparos){
+        return object inherits UnconditionalShooter(
+            shotsPerSecond = 1,                                                   // 5 ticks
+            proyectileGenerator = { user => object { method start(pos){ disparos.add(pos) } } },
+            shootingAnticipationAnimation = noImageProvider
+        ) and ActionModule{}
+    }
+
+    test "Un módulo de disparo ralentizado dispara con más tiempo entre disparo y disparo"{
+        entitiesMap.initializeEntitiesMap()
+        const disparos = []
+        const modulo = self.nuevoModuloDeDisparo(disparos)
+        const entidad = object { method position() = game.at(5, 2) }
+
+        modulo.slowDown(2)                                                        // ahora 10 ticks
+        10.times({ i => modulo.use(entidad) })
+        assert.equals(0, disparos.size())
+
+        modulo.use(entidad)
+        assert.equals(1, disparos.size())
+    }
+
+    test "Al restaurar la velocidad un módulo de disparo vuelve a disparar en su tiempo normal"{
+        entitiesMap.initializeEntitiesMap()
+        const disparos = []
+        const modulo = self.nuevoModuloDeDisparo(disparos)
+        const entidad = object { method position() = game.at(5, 2) }
+
+        modulo.slowDown(2)
+        7.times({ i => modulo.use(entidad) })
+
+        modulo.restoreSpeed()                                                     // vuelve a 5 ticks: ya se pasó
+        modulo.use(entidad)
+        assert.equals(1, disparos.size())
+    }
+
+    test "Un zombie ralentizado ataca con más tiempo entre ataque y ataque"{
+        entitiesMap.initializeEntitiesMap()
+        const planta = new Nuez()
+        planta.start(game.at(5, 2))
+        const zombie = self.nuevoZombie(game.at(5, 2))
+
+        zombie.actionModule().slowDown(2)                                         // ahora 2 segundos entre ataques
+        self.tickear(zombie, 10)
+        assert.equals(planta.startingHealth(), planta.health())
+
+        self.tickear(zombie, 1)
+        assert.equals(planta.startingHealth() - 100, planta.health())
+    }
+
+    test "Al restaurar la velocidad un zombie vuelve a atacar en su tiempo normal"{
+        entitiesMap.initializeEntitiesMap()
+        const planta = new Nuez()
+        planta.start(game.at(5, 2))
+        const zombie = self.nuevoZombie(game.at(5, 2))
+
+        zombie.actionModule().slowDown(2)
+        self.tickear(zombie, 7)
+
+        zombie.actionModule().restoreSpeed()                                      // vuelve a 1 segundo: ya se pasó
+        self.tickear(zombie, 1)
+        assert.equals(planta.startingHealth() - 100, planta.health())
     }
 }
 

@@ -149,6 +149,16 @@ mixin Shooter {
         const entitiesInLine = entitiesMap.allEntitiesAtLine(user.position().y())
         return entitiesInLine.any({ entity => user.isEnemy(entity) })
     }
+
+    override method slowDown(factor){
+        super(factor)
+        shootingBehavior.slowDown(factor)
+    }
+
+    override method restoreSpeed(){
+        super()
+        shootingBehavior.restoreSpeed()
+    }
 }
 mixin ConditionedShooter inherits Shooter{
     override method act(user, touching){
@@ -186,6 +196,16 @@ mixin MeleeAttack{
             meleeAttackingBehavior.objective(objective)
             meleeAttackingBehavior.use(user)
         }
+    }
+
+    override method slowDown(factor){
+        super(factor)
+        meleeAttackingBehavior.slowDown(factor)
+    }
+
+    override method restoreSpeed(){
+        super()
+        meleeAttackingBehavior.restoreSpeed()
     }
 }
 
