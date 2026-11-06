@@ -42,10 +42,6 @@ object entityManager{
     entities.forEach({ e =>
       self.removeEntity(e)
     })
-    game.removeTickEvent("tickEntities")
-    game.removeTickEvent("AnimateEntities")
-    game.removeTickEvent("spawnZombies")
-    game.removeTickEvent("spawnSun")
   }
 }
 

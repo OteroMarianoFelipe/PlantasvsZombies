@@ -48,3 +48,36 @@ describe "Perder la partida"{
         assert.notThat(io.containsTimeEvent(sunSpawner.wavesEventName()))
     }
 }
+
+
+describe "Administrador de entidades: clear"{
+
+    method initialize(){
+        game.width(config.width())
+        game.height(config.height())
+    }
+
+    test "clear vacía el administrador y el mapa de entidades"{
+        entitiesMap.initializeEntitiesMap()
+        const zombie = new ZombieBasico()
+        zombie.start(game.at(5, 2))
+        const planta = new Nuez()
+        planta.start(game.at(3, 2))
+
+        entityManager.clear()
+
+        assert.equals(0, entityManager.cantidadDeEntidades())
+        assert.equals([], entitiesMap.allEntitiesAt(game.at(5, 2)))
+        assert.equals([], entitiesMap.allEntitiesAt(game.at(3, 2)))
+    }
+
+    test "clear solo se ocupa de las entidades: no frena los eventos del juego"{
+        entitiesMap.initializeEntitiesMap()
+        entityManager.startTicking()
+
+        entityManager.clear()
+
+        assert.that(io.containsTimeEvent("tickEntities"))
+        assert.that(io.containsTimeEvent("AnimateEntities"))
+    }
+}
