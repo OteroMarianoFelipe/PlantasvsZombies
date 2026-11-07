@@ -63,5 +63,3 @@ class ShootingBehavior inherits Behavior{
         newProyectile.start(user.position())
     }
 }
-
-object noBehavior  { method use(user){} }
