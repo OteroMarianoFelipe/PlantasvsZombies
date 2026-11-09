@@ -1,9 +1,6 @@
 import entity.*
 import imageProvider.*
 import proyectiles.projectile.*
-import assets.peaShooter.*
-import assets.snowPea.*
-import behavior.*
 import entityManager.*
 
 class Pea inherits ActiveEntity(
@@ -13,14 +10,14 @@ class Pea inherits ActiveEntity(
             movingDirection = game.at(1, 0)
         ) and ActionModule{}
 ) and Projectile(
-    defaultImageProvider =  new PeaShot()
+    defaultImageProvider = peaShotAnimation
 ){
     var property damage
     var property frozen
 
     var property objective = null
     var property action = { => objective.takeDamage(damage)}
-    var property impactAnimation = new PeaShotImpact()
+    var property impactAnimation = peaShotImpactAnimation
 
     override method collisionHandler(entity){
         if( self.isEnemy(entity) ) { 
@@ -33,14 +30,21 @@ class Pea inherits ActiveEntity(
         super(pos)
         if(frozen){
             action = { => objective.takeDamage(damage) objective.freeze() }
-            self.changeAndUseDefaultImageProvider(new FrozenPea())
-            impactAnimation = new FrozenPeaImpact()
+            self.defaultImageProvider(frozenPeaAnimation)
+            self.useDefaultImageProvider()
+            impactAnimation = frozenPeaImpactAnimation
         }
     }
     override method handleRemoval(){
         self.actionModule().stop()
         animationCallback = { => self.cleanUp()} 
         self.imageProvider(impactAnimation)
-        entityManager.removeEntityCollitions(self)
+        entitiesMap.remove(self)
     }
 }
+
+object peaShotAnimation inherits Sprite( image = "sprites/projectiles/pea.png" ){}
+object peaShotImpactAnimation inherits Animation( durationInSeconds = 0.1, framesInAnimation = 4, animationDirectory = "projectiles/pea/impact"){}
+
+object frozenPeaAnimation inherits Sprite( image = "sprites/projectiles/frozenPea.png" ){}
+object frozenPeaImpactAnimation inherits Animation(durationInSeconds = 0.15, framesInAnimation = 6, animationDirectory = "projectiles/frozenPea/impact"){}

@@ -3,7 +3,6 @@ import zombies.zombieBasico.*
 import zombies.coneHead.*
 import util.config.*
 import util.random.*
-import assets.zombies.*
 import imageProvider.*
 import entity.*
 import proyectiles.sun.*

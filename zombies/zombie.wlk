@@ -1,10 +1,9 @@
-import assets.zombies.*
 import entity.*
 import plantas.planta.*
 import entityManager.*
 import player.*
 import util.config.*
-import util.debugger.*
+import imageProvider.*
 
 class Zombie inherits Alive and Collides and ActiveEntity and Ticks and Entity(
     team = "ZOMBIES"

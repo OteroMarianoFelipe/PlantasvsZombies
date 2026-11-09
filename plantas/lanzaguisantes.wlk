@@ -1,7 +1,7 @@
 import planta.*
 import entity.*
-import assets.peaShooter.*
 import proyectiles.pea.*
+import imageProvider.*
 
 class LanzaGuisantes inherits ActiveEntity(
     actionModule = {caller => 
@@ -19,10 +19,13 @@ class LanzaGuisantes inherits ActiveEntity(
     }.apply(self)
 ) and Planta(
     startingHealth = 300,
-    imageProviderSet = new PeaShooterImageProviderSet()
+    imageProviderSet = peaShooterImageProviderSet
 ){}
 
-class PeaShooterImageProviderSet inherits PlantImageProviderSet(
-    idle = new PeaShooterIdle(),
-    actionAnticipation = new PeaShooterAction()
+object peaShooterImageProviderSet inherits PlantImageProviderSet(
+    idle = peaShooterIdleAnimation,
+    actionAnticipation = peaShooterActionAnimation
 ){}
+
+object peaShooterIdleAnimation inherits Animation( durationInSeconds = 1, framesInAnimation = 8, animationDirectory = "plants/peashooter/idle"){}
+object peaShooterActionAnimation inherits Animation( durationInSeconds = 1, framesInAnimation = 4, animationDirectory = "plants/peashooter/active"){}

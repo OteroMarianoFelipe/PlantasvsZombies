@@ -30,7 +30,7 @@ object sunCounter inherits Entity(team = "NEUTRAL"){
 
 }
 
-object sunCounterIcoWithHundreds inherits StaticAnimation( image = "sprites/sunCounter/iconWithHundreds/"){
+object sunCounterIcoWithHundreds inherits Sprite( image = "sprites/sunCounter/iconWithHundreds/"){
     const property position = game.at(0,0)
     var property hundreds = 0
     method changeHundreds(newNumber){
@@ -41,7 +41,7 @@ object sunCounterIcoWithHundreds inherits StaticAnimation( image = "sprites/sunC
     override method image() = image + hundreds + ".png"
 }
 
-object sunCounterTens inherits StaticAnimation( image = "sprites/sunCounter/tens/"){
+object sunCounterTens inherits Sprite( image = "sprites/sunCounter/tens/"){
     const property position = game.at(1,0)
     var property tens = 0
     method numberHasSprite(num) = [0, 25, 50, 75].contains(num)

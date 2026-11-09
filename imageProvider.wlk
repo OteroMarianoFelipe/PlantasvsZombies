@@ -1,107 +1,94 @@
 import util.config.*
-import assets.zombies.*
-import util.debugger.*
 
-class ImageProvider{
-    method transitionSeamlessly(previousAnimation)
-    method update(caller)
-    method getImage()
-    method durationInTicks()
-    method durationInSeconds()
-    method durationInAnimationTicks()
+class ImageProviderHandler{
+    var imageProvider
+    method imageProvider() = imageProvider
+    method imageProvider(newImageProvider){
+        if(imageProvider != newImageProvider){
+            if(imageProvider.family() != newImageProvider.family() ){
+                frameNumber = 1
+                ticksInFrame = 1
+            }
+            imageProvider = newImageProvider
+        }
+    }
+
+    var frameNumber = 1
+    method frameNumber() = frameNumber
+    var ticksInFrame = 1
+    method ticksInFrame() = ticksInFrame
+
+    method tickUpInFrameTime(){ ticksInFrame+=1 }
+    method changeFrameNumber(user, newFrameNumber){
+        ticksInFrame = 1
+        frameNumber = newFrameNumber
+        if(frameNumber == 1){ user.animationEnded() }
+    }
+
+    method update(user){ imageProvider.update(user, self) }
+
+    method getImage(user) = imageProvider.getImage(user, self)
 }
 
-class StaticAnimation inherits ImageProvider{
+class ImageProvider{
+    const property family = null
+    method update(user, traker)
+    method getImage(user, traker)
+    method durationInTicks()
+}
+
+class Sprite inherits ImageProvider{
     const property image
 
+    override method update(user, traker){}
     override method durationInTicks() = 0
-    override method durationInSeconds() = 0
-    override method durationInAnimationTicks() = 0
-
-    override method transitionSeamlessly(previousImageProvider){}
-    override method update(caller){}
-    override method getImage() = image
+    override method getImage(user, traker) = image
 }
 
 class Animation inherits ImageProvider{
-    const property loop
     const property durationInSeconds
     const property framesInAnimation
     const property animationDirectory
 
-    var property ticksInAnimationFrame = 0
-    var property animationFrameNumber = 1
+    const property animationTicksPerFrame = (config.secondsToAnimationTicks(durationInSeconds)/framesInAnimation).truncate(0)
 
-    const property animationTicksPerFrame = config.secondsToAnimationTicks(durationInSeconds)/framesInAnimation
+    method isTimeToPassFrame(traker) = traker.ticksInFrame() >= animationTicksPerFrame
+    method newFrameNumber(previous) = (previous % framesInAnimation) +1
 
-    method canTransitionSeamlessly(previousAnimation) = previousAnimation.framesInAnimation() == framesInAnimation && previousAnimation.animationTicksPerFrame() <= animationTicksPerFrame
-    override method transitionSeamlessly(previousAnimation){
-        if( self.canTransitionSeamlessly(previousAnimation)){
-            ticksInAnimationFrame = previousAnimation.ticksInAnimationFrame()
-            animationFrameNumber = previousAnimation.animationFrameNumber()
-        }
-    }
-
-    method tickUpFrameTime() { ticksInAnimationFrame += 1 }
-    method isTimeToPassFrame() = ticksInAnimationFrame >= animationTicksPerFrame
-    method changeFrameIndex(caller){ 
-        animationFrameNumber %= framesInAnimation
-        if(animationFrameNumber == 0){
-            caller.animationEnded()
-            if( not loop ){
-                caller.endNonLoopingAnimation()
-            }
-        }
-        animationFrameNumber += 1
-    }
-
-    override method update(caller){
-        if(self.isTimeToPassFrame()){
-            self.changeFrameIndex(caller)
-            ticksInAnimationFrame = 0
+    override method update(user, traker){
+        if(self.isTimeToPassFrame(traker)){
+            const newFrameNumber = self.newFrameNumber(traker.frameNumber())
+            traker.changeFrameNumber(user, newFrameNumber)
         }else{
-            self.tickUpFrameTime()
+            traker.tickUpInFrameTime()
         }
     }
 
-    override method durationInAnimationTicks() = animationTicksPerFrame*framesInAnimation
     override method durationInTicks() = config.secondsToTicks(durationInSeconds)
 
-    method frameNumber001Format(){
-        if(animationFrameNumber<10){
-            return "00"+animationFrameNumber
-        }
-        if(animationFrameNumber<100){
-            return "0"+animationFrameNumber
-        }
-        return ""+animationFrameNumber
+    method frameNumber001Format(frameNumber){
+        if (frameNumber<10) return "00"+frameNumber
+        if (frameNumber<100) return "0"+frameNumber
+        return frameNumber.toString()
     }
 
-    override method getImage() = "animations/"+self.animationDirectory()+"/frame_"+self.frameNumber001Format()+".png"
+    override method getImage(user, traker) = "animations/"+animationDirectory+"/frame_"+self.frameNumber001Format(traker.frameNumber())+".png"
 }
+
+
 
 class HealthBasedImageProvider inherits ImageProvider{
-    var property imageProviderSet
-    var property currentProviderIndex = 0
- 
-    method currentImageProvider() = imageProviderSet.get(currentProviderIndex)
+    const imageProviderSet    
 
-    override method transitionSeamlessly(previousAnimation){}
-    override method update(caller){
-        var imageProvider = self.currentImageProvider()
-        const updatedProviderIndex = (caller.health()/caller.startingHealth()*imageProviderSet.size()).roundUp(0)-1
-        if(updatedProviderIndex != currentProviderIndex){
-            const previousImageProvider = self.currentImageProvider()
-            imageProvider = imageProviderSet.get(updatedProviderIndex)
-            imageProvider.transitionSeamlessly(previousImageProvider)
-            currentProviderIndex = updatedProviderIndex
-        }
-        imageProvider.update(caller)
+    method getIndexFromHealth(user) = (user.health()/user.startingHealth()*imageProviderSet.size()).roundUp(0)-1
+
+    method imageProvider(user) = imageProviderSet.get(self.getIndexFromHealth(user))
+
+    override method update(user, traker){
+        self.imageProvider(user).update(user, traker)
     }
-    override method getImage() = imageProviderSet.get(currentProviderIndex).getImage() 
-    override method durationInTicks() = self.currentImageProvider().durationInTicks() 
-    override method durationInSeconds() = self.currentImageProvider().durationInSeconds()
-    override method durationInAnimationTicks() = self.currentImageProvider().durationInAnimationTicks()
+    override method getImage(user, traker) = self.imageProvider(user).getImage(user, traker) 
+    override method durationInTicks() = null 
 }
 
-object noImageProvider inherits StaticAnimation(image = "sprites/missingTexture.png"){}
+object noImageProvider inherits Sprite(image = "sprites/missingTexture.png"){}

@@ -1,13 +1,12 @@
 import imageProvider.*
 import entity.*
-import assets.zombies.*
 import zombies.zombie.*
 import zombies.zombieBasico.*
 import entityManager.*
 
 class ConeHead inherits Zombie(
     startingHealth = 370,
-    imageProviderSet = new ConeHeadImageProvidersSet(),
+    imageProviderSet = coneHeadImageProvidersSet,
     defaultImageProvider = imageProviderSet.walkingImageProvider(),
     deathHandler = coneHeadDeathHandler,
     actionModule = { caller =>
@@ -21,19 +20,19 @@ class ConeHead inherits Zombie(
     }.apply(self)
 ){}
 
-class ConeHeadImageProvidersSet inherits ZombieImageProviderSet(
+object coneHeadImageProvidersSet inherits ZombieImageProviderSet(
     walkingImageProvider = new HealthBasedImageProvider(
         imageProviderSet = [
-            new ConeHeadWalkingDying(),
-            new ConeHeadWalkingHurt(),
-            new ConeHeadWalkingFH()
+            coneHeadWalkingDying,
+            coneHeadWalkingHurt,
+            coneHeadWalkingFH
         ]
     ),
     eatingImageProvider = new HealthBasedImageProvider(
         imageProviderSet = [
-            new ConeHeadEatingDying(),
-            new ConeHeadEatingHurt(),
-            new ConeHeadEatingFH()
+            coneHeadEatingDying,
+            coneHeadEatingHurt,
+            coneHeadEatingFH
         ]
     ),
     deathAnimation = noImageProvider
@@ -45,7 +44,7 @@ object coneHeadDeathHandler{
         user.health(190)
     }
     method changeUsersImageProviderSet(user){
-        user.imageProviderSet( new BasicZombieImageProvidersSet() )
+        user.imageProviderSet( basicZombieImageProvidersSet )
     }
 
     method apply(user){
@@ -54,3 +53,11 @@ object coneHeadDeathHandler{
         user.deathHandler(defaultZombieDeathHandler)
     }
 }
+
+object coneHeadWalkingDying inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/coneHead/walkingDying"){}
+object coneHeadWalkingHurt inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/coneHead/walkingHurt"){}
+object coneHeadWalkingFH inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/coneHead/walkingFH"){}
+
+object coneHeadEatingDying inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/coneHead/eatingDying"){}
+object coneHeadEatingHurt inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/coneHead/eatingHurt"){}
+object coneHeadEatingFH inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/coneHead/eatingFH"){}

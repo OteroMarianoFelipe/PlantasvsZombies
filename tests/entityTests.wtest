@@ -39,30 +39,26 @@ describe "Mensajes de consulta"{
     }
 }
 describe "Manejo de proveedores de imagen"{
-    const entidadPlana = object inherits Entity(team = "NEUTRAL"){}
+    const proveedorDeEjemplo = new Sprite( image = "" ) 
+    const entidadPlana = object inherits Entity(
+        team = "NEUTRAL",
+        imageHandler = new ImageProviderHandler( imageProvider = proveedorDeEjemplo ),
+        defaultImageProvider = proveedorDeEjemplo
+    ){}
 
     test "Logra cambiar de proveedor de imagen" {
-        const newImgProv = noImageProvider
-        entidadPlana.imageProvider(newImgProv)
-        assert.equals(newImgProv, entidadPlana.imageProvider())
+        entidadPlana.imageProvider(noImageProvider)
+        assert.equals(noImageProvider, entidadPlana.imageProvider())
+    }
+    test "Logra cambiar el proveedor de imagen default"{
+        entidadPlana.defaultImageProvider(noImageProvider)
+        assert.equals(noImageProvider, entidadPlana.defaultImageProvider())
     }
     test "Logra cambiar correctamente al proveedor de imagen default"{
-        entidadPlana.imageProvider(null)
-        entidadPlana.defaultImageProvider(null)
+        entidadPlana.defaultImageProvider(noImageProvider)
         entidadPlana.useDefaultImageProvider()
         assert.equals(entidadPlana.defaultImageProvider(), entidadPlana.imageProvider())
     }
-    test "Logra cambiar el proveedor de imagen default"{
-        entidadPlana.defaultImageProvider(null)
-        assert.equals(null, entidadPlana.defaultImageProvider())
-    }
-
-    test "Logra cambiar de proveedor de image default y cambia al mismo"{
-        entidadPlana.imageProvider(1)
-        entidadPlana.defaultImageProvider(2)
-        entidadPlana.changeAndUseDefaultImageProvider(3)
-        assert.equals(entidadPlana.imageProvider(), entidadPlana.defaultImageProvider())
-    }    
 }
 describe "Entidad viva"{
     const entidadViva = 

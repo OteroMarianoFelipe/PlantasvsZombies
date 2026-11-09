@@ -6,6 +6,7 @@ import util.debugger.*
 
 class Entity{
     var property team
+    const imageHandler = new ImageProviderHandler( imageProvider = defaultImageProvider )
 
     var property animationCallback = {=>}
     var property position = game.at(0,0)
@@ -15,19 +16,16 @@ class Entity{
     method blocksEnemyEntitiesMovement() = false
     method canBeKilled() = false
 
-    var defaultImageProvider = noImageProvider
-    method defaultImageProvider() = defaultImageProvider
+    var property defaultImageProvider = noImageProvider
     method defaultImageProvider(newImageProvider){
         if(newImageProvider != defaultImageProvider){
             defaultImageProvider =  newImageProvider 
         }
     }
 
-    var imageProvider = defaultImageProvider
-    method imageProvider() = imageProvider
+    method imageProvider() =  imageHandler.imageProvider()
     method imageProvider(newImageProvider){
-        imageProvider = newImageProvider
-        return newImageProvider
+        imageHandler.imageProvider(newImageProvider)
     }
 
     method isEnemy(other) = other.team()!=self.team() && other.team()!="NEUTRAL"
@@ -52,23 +50,15 @@ class Entity{
         entitiesMap.updatePosition(self)
         self.previousPosition(self.position())
     }
-   
-    method imageProviderSeamlessly(newImageProvider){
-        newImageProvider.transitionSeamlessly(imageProvider)
-        return self.imageProvider(newImageProvider)
-    }
 
     method animationEnded(){ animationCallback.apply() }
-    method endNonLoopingAnimation() { self.useDefaultImageProvider() }
-    method useDefaultImageProvider(){ imageProvider = defaultImageProvider }
-    method changeAndUseDefaultImageProvider(newImageProvider){
-        self.defaultImageProvider(newImageProvider)
-        self.useDefaultImageProvider()
+    method useDefaultImageProvider(){ 
+        self.imageProvider(defaultImageProvider) 
     }
 
-    method animate() = imageProvider.update(self)
+    method animate() = imageHandler.update(self)
 
-    method image() = imageProvider.getImage()
+    method image() = imageHandler.getImage(self)
 }
 
 mixin Alive{

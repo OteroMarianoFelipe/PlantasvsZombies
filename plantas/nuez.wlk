@@ -1,18 +1,21 @@
 import imageProvider.*
 import planta.*
-import assets.wallNut.*
 
 class Nuez inherits Planta(
     startingHealth = 4000,
-    imageProviderSet =  new WallNutImageProviderSet()
+    imageProviderSet =  wallNutImageProviderSet
 ){}
 
-class WallNutImageProviderSet inherits PlantImageProviderSet(
+object wallNutImageProviderSet inherits PlantImageProviderSet(
     idle = new HealthBasedImageProvider( 
         imageProviderSet=[
-            new WallNutDyingIdle(),
-            new WallNutHurtIdle(),
-            new WallNutIdle()
+            wallNutDying,
+            wallNutHurt,
+            wallNutIdle
         ]
     )
 ){}
+
+object wallNutDying inherits Animation(durationInSeconds = 1, framesInAnimation = 4, animationDirectory = "plants/wallNut/dying"){}
+object wallNutHurt inherits Animation(durationInSeconds = 1, framesInAnimation = 4, animationDirectory = "plants/wallNut/hurt"){}
+object wallNutIdle inherits Animation(durationInSeconds = 1, framesInAnimation = 4, animationDirectory = "plants/wallNut/idle"){}

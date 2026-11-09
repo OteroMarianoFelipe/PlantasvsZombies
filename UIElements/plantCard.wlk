@@ -1,5 +1,4 @@
 import entity.*
-import assets.cards.*
 import player.player
 import plantas.lanzaguisantes.*
 import plantas.girasol.Girasol
@@ -7,6 +6,7 @@ import plantas.nuez.Nuez
 import plantas.snowPea.SnowPea
 import entityManager.*
 import UIElements.sunCounter.sunCounter
+import imageProvider.*
 
 class PlantCard inherits Ticks and Collides and Entity(team = "NEUTRAL", defaultImageProvider =  self.cardUnavailableSprite()){
     const property price
@@ -58,44 +58,40 @@ class PlantCard inherits Ticks and Collides and Entity(team = "NEUTRAL", default
         self.plantBuyCoolDown(true)
         self.imageProvider(self.cardCoolDownAnimation())
     }
-    override method endNonLoopingAnimation(){
-        self.plantBuyCoolDown(false)
-        super()
-    }
 }
 
 object sunFlowerCard inherits PlantCard(
     price = 50,
-    cardSelectedSprite = new SunFlowerCardSelected(),
-    cardAvailableSprite = new SunFlowerCardAvailable(),
-    cardUnavailableSprite = new SunFlowerCardUnavailable(),
-    cardCoolDownAnimation = new SunFlowerCardCoolDown(),
+    cardAvailableSprite = new Sprite( image = "sprites/cards/sunFlower/available.png"),
+    cardUnavailableSprite = new Sprite( image = "sprites/cards/sunFlower/unavailable.png"),
+    cardSelectedSprite = new Sprite( image = "sprites/cards/sunFlower/selected.png"),
+    cardCoolDownAnimation = new Animation(framesInAnimation = 15, durationInSeconds = 7.5, animationDirectory = "cards/sunflower/coolDown"),
     createNewInstance = { => new Girasol() }
 ){}
 
 object peashooterCard inherits PlantCard(
     price = 100,
-    cardSelectedSprite = new PeashooterCardSelected(),
-    cardAvailableSprite = new PeashooterCardAvailable(),
-    cardUnavailableSprite = new PeashooterCardUnavailable(),
-    cardCoolDownAnimation = new PeashooterCardCoolDown(),
+    cardAvailableSprite = new Sprite( image = "sprites/cards/peashooter/available.png"),
+    cardUnavailableSprite = new Sprite( image = "sprites/cards/peashooter/unavailable.png"),
+    cardSelectedSprite = new Sprite( image = "sprites/cards/peashooter/selected.png"),
+    cardCoolDownAnimation = new Animation(framesInAnimation = 15, durationInSeconds = 7.5, animationDirectory = "cards/peashooter/coolDown"),
     createNewInstance = { => new LanzaGuisantes()}
 ){}
 
 object wallNutCard inherits PlantCard(
     price = 50,
-    cardSelectedSprite = new WallNutCardSelected(),
-    cardAvailableSprite = new WallNutCardAvailable(),
-    cardUnavailableSprite = new WallNutCardUnavailable(),
-    cardCoolDownAnimation = new WallNutCardCoolDown(),
+    cardAvailableSprite = new Sprite( image = "sprites/cards/wallNut/available.png"),
+    cardUnavailableSprite = new Sprite( image = "sprites/cards/wallNut/unavailable.png"),
+    cardSelectedSprite = new Sprite( image = "sprites/cards/wallNut/selected.png"),
+    cardCoolDownAnimation = new Animation(framesInAnimation = 15, durationInSeconds = 30, animationDirectory = "cards/wallNut/coolDown"),
     createNewInstance = { => new Nuez()}
 ){}
 
 object snowPeaCard inherits PlantCard(
     price = 175,
-    cardSelectedSprite = new SnowPeaCardSelected(),
-    cardAvailableSprite = new SnowPeaCardAvailable(),
-    cardUnavailableSprite = new SnowPeaCardUnavailable(),
-    cardCoolDownAnimation = new SnowPeaCardCoolDown(),
+    cardAvailableSprite = new Sprite( image = "sprites/cards/snowPea/available.png"),
+    cardUnavailableSprite = new Sprite( image = "sprites/cards/snowPea/unavailable.png"),
+    cardSelectedSprite = new Sprite( image = "sprites/cards/snowPea/selected.png"),
+    cardCoolDownAnimation = new Animation(framesInAnimation = 15, durationInSeconds = 7.5, animationDirectory = "cards/snowPea/coolDown"),
     createNewInstance = { => new SnowPea()}
 ){}

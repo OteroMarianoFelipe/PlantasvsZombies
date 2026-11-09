@@ -1,116 +1,97 @@
 import imageProvider.*
 import util.config.*
 
+object handler inherits ImageProviderHandler( imageProvider = noImageProvider ){
+    method frameNumber(n){
+        frameNumber = n
+    }
+    method ticksInFrame(n){
+        ticksInFrame = n
+    }
+}
+
 describe "Animation"{
     const caller = object{
-        var property endedNonLoopingAnimation = false
-        var property endedAnimation = false
-
-        method endNonLoopingAnimation(){ self.endedNonLoopingAnimation(true) }
-        method animationEnded(){ self.endedAnimation(true) }
+        var endedAnimation = false
+        method endedAnimation() = endedAnimation
+        method animationEnded(){ endedAnimation = true }
     }
-    const loopingAnimation = new Animation(
-        loop = true,
+    const testingAnimation = new Animation(
+        family = "zombieWalking",
         durationInSeconds = 9,
         framesInAnimation = 7,
         animationDirectory = "zombies/basic/walkingFH" 
     )
-    const loopingAnimationSecondStage = new Animation(
-        loop = not loopingAnimation.loop(),
-        durationInSeconds = loopingAnimation.durationInSeconds()-1,
-        framesInAnimation = loopingAnimation.framesInAnimation(),
-        animationDirectory = ""
-    )
-    const nonLoopingAnimation = new Animation(
-        loop = false,
-        durationInSeconds = 3,
-        framesInAnimation = 4,
-        animationDirectory = "cards/peashooter/coolDown" 
-    )
 
-    method setInLastFrame(animation){ animation.animationFrameNumber(animation.framesInAnimation()) }
-
-    method animationTicksPerFrame(animation) = config.secondsToAnimationTicks(loopingAnimation.durationInSeconds())/loopingAnimation.framesInAnimation()
-
-    test "Cambia de frame correctamente dentro del rango"{
-        loopingAnimation.changeFrameIndex(caller)
-        assert.equals(2, loopingAnimation.animationFrameNumber())
-    }
-    test "Cambia de frame a 1 una vez llega al limite"{
-        self.setInLastFrame(loopingAnimation)
-        loopingAnimation.changeFrameIndex(caller)
-        assert.equals(1, loopingAnimation.animationFrameNumber())
-    }
-    test "Envía la señal una vez terminada la animación"{
-        self.setInLastFrame(loopingAnimation)
-        loopingAnimation.changeFrameIndex(caller)
-        assert.that(caller.endedAnimation())
-    }
-    test "Envía la señal una vez termina una animación sin loop"{
-        self.setInLastFrame(nonLoopingAnimation)
-        nonLoopingAnimation.changeFrameIndex(caller)
-        assert.that(caller.endedNonLoopingAnimation())
-    }
+    method setInLastFrame(handler){ handler.frameNumber(handler.imageProvider().framesInAnimation()) }
 
     test "Determina correctamente la cantidad de ticks por frame"{
-        const ticksPerFrame = self.animationTicksPerFrame(loopingAnimation)
-        assert.equals(ticksPerFrame, loopingAnimation.animationTicksPerFrame())
+        const ticksPerFrame = (config.secondsToAnimationTicks(testingAnimation.durationInSeconds())/testingAnimation.framesInAnimation()).truncate(0)
+        assert.equals(ticksPerFrame, testingAnimation.animationTicksPerFrame())
     }
-    //method isTimeToPassFrame() = ticksInAnimationFrame >= animationTicksPerFrame
-    test "Cambia de frame llegado al ultimo tick de un frame"{
-        loopingAnimation.ticksInAnimationFrame(self.animationTicksPerFrame(loopingAnimation))
-        assert.that(loopingAnimation.isTimeToPassFrame())
+
+    test "Identifica el momento de cambiar pasados los ticks necesarios"{
+        handler.ticksInFrame(testingAnimation.animationTicksPerFrame())
+        assert.that(testingAnimation.isTimeToPassFrame(handler))
     }
-    test "No cambia de frame en caso de no llegar al ultimo ticks de un frame"{
-        loopingAnimation.ticksInAnimationFrame(1)
-        assert.that(not loopingAnimation.isTimeToPassFrame())
+
+    test "Identifica que no debe cambiar a falta de los ticks necesarios"{
+        handler.ticksInFrame(1)
+        assert.that(not testingAnimation.isTimeToPassFrame(handler))
     }
+
     test "Cambia correctamente los ticks en frame"{
-        loopingAnimation.ticksInAnimationFrame(1)
-        loopingAnimation.tickUpFrameTime()
-        assert.equals(2, loopingAnimation.ticksInAnimationFrame())
+        handler.imageProvider(testingAnimation)
+        handler.update(caller)
+        assert.equals(2, handler.ticksInFrame())
     }
-    test "Puede transicionar fluidamente a una animación similar"{
-        assert.that(loopingAnimation.canTransitionSeamlessly(loopingAnimationSecondStage))
-    }
-    test "No puede transicionar fluidamente a una transicion diferente"{
-        assert.that(not loopingAnimation.canTransitionSeamlessly(nonLoopingAnimation))
-    }
-    test "Logra transicionar de forma fluida"{
-        loopingAnimation.ticksInAnimationFrame(-1)
-        loopingAnimation.animationFrameNumber(-1)
 
-        loopingAnimation.transitionSeamlessly(loopingAnimationSecondStage)
-
-        assert.that(
-            loopingAnimation.ticksInAnimationFrame() == loopingAnimationSecondStage.ticksInAnimationFrame() &&
-            loopingAnimation.animationFrameNumber() == loopingAnimationSecondStage.animationFrameNumber()
-        )
+    test "Cambia de frame correctamente dentro del rango"{
+        const results = []
+        const expectedResults = (1 .. testingAnimation.animationTicksPerFrame()-1).map({ i=> 1 }) + [2]
+        handler.imageProvider(testingAnimation)
+        (testingAnimation.animationTicksPerFrame()).times({ t =>
+            handler.update(caller)
+            results.add(handler.frameNumber())
+        })
+        assert.equals(expectedResults, results)
+    }
+    test "Cambia al primer frame una vez llegado al final"{
+        handler.imageProvider(testingAnimation)
+        self.setInLastFrame(handler)
+        handler.ticksInFrame(handler.imageProvider().animationTicksPerFrame())
+        handler.update(caller)
+        assert.equals(1, handler.frameNumber())
+    }
+    test "Envía la señal una vez terminada la animación"{
+        handler.imageProvider(testingAnimation)
+        self.setInLastFrame(handler)
+        handler.ticksInFrame(handler.imageProvider().animationTicksPerFrame())
+        handler.update(caller)
+        assert.that(caller.endedAnimation())
     }
 
     test "Devuelve los indices en formato 001 de forma correcta"{
         const resultadosDeReferencia = ["001", "002", "003", "004", "005", "006", "007", "008", "009", "010", "101"]
         const resultadosReales = []
         10.times({ i => 
-            nonLoopingAnimation.animationFrameNumber(i)
-            resultadosReales.add(nonLoopingAnimation.frameNumber001Format())
+            resultadosReales.add(testingAnimation.frameNumber001Format(i))
         })
-        nonLoopingAnimation.animationFrameNumber(101)
-        resultadosReales.add(nonLoopingAnimation.frameNumber001Format())
+        resultadosReales.add(testingAnimation.frameNumber001Format(101))
         assert.equals(resultadosDeReferencia, resultadosReales)
     }
 
     test "Devuelve la dirección correcta a la imagen"{
-        const direcciónEsperada = "animations/cards/peashooter/coolDown/frame_909.png"
-        nonLoopingAnimation.animationFrameNumber(909)
-        assert.equals(direcciónEsperada, nonLoopingAnimation.getImage())
+        const direcciónEsperada = "animations/zombies/basic/walkingFH/frame_909.png"
+        handler.frameNumber(909)
+        assert.equals(direcciónEsperada, testingAnimation.getImage(caller, handler))
     }
 }
 
 describe "Animacion Estatica"{
     test "Devuelve como dirección a la imagen la dirección asignada"{
-        const newImage = new StaticAnimation( image = "Esta es una dirección muy real")
-        assert.equals(newImage.image(), newImage.getImage())
+        const newImage = new Sprite( image = "Esta es una dirección muy real")
+        assert.equals(newImage.image(), newImage.getImage("noUser", "noTraker"))
     }
 }
 
@@ -119,38 +100,31 @@ describe "Proveedor de imagen basado en vida"{
         var property startingHealth = 300
         var property health = 300
 
-        method endNonLoopingAnimation(){}
         method animationEnded(){}
+        method setHealthPercentage(percentage){
+            self.health(self.startingHealth()*percentage)
+        }
     }
 
     const imageProviderSet = [
             new Animation(
-                loop = true,
                 durationInSeconds = 3.14,
                 framesInAnimation = 14.5,
-                animationDirectory = "AlgunaDirecciónInventada" 
+                animationDirectory = "A" 
             ),
             new Animation(
-                loop = false,
                 durationInSeconds = 16000000,
                 framesInAnimation = 324000,
-                animationDirectory = "Alfasdfoaishdnaksjd" 
+                animationDirectory = "B" 
             ),
             new Animation(
-                loop = false,
                 durationInSeconds = 0.1,
                 framesInAnimation = 0.1,
-                animationDirectory = "/gamemode creative" 
+                animationDirectory = "C" 
             )
         ]
 
-    const healthBasedImageProvider = new HealthBasedImageProvider( imageProviderSet=imageProviderSet )
-
-    method testNewHealthPercentage(percentage, user, imageProvider){
-        user.health(user.startingHealth()*percentage)
-        imageProvider.update(user)
-        return imageProvider.currentProviderIndex()
-    }
+    const healthBasedImageProvider = new HealthBasedImageProvider( imageProviderSet = imageProviderSet )
 
     test "Devuelve la duración en ticks de la animación actual"{
         healthBasedImageProvider.currentProviderIndex(0)
@@ -158,22 +132,16 @@ describe "Proveedor de imagen basado en vida"{
     }
 
     test "Devuelve la imagen del proveedor de imagen correcto"{
-        const resultadosEsperados = []
-        const resultadosObtenidos = []
-        imageProviderSet.size().times({ i =>
-            resultadosEsperados.add(imageProviderSet.get(i-1).getImage())
-            healthBasedImageProvider.currentProviderIndex(i-1)
-            resultadosObtenidos.add(healthBasedImageProvider.getImage())
-        })
-        assert.equals(resultadosEsperados, resultadosObtenidos)
-    }
-
-    test "Cambia de indice según la vida de manera correcta"{
-        const resultadosEsperados = [2, 0, 1]
-        const resultadosObtenidos = []
-        resultadosObtenidos.add(self.testNewHealthPercentage(100 /100, caller, healthBasedImageProvider))
-        resultadosObtenidos.add(self.testNewHealthPercentage(33.3/100, caller, healthBasedImageProvider))
-        resultadosObtenidos.add(self.testNewHealthPercentage(66.6/100, caller, healthBasedImageProvider))
+        const resultadosEsperados = 
+            (1 .. imageProviderSet.size()).map({ i =>
+                const proveedorDeImagenEsperado = imageProviderSet.get(imageProviderSet.size()-i)
+                return proveedorDeImagenEsperado.getImage(caller, handler)
+            })
+        const resultadosObtenidos = 
+            (1 .. imageProviderSet.size()).map({ i =>
+                caller.setHealthPercentage(1/i)
+                return healthBasedImageProvider.getImage(caller, handler)
+            })
         assert.equals(resultadosEsperados, resultadosObtenidos)
     }
 }

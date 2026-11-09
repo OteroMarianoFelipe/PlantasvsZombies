@@ -1,7 +1,7 @@
 import proyectiles.projectile.*
 import util.config.*
-import assets.sunFlower.*
 import UIElements.sunCounter.*
+import imageProvider.*
 
 class Sun inherits Projectile(
     defaultImageProvider =  self.getProperAnimation()
@@ -14,9 +14,9 @@ class Sun inherits Projectile(
 
     method getProperAnimation(){
         if(self.isBig()){
-            return new BigSun()
+            return bigSunAnimation
         }else{
-            return new SmallSun()
+            return smallSunAnimation
         }
     }
 
@@ -35,3 +35,5 @@ class Sun inherits Projectile(
     }
     override method handleRemoval(){ self.cleanUp() }
 }
+object bigSunAnimation inherits Animation(durationInSeconds = 0.4, framesInAnimation = 2, animationDirectory = "projectiles/sun/big" ){}
+object smallSunAnimation inherits Animation(durationInSeconds = 0.4, framesInAnimation = 2, animationDirectory = "projectiles/sun/small" ){}

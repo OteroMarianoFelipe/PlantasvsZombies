@@ -1,10 +1,9 @@
 import planta.*
 import entity.*
-import assets.sunFlower.*
 import util.config.*
 import entityManager.*
 import proyectiles.sun.*
-import util.debugger.*
+import imageProvider.*
 
 class Girasol inherits ActiveEntity(
     actionModule = { caller =>
@@ -21,10 +20,13 @@ class Girasol inherits ActiveEntity(
     }.apply(self)
 ) and Planta(
     startingHealth = 300,
-    imageProviderSet = new SunFlowerImageProviderSet()
+    imageProviderSet = sunFlowerImageProviderSet
 ){}
 
-class SunFlowerImageProviderSet inherits PlantImageProviderSet(
-    idle = new SunFlowerIdle(),
-    actionAnticipation = new SunFlowerActive()
+object sunFlowerImageProviderSet inherits PlantImageProviderSet(
+    idle = sunFlowerIdleAnimation,
+    actionAnticipation = sunFlowerActiveAnimation
 ){}
+
+object sunFlowerIdleAnimation inherits Animation(durationInSeconds = 1, framesInAnimation = 9, animationDirectory = "plants/sunFlower/idle"){}
+object sunFlowerActiveAnimation inherits Animation(durationInSeconds = 1, framesInAnimation = 9, animationDirectory = "plants/sunFlower/active"){}

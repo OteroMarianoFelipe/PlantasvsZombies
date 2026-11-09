@@ -1,8 +1,8 @@
 import planta.*
 import entity.*
-import assets.snowPea.*
 import proyectiles.projectile.*
 import proyectiles.pea.*
+import imageProvider.*
 
 class SnowPea inherits ActiveEntity(
     actionModule = { caller =>
@@ -20,10 +20,13 @@ class SnowPea inherits ActiveEntity(
     }.apply(self)
 ) and Planta(
     startingHealth = 300,
-    imageProviderSet = new SnowPeaImageProviderSet()
+    imageProviderSet = snowPeaImageProviderSet
 ){}
 
-class SnowPeaImageProviderSet inherits PlantImageProviderSet(
-    idle = new SnowPeaIdle(),
-    actionAnticipation = new SnowPeaAction()
+object snowPeaImageProviderSet inherits PlantImageProviderSet(
+    idle = snowPeaIdle,
+    actionAnticipation = snowPeaAction
 ){}
+
+object snowPeaIdle inherits Animation(durationInSeconds = 1, framesInAnimation = 8, animationDirectory = "plants/snowPea/idle"){}
+object snowPeaAction inherits Animation(durationInSeconds = 1, framesInAnimation = 4, animationDirectory = "plants/snowPea/active"){}

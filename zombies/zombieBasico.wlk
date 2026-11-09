@@ -1,11 +1,10 @@
 import zombie.*
 import entity.*
-import assets.zombies.*
 import imageProvider.*
 
 class ZombieBasico inherits Zombie(
     startingHealth = 190,
-    imageProviderSet = new BasicZombieImageProvidersSet(),
+    imageProviderSet = basicZombieImageProvidersSet,
     defaultImageProvider = imageProviderSet.walkingImageProvider(),
     deathHandler = defaultZombieDeathHandler,
     actionModule = { caller =>
@@ -19,20 +18,30 @@ class ZombieBasico inherits Zombie(
     }.apply(self)
 ){}
 
-class BasicZombieImageProvidersSet inherits ZombieImageProviderSet(
+object basicZombieImageProvidersSet inherits ZombieImageProviderSet(
     walkingImageProvider = new HealthBasedImageProvider( 
         imageProviderSet=[
-            new ZombieWalkingDying(),
-            new ZombieWalkingHurt(),
-            new ZombieWalkingFH()
+            zombieWalkingDying,
+            zombieWalkingHurt,
+            zombieWalkingFH
         ]
     ),
     eatingImageProvider = new HealthBasedImageProvider(
         imageProviderSet=[
-            new ZombieEatingDying(),
-            new ZombieEatingHurt(),
-            new ZombieEatingFH()
+            zombieEatingDying,
+            zombieEatingHurt,
+            zombieEatingFH
         ]
     ),
-    deathAnimation = new ZombieDeath()
+    deathAnimation = zombieDying
 ){} 
+
+object zombieWalkingDying inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/basic/walkingDying"){}
+object zombieWalkingHurt inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/basic/walkingHurt"){}
+object zombieWalkingFH inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/basic/walkingFH"){}
+
+object zombieEatingDying inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/basic/eatingDying"){}
+object zombieEatingHurt inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/basic/eatingHurt"){}
+object zombieEatingFH inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/basic/eatingFH"){}
+
+object zombieDying inherits Animation(durationInSeconds = 1, framesInAnimation = 9, animationDirectory = "zombies/basic/death"){}
