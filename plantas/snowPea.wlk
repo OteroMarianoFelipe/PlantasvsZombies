@@ -29,4 +29,4 @@ object snowPeaImageProviderSet inherits PlantImageProviderSet(
 ){}
 
 object snowPeaIdle inherits Animation(durationInSeconds = 1, framesInAnimation = 8, animationDirectory = "plants/snowPea/idle"){}
-object snowPeaAction inherits Animation(durationInSeconds = 1, framesInAnimation = 4, animationDirectory = "plants/snowPea/active"){}
+object snowPeaAction inherits Animation(durationInSeconds = 0.5, framesInAnimation = 4, animationDirectory = "plants/snowPea/active"){}

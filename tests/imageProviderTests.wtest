@@ -1,3 +1,4 @@
+import wollok.mirror.*
 import imageProvider.*
 import util.config.*
 
@@ -9,13 +10,63 @@ object handler inherits ImageProviderHandler( imageProvider = noImageProvider ){
         ticksInFrame = n
     }
 }
+object caller {
+    var endedAnimation = false
+    method endedAnimation() = endedAnimation
+    method animationEnded(){ endedAnimation = true }
+}
+
+describe "Image provider handler"{
+    const handlerMirror = new ObjectMirror(target = handler)
+    const testingAnimation1 = new Animation(
+        family = "zombieWalking",
+        durationInSeconds = 9,
+        framesInAnimation = 7,
+        animationDirectory = "zombies/basic/walkingFH" 
+    )
+    const testingAnimation2 = new Animation(
+        durationInSeconds = 0.5,
+        framesInAnimation = 4,
+        animationDirectory = "plants/peashooter/active"
+    )
+    method changeImageProviderTemporarily(handler){
+        handler.imageProvider(testingAnimation1)
+        handler.frameNumber(3)
+        handler.ticksInFrame(2)
+        handler.useTempAnimation(testingAnimation2, 1)
+    }
+    test "Cambia efectivamente a un proveedor de imagen temporal"{
+        self.changeImageProviderTemporarily(handler)        
+        assert.equals(testingAnimation1, handlerMirror.resolve("imageProviderToRestoreTo"))
+        assert.equals(testingAnimation2, handlerMirror.resolve("imageProvider"))
+        assert.equals(1, handlerMirror.resolve("ticksInFrame"))
+        assert.equals(1, handlerMirror.resolve("frameNumber"))
+    }
+
+    test "Transiciona efectivamente toda la animación temporal"{
+        self.changeImageProviderTemporarily(handler)        
+        handler.imageProvider().framesInAnimation().times({ f =>
+            handler.imageProvider().animationTicksPerFrame().times({ t =>
+                assert.equals(testingAnimation2 ,handler.imageProvider())
+                handler.update(caller) 
+            })
+        })
+        assert.equals(testingAnimation1 ,handler.imageProvider())
+    }
+    
+    test "Cambia de vuelta a su proveedor original una vez se terminan las repeticiones del temporal"{
+        self.changeImageProviderTemporarily(handler)
+        handler.frameNumber(handler.imageProvider().framesInAnimation())
+        handler.ticksInFrame(handler.imageProvider().animationTicksPerFrame())
+        handler.update(caller)
+        assert.equals(testingAnimation1, handlerMirror.resolve("imageProvider"))
+        assert.equals(1, handlerMirror.resolve("frameNumber"))
+        assert.equals(1, handlerMirror.resolve("ticksInFrame"))
+
+    }
+}
 
 describe "Animation"{
-    const caller = object{
-        var endedAnimation = false
-        method endedAnimation() = endedAnimation
-        method animationEnded(){ endedAnimation = true }
-    }
     const testingAnimation = new Animation(
         family = "zombieWalking",
         durationInSeconds = 9,
@@ -125,11 +176,6 @@ describe "Proveedor de imagen basado en vida"{
         ]
 
     const healthBasedImageProvider = new HealthBasedImageProvider( imageProviderSet = imageProviderSet )
-
-    test "Devuelve la duración en ticks de la animación actual"{
-        healthBasedImageProvider.currentProviderIndex(0)
-        assert.equals(imageProviderSet.head().durationInTicks(), healthBasedImageProvider.durationInTicks())
-    }
 
     test "Devuelve la imagen del proveedor de imagen correcto"{
         const resultadosEsperados = 

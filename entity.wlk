@@ -6,7 +6,7 @@ import util.debugger.*
 
 class Entity{
     var property team
-    const imageHandler = new ImageProviderHandler( imageProvider = defaultImageProvider )
+    const property imageHandler = new ImageProviderHandler( imageProvider = defaultImageProvider )
 
     var property animationCallback = {=>}
     var property position = game.at(0,0)
@@ -51,7 +51,10 @@ class Entity{
         self.previousPosition(self.position())
     }
 
-    method animationEnded(){ animationCallback.apply() }
+    method animationEnded(){ 
+        animationCallback.apply() 
+        self.animationCallback({=>})
+    }
     method useDefaultImageProvider(){ 
         self.imageProvider(defaultImageProvider) 
     }
@@ -97,9 +100,11 @@ mixin Collides{
 mixin ActiveEntity{
     var property actionModule 
 
-    method imageProvider(newImageProvider)
+    method imageHandler()
 
-    method anticipateBehavior(behaviorImageProvider){ self.imageProvider(behaviorImageProvider) }
+    method anticipateBehavior(behaviorImageProvider){ 
+        self.imageHandler().useTempAnimation(behaviorImageProvider, 1)
+    }
     override method tick(){
         super()
         actionModule.use(self)

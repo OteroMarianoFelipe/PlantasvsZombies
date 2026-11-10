@@ -56,7 +56,8 @@ class PlantCard inherits Ticks and Collides and Entity(team = "NEUTRAL", default
 
     method startCoolDown(){
         self.plantBuyCoolDown(true)
-        self.imageProvider(self.cardCoolDownAnimation())
+        self.animationCallback({ => self.plantBuyCoolDown(false) })
+        self.imageHandler().useTempAnimation(self.cardCoolDownAnimation(), 1)
     }
 }
 

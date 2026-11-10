@@ -1,15 +1,42 @@
 import util.config.*
 
 class ImageProviderHandler{
+    var timesToUseTempAnimation = 0
+    var imageProviderToRestoreTo = noImageProvider
+
+    method noFamily(imgProv) = imgProv.family() == null
+    method sameFamily(imgProv1, imgProv2) = imgProv1.family() == imgProv2.family()
+
     var imageProvider
     method imageProvider() = imageProvider
     method imageProvider(newImageProvider){
-        if(imageProvider != newImageProvider){
-            if(imageProvider.family() != newImageProvider.family() ){
-                frameNumber = 1
-                ticksInFrame = 1
+        if(imageProvider == newImageProvider){return}
+        if(
+            self.noFamily(newImageProvider) || 
+            not self.sameFamily(imageProvider, newImageProvider) 
+        ){
+            frameNumber = 1
+            ticksInFrame = 1
+        }
+        imageProvider = newImageProvider
+        return
+    }
+
+    method useTempAnimation(tempAnimation, times){
+        timesToUseTempAnimation = times
+        imageProviderToRestoreTo = imageProvider
+        self.imageProvider(tempAnimation)
+    }
+    method restoreFromTemporaryAnimation(){
+        self.imageProvider(imageProviderToRestoreTo)
+        imageProviderToRestoreTo = noImageProvider
+    }
+    method checkForTemporaryAnimation(){
+        if (timesToUseTempAnimation > 0){
+            timesToUseTempAnimation-=1
+            if(timesToUseTempAnimation == 0){
+                self.restoreFromTemporaryAnimation()
             }
-            imageProvider = newImageProvider
         }
     }
 
@@ -22,7 +49,10 @@ class ImageProviderHandler{
     method changeFrameNumber(user, newFrameNumber){
         ticksInFrame = 1
         frameNumber = newFrameNumber
-        if(frameNumber == 1){ user.animationEnded() }
+        if(frameNumber == 1){ 
+            self.checkForTemporaryAnimation()
+            user.animationEnded() 
+        }
     }
 
     method update(user){ imageProvider.update(user, self) }
@@ -86,7 +116,7 @@ class HealthBasedImageProvider inherits ImageProvider{
 
     override method update(user, traker){
         self.imageProvider(user).update(user, traker)
-    }
+    }   
     override method getImage(user, traker) = self.imageProvider(user).getImage(user, traker) 
     override method durationInTicks() = null 
 }

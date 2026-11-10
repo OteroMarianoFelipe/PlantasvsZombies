@@ -28,4 +28,4 @@ object peaShooterImageProviderSet inherits PlantImageProviderSet(
 ){}
 
 object peaShooterIdleAnimation inherits Animation( durationInSeconds = 1, framesInAnimation = 8, animationDirectory = "plants/peashooter/idle"){}
-object peaShooterActionAnimation inherits Animation( durationInSeconds = 1, framesInAnimation = 4, animationDirectory = "plants/peashooter/active"){}
+object peaShooterActionAnimation inherits Animation( durationInSeconds = 0.5, framesInAnimation = 4, animationDirectory = "plants/peashooter/active"){}

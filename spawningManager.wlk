@@ -49,12 +49,12 @@ class Spawner{
     }
 }
 class ZombieSpawner inherits Spawner{
-    const allLines = (config.lowerBound().y() .. config.upperBound().y()).map({ i => i }).asList()
-    var linesAvailable = allLines
+    method allLines() = (config.lowerBound().y() .. config.upperBound().y()).map({ i => i }).asList()
+    var linesAvailable = []
 
     method getRandomLine(){
         if(linesAvailable.size() == 0){
-            linesAvailable = allLines
+            linesAvailable = self.allLines()
         }
         const selectedLine = linesAvailable.get(random.numberBetween(0, linesAvailable.size()-1))
         linesAvailable.remove(selectedLine)
@@ -64,7 +64,7 @@ class ZombieSpawner inherits Spawner{
     override method instancePosition() = game.at(config.upperBound().x(), self.getRandomLine())
     override method stopWaves(){
         super()
-        linesAvailable = allLines
+        linesAvailable = []
     }
 }
 
