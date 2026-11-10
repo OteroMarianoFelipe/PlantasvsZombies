@@ -3,17 +3,15 @@ import planta.*
 
 class Nuez inherits Planta(
     startingHealth = 4000,
-    imageProviderSet =  wallNutImageProviderSet
+    defaultImageProvider =  wallNutImageProvider
 ){}
 
-object wallNutImageProviderSet inherits PlantImageProviderSet(
-    idle = new HealthBasedImageProvider( 
-        imageProviderSet=[
-            wallNutDying,
-            wallNutHurt,
-            wallNutIdle
-        ]
-    )
+object wallNutImageProvider inherits HealthBasedImageProvider( 
+    imageProviderSet=[
+        wallNutDying,
+        wallNutHurt,
+        wallNutIdle
+    ]
 ){}
 
 object wallNutDying inherits Animation(durationInSeconds = 1, framesInAnimation = 4, animationDirectory = "plants/wallNut/dying"){}

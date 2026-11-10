@@ -9,8 +9,8 @@ import proyectiles.sun.*
 
 object spawningManager{
     method startSpawning(){
-        basicZombieSpawner.setPeriodicalWaves(5, 3)
-        coneHeadZombieSpawner.setPeriodicalWaves(40, 2)
+        basicZombieSpawner.setPeriodicalWaves(20, 2)
+        coneHeadZombieSpawner.setPeriodicalWaves(40, 1)
         sunSpawner.setPeriodicalWaves(10, 1)
     }
     method stopSpawning(){

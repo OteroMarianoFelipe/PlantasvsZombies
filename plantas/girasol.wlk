@@ -15,17 +15,12 @@ class Girasol inherits ActiveEntity(
                         value = 25
                     ) 
                 },
-            shootingAnticipationAnimation = caller.imageProviderSet().actionAnticipation()
+            shootingAnticipationAnimation = sunFlowerActiveAnimation
         ) and ActionModule{}
     }.apply(self)
 ) and Planta(
     startingHealth = 300,
-    imageProviderSet = sunFlowerImageProviderSet
-){}
-
-object sunFlowerImageProviderSet inherits PlantImageProviderSet(
-    idle = sunFlowerIdleAnimation,
-    actionAnticipation = sunFlowerActiveAnimation
+    defaultImageProvider = sunFlowerIdleAnimation
 ){}
 
 object sunFlowerIdleAnimation inherits Animation(durationInSeconds = 1, framesInAnimation = 9, animationDirectory = "plants/sunFlower/idle"){}

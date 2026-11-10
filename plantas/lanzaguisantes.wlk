@@ -14,17 +14,12 @@ class LanzaGuisantes inherits ActiveEntity(
                     frozen = false
                 )
             },
-            shootingAnticipationAnimation = caller.imageProviderSet().actionAnticipation()
+            shootingAnticipationAnimation = peaShooterActionAnimation
         ) and ActionModule{}
     }.apply(self)
 ) and Planta(
     startingHealth = 300,
-    imageProviderSet = peaShooterImageProviderSet
-){}
-
-object peaShooterImageProviderSet inherits PlantImageProviderSet(
-    idle = peaShooterIdleAnimation,
-    actionAnticipation = peaShooterActionAnimation
+    defaultImageProvider = peaShooterIdleAnimation
 ){}
 
 object peaShooterIdleAnimation inherits Animation( durationInSeconds = 1, framesInAnimation = 8, animationDirectory = "plants/peashooter/idle"){}

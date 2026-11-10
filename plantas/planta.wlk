@@ -9,11 +9,8 @@ import util.debugger.*
 class Planta inherits Alive( 
     deathHandler = { user => user.cleanUp() } 
 ) and Collides and Ticks and Entity(
-    team = "PLANTAS",
-    defaultImageProvider = imageProviderSet.idle()
+    team = "PLANTAS"
 ){
-    var property imageProviderSet
-
     override method blocksPlantPlacement() = true
     override method blocksEnemyEntitiesMovement() = true
 }

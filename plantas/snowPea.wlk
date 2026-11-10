@@ -15,17 +15,12 @@ class SnowPea inherits ActiveEntity(
                     frozen = true
                 )
             },
-            shootingAnticipationAnimation = caller.imageProviderSet().actionAnticipation()
+            shootingAnticipationAnimation = snowPeaAction
         ) and ActionModule{}
     }.apply(self)
 ) and Planta(
     startingHealth = 300,
-    imageProviderSet = snowPeaImageProviderSet
-){}
-
-object snowPeaImageProviderSet inherits PlantImageProviderSet(
-    idle = snowPeaIdle,
-    actionAnticipation = snowPeaAction
+    defaultImageProvider = snowPeaIdle
 ){}
 
 object snowPeaIdle inherits Animation(durationInSeconds = 1, framesInAnimation = 8, animationDirectory = "plants/snowPea/idle"){}
