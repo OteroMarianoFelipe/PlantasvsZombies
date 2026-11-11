@@ -10,17 +10,18 @@ describe "Manejo propio"{
         assert.that(game.hasVisual(entidadPlana) && entidadPlana.position() == game.at(-33, 99))
     }
     test "Logra eliminarse correctamente"{
-        entitiesMap.initializeEntitiesMap()
         entidadPlana.start(game.at(0, 0))
         entidadPlana.cleanUp()
         assert.that(not game.hasVisual(entidadPlana))
     }
     test "Logra cambiar su posición correctamente"{
-        entitiesMap.initializeEntitiesMap()
+        const nuevaPosición = game.at(2, 2)
+        game.addVisual(entidadPlana)
         entidadPlana.position(game.at(3, 3))
-        entitiesMap.add(entidadPlana)
-        entidadPlana.updatePosition(game.at(2, 2))
-        assert.that(entidadPlana.position() == game.at(2, 2) && entitiesMap.allEntitiesAt(game.at(2, 2)).contains(entidadPlana))
+        entidadPlana.position(nuevaPosición)
+        assert.equals(entidadPlana.position(), nuevaPosición)
+        assert.equals([entidadPlana], nuevaPosición.allElements())
+        assert.that(nuevaPosición.allElements().contains(entidadPlana))
     }
 }
 describe "Mensajes de consulta"{

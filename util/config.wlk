@@ -26,7 +26,6 @@ object config {
     self.configurarVisuales()  
     self.configurarControles()
     entityManager.startTicking()
-    entitiesMap.initializeEntitiesMap()
     spawningManager.startSpawning()
   }
 

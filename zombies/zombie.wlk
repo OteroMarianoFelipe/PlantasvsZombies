@@ -5,8 +5,9 @@ import player.*
 import util.config.*
 import imageProvider.*
 
-class Zombie inherits Alive and Collides and ActiveEntity and Ticks and Entity(
-    team = "ZOMBIES"
+class Zombie inherits Alive and ActiveEntity and Ticks and Entity(
+    team = "ZOMBIES",
+    collides = true
 ){
     var property imageProviderSet
     var property frozen = 0
@@ -26,8 +27,8 @@ class Zombie inherits Alive and Collides and ActiveEntity and Ticks and Entity(
   
     method crossedTheYard() = position.x() < config.lowerBound().x()
 
-    override method updatePosition(newPosition){
-        super(newPosition)
+    override method position(newPos){
+        super(newPos)
         if(self.crossedTheYard()){
             config.perderPartida()
         }
@@ -38,7 +39,7 @@ object defaultZombieDeathHandler{
     method apply(user){
         user.animationCallback({ => user.cleanUp()}) 
         user.imageProvider(user.imageProviderSet().deathAnimation())
-        entityManager.removeEntityCollitions(user)
+        user.removeCollision()
     }
 }
 

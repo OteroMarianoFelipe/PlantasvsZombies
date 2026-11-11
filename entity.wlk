@@ -2,15 +2,20 @@ import zombies.zombie.*
 import imageProvider.*
 import entityManager.*
 import behavior.*
-import util.debugger.*
+import util.config.*
 
 class Entity{
     var property team
     const property imageHandler = new ImageProviderHandler( imageProvider = defaultImageProvider )
+    
+    var collides = false
+    method collides() = collides
+
+    method removeCollision(){ collides = false }
+    method restoreCollision(){ collides = true }
 
     var property animationCallback = {=>}
     var property position = game.at(0,0)
-    var property previousPosition = self.position()
 
     method blocksPlantPlacement() = false
     method blocksEnemyEntitiesMovement() = false
@@ -22,6 +27,13 @@ class Entity{
             defaultImageProvider =  newImageProvider 
         }
     }
+
+    method allIntersectingElements() = position.allElements().filter({ e => e != self && e.collides()})
+    method allCollidingEntities() = self.allIntersectingElements().filter({ e => e.collides() })
+    method allEntitiesAtOwnLine() =
+        (config.lowerBound().x() .. config.upperBound().x()).map({ x =>
+        game.at(x, position.y()).allElements()
+        }).flatten()
 
     method imageProvider() =  imageHandler.imageProvider()
     method imageProvider(newImageProvider){
@@ -37,18 +49,8 @@ class Entity{
 
     method beClicked(){}
     method cleanUp(){
-        entityManager.removeEntity(self)
+        entityManager.remove(self)
         game.removeVisual(self)
-    }
-
-    method updatePosition(newPosition){
-        self.previousPosition(position)
-        self.position(newPosition)        
-        self.updateMapPosition()
-    }
-    method updateMapPosition(){
-        entitiesMap.updatePosition(self)
-        self.previousPosition(self.position())
     }
 
     method animationEnded(){ 
@@ -90,13 +92,6 @@ mixin Ticks{
     }
 }
 
-mixin Collides{
-    override method start(pos){
-        super(pos)
-        entitiesMap.add(self)
-    }
-}
-
 mixin ActiveEntity{
     var property actionModule 
 
@@ -119,7 +114,7 @@ class ActionModule{
 
     method use(user){
         if(not stopped){
-            self.act(user, entitiesMap.allIntersectingEntities(user))
+            self.act(user, user.allCollidingEntities())
         }
     }
 
@@ -140,10 +135,7 @@ mixin Shooter {
             anticipationAnimation = shootingAnticipationAnimation
         )
 
-    method hasEnemyInSight(user){
-        const entitiesInLine = entitiesMap.allEntitiesAtLine(user.position().y())
-        return entitiesInLine.any({ entity => user.isEnemy(entity) })
-    }
+    method hasEnemyInSight(user) = user.allEntitiesAtOwnLine().any({ entity => user.isEnemy(entity) })
 
     override method slowDown(factor){
         super(factor)

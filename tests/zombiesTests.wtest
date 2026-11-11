@@ -44,11 +44,10 @@ describe "ZombieBasico"{
     }
 
     test "Cuando un zombie cruza el patio se pierde la partida"{
-        entitiesMap.initializeEntitiesMap()
         const planta = new Nuez()
         planta.start(game.at(3, 2))
 
-        zombie.updatePosition(game.at(config.lowerBound().x()-1, 2))
+        zombie.position(game.at(config.lowerBound().x()-1, 2))
 
         assert.that(game.hasVisual(gameOver))
         assert.notThat(game.hasVisual(planta))

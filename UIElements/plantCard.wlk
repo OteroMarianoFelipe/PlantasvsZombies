@@ -8,7 +8,10 @@ import entityManager.*
 import UIElements.sunCounter.sunCounter
 import imageProvider.*
 
-class PlantCard inherits Ticks and Collides and Entity(team = "NEUTRAL", defaultImageProvider =  self.cardUnavailableSprite()){
+class PlantCard inherits Ticks and Entity(
+    team = "NEUTRAL", 
+    defaultImageProvider =  self.cardUnavailableSprite()
+){
     const property price
     const property createNewInstance
     const property cardAvailableSprite

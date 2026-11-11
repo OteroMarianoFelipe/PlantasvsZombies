@@ -23,7 +23,6 @@ describe "Módulo de acción: zombies"{
     }
 
     test "Un zombie ataca a la planta con la que choca (una vez por segundo)"{
-        entitiesMap.initializeEntitiesMap()
         const planta = new Nuez()
         planta.start(game.at(5, 2))
         const zombie = self.nuevoZombie(game.at(5, 2))
@@ -36,7 +35,6 @@ describe "Módulo de acción: zombies"{
     }
 
     test "Un zombie no avanza mientras tenga una planta en su celda"{
-        entitiesMap.initializeEntitiesMap()
         const planta = new Nuez()
         planta.start(game.at(5, 2))
         const zombie = self.nuevoZombie(game.at(5, 2))
@@ -45,7 +43,6 @@ describe "Módulo de acción: zombies"{
     }
 
     test "Un zombie sin obstáculos avanza hacia la izquierda"{
-        entitiesMap.initializeEntitiesMap()
         const zombie = self.nuevoZombie(game.at(8, 2))
         self.tickear(zombie, 24)
         assert.equals(game.at(7, 2), zombie.position())
@@ -53,7 +50,6 @@ describe "Módulo de acción: zombies"{
     }
 
     test "Un zombie sigue avanzando después de comerse a la planta"{
-        entitiesMap.initializeEntitiesMap()
         const planta = new Girasol()
         planta.start(game.at(8, 2))
         const zombie = self.nuevoZombie(game.at(8, 2))
@@ -72,7 +68,6 @@ describe "Módulo de acción: base"{
     }
 
     test "El módulo le pasa a sus partes las entidades con las que choca, una sola vez por tick"{
-        entitiesMap.initializeEntitiesMap()
         const planta = new Nuez()
         planta.start(game.at(5, 2))
         const zombie = new ZombieBasico()
@@ -88,7 +83,6 @@ describe "Módulo de acción: base"{
     }
     
     test "Un módulo detenido no actúa"{
-        entitiesMap.initializeEntitiesMap()
         const zombie = new ZombieBasico()
         zombie.start(game.at(8, 2))
 
@@ -110,6 +104,14 @@ mixin ParteQueRegistra{
     }
 }
 
+const entity = object {
+        var property collisionHandlerBlock = { otra => }
+        var property collides = true
+        method position() = game.at(5, 2)
+        method collisionHandler(otra){ collisionHandlerBlock.apply(otra) }
+        method allCollidingEntities() = self.position().allElements().filter({e => e != self && e.collides()})
+    }
+
 describe "Módulo de acción: HandlesCollisions"{
 
     method initialize(){
@@ -124,47 +126,38 @@ describe "Módulo de acción: HandlesCollisions"{
     }
 
     test "Le avisa a la entidad con quién chocó"{
-        entitiesMap.initializeEntitiesMap()
         const zombie = self.nuevoZombie(game.at(5, 2))
         const choques = []
-        const entidad = object {
-            method position() = game.at(5, 2)
-            method collisionHandler(otra){ choques.add(otra) }
-        }
+        entity.collisionHandlerBlock({ otra =>
+            choques.add(otra) 
+        })
         const modulo = object inherits HandlesCollisions and ActionModule{}
 
-        modulo.use(entidad)
+        modulo.use(entity)
 
         assert.equals([zombie], choques)
     }
 
     test "Si manejar una colisión detiene el módulo, ignora el resto de las colisiones y de las acciones"{
-        entitiesMap.initializeEntitiesMap()
         self.nuevoZombie(game.at(5, 2))
         self.nuevoZombie(game.at(5, 2))
         const choques = []
         const modulo = object inherits HandlesCollisions and ParteQueRegistra and ActionModule{}
-        const entidad = object {
-            method position() = game.at(5, 2)
-            method collisionHandler(otra){ choques.add(otra) modulo.stop() }
-        }
+        entity.collisionHandlerBlock({ otra =>
+            choques.add(otra) 
+            modulo.stop()
+        })
 
-        modulo.use(entidad)
+        modulo.use(entity)
 
         assert.equals(1, choques.size())
         assert.equals([], modulo.veces())
     }
 
     test "Si no se detiene el módulo, después de manejar las colisiones sigue con el resto de las acciones"{
-        entitiesMap.initializeEntitiesMap()
         self.nuevoZombie(game.at(5, 2))
         const modulo = object inherits HandlesCollisions and ParteQueRegistra and ActionModule{}
-        const entidad = object {
-            method position() = game.at(5, 2)
-            method collisionHandler(otra){}
-        }
-
-        modulo.use(entidad)
+        modulo.use(entity)
 
         assert.equals(["actuó"], modulo.veces())
     }
@@ -186,7 +179,6 @@ describe "Módulo de acción: ralentizar"{
     }
 
     test "Un módulo ralentizado se mueve más lento"{
-        entitiesMap.initializeEntitiesMap()
         const zombie = self.nuevoZombie(game.at(8, 2))
         zombie.actionModule().slowDown(2)
 
@@ -198,7 +190,6 @@ describe "Módulo de acción: ralentizar"{
     }
 
     test "Al restaurar la velocidad el módulo se mueve a su ritmo normal sin perder el tiempo acumulado"{
-        entitiesMap.initializeEntitiesMap()
         const zombie = self.nuevoZombie(game.at(8, 2))
         zombie.actionModule().slowDown(2)
         self.tickear(zombie, 10)
@@ -221,35 +212,30 @@ describe "Módulo de acción: ralentizar"{
     }
 
     test "Un módulo de disparo ralentizado dispara con más tiempo entre disparo y disparo"{
-        entitiesMap.initializeEntitiesMap()
         const disparos = []
         const modulo = self.nuevoModuloDeDisparo(disparos)
-        const entidad = object { method position() = game.at(5, 2) }
 
         modulo.slowDown(2)                                                        // ahora 10 ticks
-        10.times({ i => modulo.use(entidad) })
+        10.times({ i => modulo.use(entity) })
         assert.equals(0, disparos.size())
 
-        modulo.use(entidad)
+        modulo.use(entity)
         assert.equals(1, disparos.size())
     }
 
     test "Al restaurar la velocidad un módulo de disparo vuelve a disparar en su tiempo normal"{
-        entitiesMap.initializeEntitiesMap()
         const disparos = []
         const modulo = self.nuevoModuloDeDisparo(disparos)
-        const entidad = object { method position() = game.at(5, 2) }
 
         modulo.slowDown(2)
-        7.times({ i => modulo.use(entidad) })
+        7.times({ i => modulo.use(entity) })
 
         modulo.restoreSpeed()                                                     // vuelve a 5 ticks: ya se pasó
-        modulo.use(entidad)
+        modulo.use(entity)
         assert.equals(1, disparos.size())
     }
 
     test "Un zombie ralentizado ataca con más tiempo entre ataque y ataque"{
-        entitiesMap.initializeEntitiesMap()
         const planta = new Nuez()
         planta.start(game.at(5, 2))
         const zombie = self.nuevoZombie(game.at(5, 2))
@@ -263,7 +249,6 @@ describe "Módulo de acción: ralentizar"{
     }
 
     test "Al restaurar la velocidad un zombie vuelve a atacar en su tiempo normal"{
-        entitiesMap.initializeEntitiesMap()
         const planta = new Nuez()
         planta.start(game.at(5, 2))
         const zombie = self.nuevoZombie(game.at(5, 2))
@@ -299,7 +284,6 @@ describe "Proyectiles: arvejas"{
     }
 
     test "Una arveja avanza una celda por tick"{
-        entitiesMap.initializeEntitiesMap()
         const arveja = self.nuevaArveja(game.at(3, 2))
         arveja.tick()
         assert.equals(game.at(4, 2), arveja.position())
@@ -307,7 +291,6 @@ describe "Proyectiles: arvejas"{
     }
 
     test "Una arveja que sale del tablero se elimina"{
-        entitiesMap.initializeEntitiesMap()
         const arveja = self.nuevaArveja(game.at(config.width() - 2, 2))
         arveja.tick()
         assert.that(game.hasVisual(arveja))
@@ -316,7 +299,6 @@ describe "Proyectiles: arvejas"{
     }
 
     test "Una arveja daña a un zombie cuando choca con él"{
-        entitiesMap.initializeEntitiesMap()
         const zombie = self.nuevoZombie(game.at(5, 2))
         const arveja = self.nuevaArveja(game.at(4, 2))
         self.tickear(arveja, 2)
@@ -324,7 +306,6 @@ describe "Proyectiles: arvejas"{
     }
 
     test "Después de chocar la arveja deja de actuar: ni avanza ni vuelve a dañar"{
-        entitiesMap.initializeEntitiesMap()
         const zombie = self.nuevoZombie(game.at(5, 2))
         const arveja = self.nuevaArveja(game.at(4, 2))
         self.tickear(arveja, 6)
@@ -333,7 +314,6 @@ describe "Proyectiles: arvejas"{
     }
 
     test "Una arveja solo daña a un zombie aunque haya dos en la misma celda"{
-        entitiesMap.initializeEntitiesMap()
         const zombie1 = self.nuevoZombie(game.at(5, 2))
         const zombie2 = self.nuevoZombie(game.at(5, 2))
         const arveja = self.nuevaArveja(game.at(4, 2))
@@ -343,7 +323,6 @@ describe "Proyectiles: arvejas"{
     }
 
     test "Una arveja no daña a las plantas"{
-        entitiesMap.initializeEntitiesMap()
         const planta = new Nuez()
         planta.start(game.at(5, 2))
         const arveja = self.nuevaArveja(game.at(4, 2))
@@ -369,7 +348,6 @@ describe "Zombies: congelamiento"{
     }
 
     test "Un zombie congelado avanza más lento"{
-        entitiesMap.initializeEntitiesMap()
         const zombie = self.nuevoZombie(game.at(8, 2))
         zombie.freeze()
 
@@ -381,7 +359,6 @@ describe "Zombies: congelamiento"{
     }
 
     test "Cuando termina el congelamiento el zombie vuelve a su velocidad normal"{
-        entitiesMap.initializeEntitiesMap()
         const zombie = self.nuevoZombie(game.at(8, 2))
         zombie.freeze()
 
@@ -394,7 +371,6 @@ describe "Zombies: congelamiento"{
     }
 
     test "Volver a congelar a un zombie ya congelado reinicia el tiempo de congelamiento"{
-        entitiesMap.initializeEntitiesMap()
         const zombie = self.nuevoZombie(game.at(8, 2))
         zombie.freeze()
         self.tickear(zombie, 20)
@@ -405,7 +381,6 @@ describe "Zombies: congelamiento"{
     }
 
     test "Una arveja de hielo congela al zombie que golpea"{
-        entitiesMap.initializeEntitiesMap()
         const zombie = self.nuevoZombie(game.at(5, 2))
         const arveja = new Pea(team = "PLANTAS", damage = 20, frozen = true)
         arveja.start(game.at(4, 2))

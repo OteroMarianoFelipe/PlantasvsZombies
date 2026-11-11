@@ -4,8 +4,12 @@ import zombies.zombieBasico.*
 import plantas.nuez.*
 import UIElements.gameOver.*
 import util.config.*
+import wollok.mirror.*
+
+const entityManagerMirror = new ObjectMirror(target = entityManager)
 
 describe "Perder la partida"{
+
 
     method initialize(){
         game.width(config.width())
@@ -13,7 +17,6 @@ describe "Perder la partida"{
     }
 
     test "Al perder se eliminan las visuales de todas las entidades y se vacía el administrador"{
-        entitiesMap.initializeEntitiesMap()
         const zombie = new ZombieBasico()
         zombie.start(game.at(5, 2))
         const planta = new Nuez()
@@ -23,11 +26,10 @@ describe "Perder la partida"{
 
         assert.notThat(game.hasVisual(zombie))
         assert.notThat(game.hasVisual(planta))
-        assert.equals(0, entityManager.cantidadDeEntidades())
+        assert.equals(0, entityManagerMirror.resolve("entities").size())
     }
 
     test "Al perder aparece la pantalla de game over"{
-        entitiesMap.initializeEntitiesMap()
 
         config.perderPartida()
 
@@ -35,7 +37,6 @@ describe "Perder la partida"{
     }
 
     test "Al perder se frenan los ticks de las entidades y los spawners"{
-        entitiesMap.initializeEntitiesMap()
         entityManager.startTicking()
         spawningManager.startSpawning()
 
@@ -57,8 +58,7 @@ describe "Administrador de entidades: clear"{
         game.height(config.height())
     }
 
-    test "clear vacía el administrador y el mapa de entidades"{
-        entitiesMap.initializeEntitiesMap()
+    test "clear vacía el administrador de entidades"{
         const zombie = new ZombieBasico()
         zombie.start(game.at(5, 2))
         const planta = new Nuez()
@@ -66,13 +66,10 @@ describe "Administrador de entidades: clear"{
 
         entityManager.clear()
 
-        assert.equals(0, entityManager.cantidadDeEntidades())
-        assert.equals([], entitiesMap.allEntitiesAt(game.at(5, 2)))
-        assert.equals([], entitiesMap.allEntitiesAt(game.at(3, 2)))
+        assert.equals(0, entityManagerMirror.resolve("entities").size())
     }
 
     test "clear solo se ocupa de las entidades: no frena los eventos del juego"{
-        entitiesMap.initializeEntitiesMap()
         entityManager.startTicking()
 
         entityManager.clear()

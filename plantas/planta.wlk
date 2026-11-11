@@ -8,8 +8,9 @@ import util.debugger.*
 
 class Planta inherits Alive( 
     deathHandler = { user => user.cleanUp() } 
-) and Collides and Ticks and Entity(
-    team = "PLANTAS"
+) and Ticks and Entity(
+    team = "PLANTAS",
+    collides = true
 ){
     override method blocksPlantPlacement() = true
     override method blocksEnemyEntitiesMovement() = true

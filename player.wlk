@@ -25,7 +25,7 @@ object player {
   }
 
   method clickHandler(pos){
-    const entitiesHere = entitiesMap.allEntitiesAt(pos)
+    const entitiesHere = pos.allElements()
     if( self.cardSelected()!= null){
       if(self.isInBounds(pos) and self.cellIsUnblocked(entitiesHere)){
         self.cardSelected().use(pos)

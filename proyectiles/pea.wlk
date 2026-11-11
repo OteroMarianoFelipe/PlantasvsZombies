@@ -39,7 +39,7 @@ class Pea inherits ActiveEntity(
         self.actionModule().stop()
         animationCallback = { => self.cleanUp()} 
         self.imageProvider(impactAnimation)
-        entitiesMap.remove(self)
+        self.removeCollision()
     }
 }
 

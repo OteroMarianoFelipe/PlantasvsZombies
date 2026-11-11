@@ -39,7 +39,7 @@ class MovingBehavior inherits Behavior{
 
     override method activate(user){
         const newPosition = self.newPosition(user)
-        user.updatePosition(newPosition)
+        user.position(newPosition)
         if(not self.inBounds(user)){
             user.cleanUp()
         }
