@@ -14,8 +14,3 @@ class Planta inherits Alive(
     override method blocksPlantPlacement() = true
     override method blocksEnemyEntitiesMovement() = true
 }
-
-class PlantImageProviderSet{
-    var property idle
-    var property actionAnticipation = idle
-}
