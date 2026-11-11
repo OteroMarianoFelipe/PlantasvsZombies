@@ -1,6 +1,6 @@
 import imageProvider.*
 import entity.*
-import entityManager.*
+import entityTickingManager.*
 
 describe "Manejo propio"{
     const entidadPlana = object inherits Entity(team = "NEUTRAL"){}

@@ -1,5 +1,5 @@
 import wollok.game.*
-import entityManager.*
+import entityTickingManager.*
 import player.*
 import UIElements.plantCard.*
 import UIElements.sunCounter.*
@@ -25,7 +25,7 @@ object config {
   method configuracionGeneral(){
     self.configurarVisuales()  
     self.configurarControles()
-    entityManager.startTicking()
+    entityTickingManager.startTicking()
     spawningManager.startSpawning()
   }
 
@@ -51,7 +51,7 @@ object config {
 
   method perderPartida(){
     game.clear()
-    entityManager.clear()
+    entityTickingManager.clear()
     game.addVisual(gameOver)
   }
 }

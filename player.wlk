@@ -1,9 +1,8 @@
 import juego.*
-import entityManager.*
+import entityTickingManager.*
 import util.config.config
 
 object player {
-  var property position = game.at(2, 3)
   var property cardSelected = null
 
   method deselectCard(){ 

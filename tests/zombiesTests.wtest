@@ -3,7 +3,7 @@ import zombies.zombie.*
 import imageProvider.*
 import entity.*
 import util.config.*
-import entityManager.*
+import entityTickingManager.*
 import plantas.nuez.*
 import UIElements.gameOver.*
 

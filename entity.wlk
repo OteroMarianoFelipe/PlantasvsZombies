@@ -1,6 +1,6 @@
 import zombies.zombie.*
 import imageProvider.*
-import entityManager.*
+import entityTickingManager.*
 import behavior.*
 import util.config.*
 
@@ -49,7 +49,7 @@ class Entity{
 
     method beClicked(){}
     method cleanUp(){
-        entityManager.remove(self)
+        entityTickingManager.remove(self)
         game.removeVisual(self)
     }
 
@@ -88,7 +88,7 @@ mixin Ticks{
 
     override method start(pos){
         super(pos)
-        entityManager.add(self)
+        entityTickingManager.add(self)
     }
 }
 

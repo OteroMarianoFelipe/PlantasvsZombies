@@ -1,11 +1,6 @@
-import zombies.zombie.*
-import zombies.zombieBasico.*
-import zombies.coneHead.*
-import proyectiles.sun.*
-import util.random.*
 import util.config.*
 
-object entityManager{
+object entityTickingManager{
   const entities = []
 
   method startTicking(){
@@ -22,15 +17,8 @@ object entityManager{
     })
   }
 
-  method cantidadDeEntidades() = entities.size()
-
-  method add(entity){
-    entities.add(entity)
-  }  
-
-  method remove(entity){
-    entities.remove(entity)
-  }
+  method add(entity){ entities.add(entity) }
+  method remove(entity){ entities.remove(entity) }
 
   method clear(){
     entities.forEach({ e =>

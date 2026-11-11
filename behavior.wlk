@@ -1,5 +1,5 @@
 import util.config.*
-import entityManager.*
+import entityTickingManager.*
 import imageProvider.*
 
 class Behavior{

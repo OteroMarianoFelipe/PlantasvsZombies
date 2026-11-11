@@ -2,7 +2,7 @@ import imageProvider.*
 import entity.*
 import zombies.zombie.*
 import zombies.zombieBasico.*
-import entityManager.*
+import entityTickingManager.*
 
 class ConeHead inherits Zombie(
     startingHealth = 370,

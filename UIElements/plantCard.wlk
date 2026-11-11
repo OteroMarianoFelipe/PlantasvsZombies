@@ -4,7 +4,7 @@ import plantas.lanzaguisantes.*
 import plantas.girasol.Girasol
 import plantas.nuez.Nuez
 import plantas.snowPea.SnowPea
-import entityManager.*
+import entityTickingManager.*
 import UIElements.sunCounter.sunCounter
 import imageProvider.*
 

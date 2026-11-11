@@ -1,7 +1,7 @@
 import planta.*
 import entity.*
 import util.config.*
-import entityManager.*
+import entityTickingManager.*
 import proyectiles.sun.*
 import imageProvider.*
 

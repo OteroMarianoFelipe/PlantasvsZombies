@@ -1,4 +1,4 @@
-import entityManager.*
+import entityTickingManager.*
 import spawningManager.*
 import zombies.zombieBasico.*
 import plantas.nuez.*
@@ -6,7 +6,7 @@ import UIElements.gameOver.*
 import util.config.*
 import wollok.mirror.*
 
-const entityManagerMirror = new ObjectMirror(target = entityManager)
+const entityTickingManagerMirror = new ObjectMirror(target = entityTickingManager)
 
 describe "Perder la partida"{
 
@@ -26,7 +26,7 @@ describe "Perder la partida"{
 
         assert.notThat(game.hasVisual(zombie))
         assert.notThat(game.hasVisual(planta))
-        assert.equals(0, entityManagerMirror.resolve("entities").size())
+        assert.equals(0, entityTickingManagerMirror.resolve("entities").size())
     }
 
     test "Al perder aparece la pantalla de game over"{
@@ -37,7 +37,7 @@ describe "Perder la partida"{
     }
 
     test "Al perder se frenan los ticks de las entidades y los spawners"{
-        entityManager.startTicking()
+        entityTickingManager.startTicking()
         spawningManager.startSpawning()
 
         config.perderPartida()
@@ -64,15 +64,15 @@ describe "Administrador de entidades: clear"{
         const planta = new Nuez()
         planta.start(game.at(3, 2))
 
-        entityManager.clear()
+        entityTickingManager.clear()
 
-        assert.equals(0, entityManagerMirror.resolve("entities").size())
+        assert.equals(0, entityTickingManagerMirror.resolve("entities").size())
     }
 
     test "clear solo se ocupa de las entidades: no frena los eventos del juego"{
-        entityManager.startTicking()
+        entityTickingManager.startTicking()
 
-        entityManager.clear()
+        entityTickingManager.clear()
 
         assert.that(io.containsTimeEvent("tickEntities"))
         assert.that(io.containsTimeEvent("AnimateEntities"))

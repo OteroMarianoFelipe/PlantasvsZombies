@@ -1,5 +1,5 @@
 import entity.*
-import entityManager.entityManager
+import entityTickingManager.entityTickingManager
 import imageProvider.*
 import proyectiles.projectile.*
 import proyectiles.pea.*

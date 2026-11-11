@@ -1,6 +1,6 @@
 import entity.*
 import plantas.planta.*
-import entityManager.*
+import entityTickingManager.*
 import player.*
 import util.config.*
 import imageProvider.*
