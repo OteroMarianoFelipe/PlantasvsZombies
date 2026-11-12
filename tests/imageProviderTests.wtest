@@ -1,15 +1,11 @@
 import wollok.mirror.*
 import imageProvider.*
+import imageProviderHandler.*
 import util.config.*
 
-object handler inherits ImageProviderHandler( imageProvider = noImageProvider ){
-    method frameNumber(n){
-        frameNumber = n
-    }
-    method ticksInFrame(n){
-        ticksInFrame = n
-    }
-}
+object handler inherits ImageProviderHandler( imageProvider = noImageProvider, user = caller ){}
+object handlerMirror inherits ObjectMirror(target = handler){}
+const tracker = handlerMirror.resolve("imageStateTracker")
 object caller {
     var endedAnimation = false
     method endedAnimation() = endedAnimation
@@ -17,7 +13,6 @@ object caller {
 }
 
 describe "Image provider handler"{
-    const handlerMirror = new ObjectMirror(target = handler)
     const testingAnimation1 = new Animation(
         family = "zombieWalking",
         durationInSeconds = 9,
@@ -31,16 +26,17 @@ describe "Image provider handler"{
     )
     method changeImageProviderTemporarily(handler){
         handler.imageProvider(testingAnimation1)
-        handler.frameNumber(3)
-        handler.ticksInFrame(2)
+        tracker.frameNumber(3)
+        tracker.ticksInFrame(2)
         handler.useTempAnimation(testingAnimation2, 1)
     }
+
     test "Cambia efectivamente a un proveedor de imagen temporal"{
         self.changeImageProviderTemporarily(handler)        
         assert.equals(testingAnimation1, handlerMirror.resolve("imageProviderToRestoreTo"))
         assert.equals(testingAnimation2, handlerMirror.resolve("imageProvider"))
-        assert.equals(1, handlerMirror.resolve("ticksInFrame"))
-        assert.equals(1, handlerMirror.resolve("frameNumber"))
+        assert.equals(1, tracker.ticksInFrame())
+        assert.equals(1, tracker.frameNumber())
     }
 
     test "Transiciona efectivamente toda la animación temporal"{
@@ -48,7 +44,7 @@ describe "Image provider handler"{
         handler.imageProvider().framesInAnimation().times({ f =>
             handler.imageProvider().animationTicksPerFrame().times({ t =>
                 assert.equals(testingAnimation2 ,handler.imageProvider())
-                handler.update(caller) 
+                handler.update() 
             })
         })
         assert.equals(testingAnimation1 ,handler.imageProvider())
@@ -56,12 +52,12 @@ describe "Image provider handler"{
     
     test "Cambia de vuelta a su proveedor original una vez se terminan las repeticiones del temporal"{
         self.changeImageProviderTemporarily(handler)
-        handler.frameNumber(handler.imageProvider().framesInAnimation())
-        handler.ticksInFrame(handler.imageProvider().animationTicksPerFrame())
-        handler.update(caller)
+        tracker.frameNumber(handler.imageProvider().framesInAnimation())
+        tracker.ticksInFrame(handler.imageProvider().animationTicksPerFrame())
+        handler.update()
         assert.equals(testingAnimation1, handlerMirror.resolve("imageProvider"))
-        assert.equals(1, handlerMirror.resolve("frameNumber"))
-        assert.equals(1, handlerMirror.resolve("ticksInFrame"))
+        assert.equals(1, tracker.frameNumber())
+        assert.equals(1, tracker.ticksInFrame())
 
     }
 }
@@ -74,7 +70,7 @@ describe "Animation"{
         animationDirectory = "zombies/basic/walkingFH" 
     )
 
-    method setInLastFrame(handler){ handler.frameNumber(handler.imageProvider().framesInAnimation()) }
+    method setInLastFrame(tracker){ tracker.frameNumber(handler.imageProvider().framesInAnimation()) }
 
     test "Determina correctamente la cantidad de ticks por frame"{
         const ticksPerFrame = (config.secondsToAnimationTicks(testingAnimation.durationInSeconds())/testingAnimation.framesInAnimation()).truncate(0)
@@ -82,19 +78,19 @@ describe "Animation"{
     }
 
     test "Identifica el momento de cambiar pasados los ticks necesarios"{
-        handler.ticksInFrame(testingAnimation.animationTicksPerFrame())
-        assert.that(testingAnimation.isTimeToPassFrame(handler))
+        tracker.ticksInFrame(testingAnimation.animationTicksPerFrame())
+        assert.that(testingAnimation.isTimeToPassFrame(tracker))
     }
 
     test "Identifica que no debe cambiar a falta de los ticks necesarios"{
-        handler.ticksInFrame(1)
-        assert.that(not testingAnimation.isTimeToPassFrame(handler))
+        tracker.ticksInFrame(1)
+        assert.that(not testingAnimation.isTimeToPassFrame(tracker))
     }
 
     test "Cambia correctamente los ticks en frame"{
         handler.imageProvider(testingAnimation)
-        handler.update(caller)
-        assert.equals(2, handler.ticksInFrame())
+        handler.update()
+        assert.equals(2, tracker.ticksInFrame())
     }
 
     test "Cambia de frame correctamente dentro del rango"{
@@ -102,23 +98,23 @@ describe "Animation"{
         const expectedResults = (1 .. testingAnimation.animationTicksPerFrame()-1).map({ i=> 1 }) + [2]
         handler.imageProvider(testingAnimation)
         (testingAnimation.animationTicksPerFrame()).times({ t =>
-            handler.update(caller)
-            results.add(handler.frameNumber())
+            handler.update()
+            results.add(tracker.frameNumber())
         })
         assert.equals(expectedResults, results)
     }
     test "Cambia al primer frame una vez llegado al final"{
         handler.imageProvider(testingAnimation)
-        self.setInLastFrame(handler)
-        handler.ticksInFrame(handler.imageProvider().animationTicksPerFrame())
-        handler.update(caller)
-        assert.equals(1, handler.frameNumber())
+        self.setInLastFrame(tracker)
+        tracker.ticksInFrame(handler.imageProvider().animationTicksPerFrame())
+        handler.update()
+        assert.equals(1, tracker.frameNumber())
     }
     test "Envía la señal una vez terminada la animación"{
         handler.imageProvider(testingAnimation)
-        self.setInLastFrame(handler)
-        handler.ticksInFrame(handler.imageProvider().animationTicksPerFrame())
-        handler.update(caller)
+        self.setInLastFrame(tracker)
+        tracker.ticksInFrame(handler.imageProvider().animationTicksPerFrame())
+        handler.update()
         assert.that(caller.endedAnimation())
     }
 
@@ -134,8 +130,8 @@ describe "Animation"{
 
     test "Devuelve la dirección correcta a la imagen"{
         const direcciónEsperada = "animations/zombies/basic/walkingFH/frame_909.png"
-        handler.frameNumber(909)
-        assert.equals(direcciónEsperada, testingAnimation.getImage(caller, handler))
+        tracker.frameNumber(909)
+        assert.equals(direcciónEsperada, testingAnimation.getImage(caller, tracker))
     }
 }
 
@@ -181,12 +177,12 @@ describe "Proveedor de imagen basado en vida"{
         const resultadosEsperados = 
             (1 .. imageProviderSet.size()).map({ i =>
                 const proveedorDeImagenEsperado = imageProviderSet.get(imageProviderSet.size()-i)
-                return proveedorDeImagenEsperado.getImage(caller, handler)
+                return proveedorDeImagenEsperado.getImage(caller, tracker)
             })
         const resultadosObtenidos = 
             (1 .. imageProviderSet.size()).map({ i =>
                 caller.setHealthPercentage(1/i)
-                return healthBasedImageProvider.getImage(caller, handler)
+                return healthBasedImageProvider.getImage(caller, tracker)
             })
         assert.equals(resultadosEsperados, resultadosObtenidos)
     }

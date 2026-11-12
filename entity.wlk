@@ -1,5 +1,6 @@
 import zombies.zombie.*
 import imageProvider.*
+import imageProviderHandler.*
 import entityTickingManager.*
 import behavior.*
 import util.config.*
@@ -7,7 +8,7 @@ import team.*
 
 class Entity{
     var property team = neutralTeam
-    const property imageHandler = new ImageProviderHandler( imageProvider = defaultImageProvider )
+    const property imageHandler = new ImageProviderHandler( user = self, imageProvider = defaultImageProvider )
     
     var collides = false
     method collides() = collides
@@ -62,9 +63,9 @@ class Entity{
         self.imageProvider(defaultImageProvider) 
     }
 
-    method animate() = imageHandler.update(self)
+    method animate() = imageHandler.update()
 
-    method image() = imageHandler.getImage(self)
+    method image() = imageHandler.getImage()
 }
 
 mixin Alive{

@@ -1,4 +1,5 @@
 import imageProvider.*
+import imageProviderHandler.*
 import entity.*
 import entityTickingManager.*
 import team.*
@@ -43,7 +44,11 @@ describe "Mensajes de consulta"{
 describe "Manejo de proveedores de imagen"{
     const proveedorDeEjemplo = new Sprite( image = "" ) 
     const entidadPlana = object inherits Entity(
-        imageHandler = new ImageProviderHandler( imageProvider = proveedorDeEjemplo ),
+        imageHandler = 
+            new ImageProviderHandler(
+                imageProvider = proveedorDeEjemplo,
+                user = self 
+            ),
         defaultImageProvider = proveedorDeEjemplo
     ){}
 
