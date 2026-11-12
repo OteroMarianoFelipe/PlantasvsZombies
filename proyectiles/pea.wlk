@@ -2,6 +2,7 @@ import entity.*
 import imageProvider.*
 import proyectiles.projectile.*
 import entityTickingManager.*
+import actionModule.*
 
 class Pea inherits Active(
     actionModule =

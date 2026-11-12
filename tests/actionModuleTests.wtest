@@ -7,6 +7,7 @@ import plantas.girasol.*
 import proyectiles.pea.*
 import util.config.*
 import team.*
+import actionModule.*
 
 describe "Módulo de acción: zombies"{
 
@@ -29,10 +30,10 @@ describe "Módulo de acción: zombies"{
         const zombie = self.nuevoZombie(game.at(5, 2))
 
         self.tickear(zombie, 5)
-        assert.equals(planta.startingHealth(), planta.health())
+        assert.equals(planta.maxHealth(), planta.health())
 
         self.tickear(zombie, 1)
-        assert.equals(planta.startingHealth() - 100, planta.health())
+        assert.equals(planta.maxHealth() - 100, planta.health())
     }
 
     test "Un zombie no avanza mientras tenga una planta en su celda"{
@@ -243,10 +244,10 @@ describe "Módulo de acción: ralentizar"{
 
         zombie.actionModule().slowDown(2)                                         // ahora 2 segundos entre ataques
         self.tickear(zombie, 10)
-        assert.equals(planta.startingHealth(), planta.health())
+        assert.equals(planta.maxHealth(), planta.health())
 
         self.tickear(zombie, 1)
-        assert.equals(planta.startingHealth() - 100, planta.health())
+        assert.equals(planta.maxHealth() - 100, planta.health())
     }
 
     test "Al restaurar la velocidad un zombie vuelve a atacar en su tiempo normal"{
@@ -259,7 +260,7 @@ describe "Módulo de acción: ralentizar"{
 
         zombie.actionModule().restoreSpeed()                                      // vuelve a 1 segundo: ya se pasó
         self.tickear(zombie, 1)
-        assert.equals(planta.startingHealth() - 100, planta.health())
+        assert.equals(planta.maxHealth() - 100, planta.health())
     }
 }
 
@@ -303,7 +304,7 @@ describe "Proyectiles: arvejas"{
         const zombie = self.nuevoZombie(game.at(5, 2))
         const arveja = self.nuevaArveja(game.at(4, 2))
         self.tickear(arveja, 2)
-        assert.equals(zombie.startingHealth() - 20, zombie.health())
+        assert.equals(zombie.maxHealth() - 20, zombie.health())
     }
 
     test "Después de chocar la arveja deja de actuar: ni avanza ni vuelve a dañar"{
@@ -311,7 +312,7 @@ describe "Proyectiles: arvejas"{
         const arveja = self.nuevaArveja(game.at(4, 2))
         self.tickear(arveja, 6)
         assert.equals(game.at(5, 2), arveja.position())
-        assert.equals(zombie.startingHealth() - 20, zombie.health())
+        assert.equals(zombie.maxHealth() - 20, zombie.health())
     }
 
     test "Una arveja solo daña a un zombie aunque haya dos en la misma celda"{
@@ -319,7 +320,7 @@ describe "Proyectiles: arvejas"{
         const zombie2 = self.nuevoZombie(game.at(5, 2))
         const arveja = self.nuevaArveja(game.at(4, 2))
         self.tickear(arveja, 3)
-        const danioTotal = (zombie1.startingHealth() - zombie1.health()) + (zombie2.startingHealth() - zombie2.health())
+        const danioTotal = (zombie1.maxHealth() - zombie1.health()) + (zombie2.maxHealth() - zombie2.health())
         assert.equals(20, danioTotal)
     }
 
@@ -328,7 +329,7 @@ describe "Proyectiles: arvejas"{
         planta.start(game.at(5, 2))
         const arveja = self.nuevaArveja(game.at(4, 2))
         self.tickear(arveja, 3)
-        assert.equals(planta.startingHealth(), planta.health())
+        assert.equals(planta.maxHealth(), planta.health())
     }
 }
 

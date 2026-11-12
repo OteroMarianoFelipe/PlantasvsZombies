@@ -54,7 +54,7 @@ class Animation inherits ImageProvider{
 class HealthBasedImageProvider inherits ImageProvider{
     const imageProviderSet    
 
-    method getIndexFromHealth(user) = (user.health()/user.startingHealth()*imageProviderSet.size()).roundUp(0)-1
+    method getIndexFromHealth(user) = (user.health()/user.maxHealth()*imageProviderSet.size()).roundUp(0)-1
 
     method imageProvider(user) = imageProviderSet.get(self.getIndexFromHealth(user))
 

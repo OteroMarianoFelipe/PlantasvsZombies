@@ -4,6 +4,7 @@ import util.config.*
 import entityTickingManager.*
 import proyectiles.sun.*
 import imageProvider.*
+import actionModule.*
 
 class Girasol inherits Active(
     actionModule = { caller =>
@@ -19,7 +20,7 @@ class Girasol inherits Active(
         ) and ActionModule{}
     }.apply(self)
 ) and Planta(
-    startingHealth = 300,
+    maxHealth = 300,
     defaultImageProvider = sunFlowerIdleAnimation
 ){}
 

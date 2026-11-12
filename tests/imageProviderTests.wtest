@@ -144,12 +144,12 @@ describe "Animacion Estatica"{
 
 describe "Proveedor de imagen basado en vida"{
     const caller = object{
-        var property startingHealth = 300
+        var property maxHealth = 300
         var property health = 300
 
         method animationEnded(){}
         method setHealthPercentage(percentage){
-            self.health(self.startingHealth()*percentage)
+            self.health(self.maxHealth()*percentage)
         }
     }
 

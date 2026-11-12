@@ -3,9 +3,10 @@ import entity.*
 import zombies.zombie.*
 import zombies.zombieBasico.*
 import entityTickingManager.*
+import actionModule.*
 
 class ConeHead inherits Zombie(
-    startingHealth = 370,
+    maxHealth = 370,
     imageProviderSet = coneHeadImageProvidersSet,
     defaultImageProvider = imageProviderSet.walkingImageProvider(),
     deathHandler = coneHeadDeathHandler,
@@ -40,7 +41,7 @@ object coneHeadImageProvidersSet inherits ZombieImageProviderSet(
 
 object coneHeadDeathHandler{
     method changeUsersHealth(user){
-        user.startingHealth(190)
+        user.maxHealth(190)
         user.health(190)
     }
     method changeUsersImageProviderSet(user){

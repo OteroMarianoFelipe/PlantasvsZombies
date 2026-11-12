@@ -1,9 +1,10 @@
 import zombie.*
 import entity.*
 import imageProvider.*
+import actionModule.*
 
 class ZombieBasico inherits Zombie(
-    startingHealth = 190,
+    maxHealth = 190,
     imageProviderSet = basicZombieImageProvidersSet,
     defaultImageProvider = imageProviderSet.walkingImageProvider(),
     deathHandler = defaultZombieDeathHandler,

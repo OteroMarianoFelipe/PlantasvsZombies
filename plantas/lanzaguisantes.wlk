@@ -2,6 +2,7 @@ import planta.*
 import entity.*
 import proyectiles.pea.*
 import imageProvider.*
+import actionModule.*
 
 class LanzaGuisantes inherits Active(
     actionModule = {caller => 
@@ -18,7 +19,7 @@ class LanzaGuisantes inherits Active(
         ) and ActionModule{}
     }.apply(self)
 ) and Planta(
-    startingHealth = 300,
+    maxHealth = 300,
     defaultImageProvider = peaShooterIdleAnimation
 ){}
 

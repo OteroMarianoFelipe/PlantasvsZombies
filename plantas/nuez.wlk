@@ -2,7 +2,7 @@ import imageProvider.*
 import planta.*
 
 class Nuez inherits Planta(
-    startingHealth = 4000,
+    maxHealth = 4000,
     defaultImageProvider =  wallNutImageProvider
 ){}
 
