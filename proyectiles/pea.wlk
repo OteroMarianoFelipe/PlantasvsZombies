@@ -3,7 +3,7 @@ import imageProvider.*
 import proyectiles.projectile.*
 import entityTickingManager.*
 
-class Pea inherits ActiveEntity(
+class Pea inherits Active(
     actionModule =
         object inherits HandlesCollisions and Mobile(
             cellsPerSecond = 10,

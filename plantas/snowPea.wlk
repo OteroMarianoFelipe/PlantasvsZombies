@@ -4,7 +4,7 @@ import proyectiles.projectile.*
 import proyectiles.pea.*
 import imageProvider.*
 
-class SnowPea inherits ActiveEntity(
+class SnowPea inherits Active(
     actionModule = { caller =>
         object inherits ConditionedShooter(
             shotsPerSecond = 2/3,     

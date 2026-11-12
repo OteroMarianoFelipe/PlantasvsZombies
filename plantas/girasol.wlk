@@ -5,7 +5,7 @@ import entityTickingManager.*
 import proyectiles.sun.*
 import imageProvider.*
 
-class Girasol inherits ActiveEntity(
+class Girasol inherits Active(
     actionModule = { caller =>
         object inherits UnconditionalShooter(
             shotsPerSecond = 1/24.25,

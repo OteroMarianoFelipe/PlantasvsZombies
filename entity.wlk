@@ -94,7 +94,7 @@ mixin Ticks{
     }
 }
 
-mixin ActiveEntity{
+mixin Active{
     var property actionModule 
 
     method imageHandler()

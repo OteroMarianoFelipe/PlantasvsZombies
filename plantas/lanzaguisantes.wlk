@@ -3,7 +3,7 @@ import entity.*
 import proyectiles.pea.*
 import imageProvider.*
 
-class LanzaGuisantes inherits ActiveEntity(
+class LanzaGuisantes inherits Active(
     actionModule = {caller => 
         object inherits ConditionedShooter(
             shotsPerSecond = 2/3,     
