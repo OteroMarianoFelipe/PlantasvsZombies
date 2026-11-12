@@ -51,7 +51,6 @@ class Entity{
 
     method beClicked(){}
     method cleanUp(){
-        entityTickingManager.remove(self)
         game.removeVisual(self)
     }
 
@@ -68,23 +67,6 @@ class Entity{
     method image() = imageHandler.getImage()
 }
 
-mixin Alive{
-    var property maxHealth
-    var property health = maxHealth
-
-    var property deathHandler
-
-    override method canBeKilled() = true
-
-    method lives() = health > 0
-    method takeDamage(damage) {
-        health = 0.max(health - damage)
-        if(not self.lives()){
-            deathHandler.apply(self)
-        }
-    }
-}
-
 mixin Ticks{
     method tick(){}
 
@@ -92,6 +74,11 @@ mixin Ticks{
         super(pos)
         entityTickingManager.add(self)
     }
+    override method cleanUp(){
+        entityTickingManager.remove(self)
+        super()
+    }
+
 }
 
 mixin Active{
@@ -106,4 +93,24 @@ mixin Active{
         super()
         actionModule.use(self)
     }
+}
+
+mixin Alive{
+    var property maxHealth
+    var property deathHandler
+
+    var property health = maxHealth
+    method health(newHealth){
+        health = newHealth
+        if(not self.lives()){
+            deathHandler.apply(self)
+        }
+    }
+
+    method healthPercentage() = health/maxHealth
+
+    override method canBeKilled() = true
+
+    method lives() = health > 0
+    method takeDamage(damage) { self.health(health-damage) }
 }
