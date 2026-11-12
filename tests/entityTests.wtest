@@ -1,9 +1,10 @@
 import imageProvider.*
 import entity.*
 import entityTickingManager.*
+import team.*
 
 describe "Manejo propio"{
-    const entidadPlana = object inherits Entity(team = "NEUTRAL"){}
+    const entidadPlana = object inherits Entity{}
 
     test "Logra iniciar correctamente"{
         entidadPlana.start(game.at(-33, 99))
@@ -25,15 +26,15 @@ describe "Manejo propio"{
     }
 }
 describe "Mensajes de consulta"{
-    const entidadPlana = object inherits Entity(team = "NEUTRAL"){}
+    const entidadPlana = object inherits Entity{}
     test "Logra determinar correctamente si una entidad es o no enemiga"{
-        const resultadosEsperados = [false, true, false, true, false, false, true, true, false]
+        const resultadosEsperados = [false, true, false, true, false, false, false, false, false]
         const resultadosObtenidos = []
-        const equiposAProbar=["PLANTAS", "ZOMBIES", "NEUTRAL"]
+        const equiposAProbar=[plantsTeam, zombiesTeam, neutralTeam]
         equiposAProbar.forEach({ i =>
             entidadPlana.team(i)
-            equiposAProbar.forEach({ j =>
-                resultadosObtenidos.add(entidadPlana.isEnemy(new Entity(team = j)))
+            equiposAProbar.forEach({ t =>
+                resultadosObtenidos.add(entidadPlana.isEnemy(new Entity(team = t)))
             })
         })
         assert.equals(resultadosEsperados, resultadosObtenidos)
@@ -42,7 +43,6 @@ describe "Mensajes de consulta"{
 describe "Manejo de proveedores de imagen"{
     const proveedorDeEjemplo = new Sprite( image = "" ) 
     const entidadPlana = object inherits Entity(
-        team = "NEUTRAL",
         imageHandler = new ImageProviderHandler( imageProvider = proveedorDeEjemplo ),
         defaultImageProvider = proveedorDeEjemplo
     ){}
@@ -66,9 +66,7 @@ describe "Entidad viva"{
         object inherits Alive(
             deathHandler = { user => user.dead(true) },
             startingHealth = 200
-        ) and Entity(
-            team = "NEUTRAL"
-        ){ var property dead = false }
+        ) and Entity{ var property dead = false }
 
     test "Recibe la cantidad correcta de daño"{
         entidadViva.health(200)

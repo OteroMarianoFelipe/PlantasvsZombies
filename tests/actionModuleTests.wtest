@@ -6,6 +6,7 @@ import plantas.nuez.*
 import plantas.girasol.*
 import proyectiles.pea.*
 import util.config.*
+import team.*
 
 describe "Módulo de acción: zombies"{
 
@@ -272,7 +273,7 @@ describe "Proyectiles: arvejas"{
     method tickear(entidad, veces){ veces.times({ i => entidad.tick() }) }
 
     method nuevaArveja(pos){
-        const arveja = new Pea(team = "PLANTAS", damage = 20, frozen = false)
+        const arveja = new Pea(team = plantsTeam, damage = 20, frozen = false)
         arveja.start(pos)
         return arveja
     }
@@ -382,7 +383,7 @@ describe "Zombies: congelamiento"{
 
     test "Una arveja de hielo congela al zombie que golpea"{
         const zombie = self.nuevoZombie(game.at(5, 2))
-        const arveja = new Pea(team = "PLANTAS", damage = 20, frozen = true)
+        const arveja = new Pea(team = plantsTeam, damage = 20, frozen = true)
         arveja.start(game.at(4, 2))
 
         self.tickear(arveja, 2)

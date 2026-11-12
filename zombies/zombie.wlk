@@ -4,9 +4,10 @@ import entityTickingManager.*
 import player.*
 import util.config.*
 import imageProvider.*
+import team.*
 
 class Zombie inherits Alive and ActiveEntity and Ticks and Entity(
-    team = "ZOMBIES",
+    team = zombiesTeam,
     collides = true
 ){
     var property imageProviderSet

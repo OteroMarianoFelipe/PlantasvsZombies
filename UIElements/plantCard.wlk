@@ -9,7 +9,6 @@ import UIElements.sunCounter.sunCounter
 import imageProvider.*
 
 class PlantCard inherits Ticks and Entity(
-    team = "NEUTRAL", 
     defaultImageProvider =  self.cardUnavailableSprite()
 ){
     const property price

@@ -3,9 +3,10 @@ import imageProvider.*
 import entityTickingManager.*
 import behavior.*
 import util.config.*
+import team.*
 
 class Entity{
-    var property team
+    var property team = neutralTeam
     const property imageHandler = new ImageProviderHandler( imageProvider = defaultImageProvider )
     
     var collides = false
@@ -40,7 +41,7 @@ class Entity{
         imageHandler.imageProvider(newImageProvider)
     }
 
-    method isEnemy(other) = other.team()!=self.team() && other.team()!="NEUTRAL"
+    method isEnemy(other) = team.isEnemy(other)
 
     method start(pos){
         self.position(pos)

@@ -6,6 +6,7 @@ import util.random.*
 import imageProvider.*
 import entity.*
 import proyectiles.sun.*
+import team.*
 
 object spawningManager{
     method startSpawning(){
@@ -97,6 +98,6 @@ object sunSpawner inherits Spawner(
     override method newInstance() = 
         new Sun(
             value = 25,
-            team="PLANTAS"
+            team=plantsTeam
         )
 }
