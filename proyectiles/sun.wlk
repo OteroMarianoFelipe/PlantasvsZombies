@@ -28,7 +28,6 @@ class Sun inherits Projectile(
         }
     }
 
-    override method collisionHandler(entity){}
     override method beClicked(){
         sunCounter.addSuns(self.value())
         self.handleRemoval()

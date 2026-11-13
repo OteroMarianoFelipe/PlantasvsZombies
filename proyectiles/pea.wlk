@@ -5,7 +5,13 @@ import entityTickingManager.*
 import actionModule.*
 import behavior.*
 
-class Pea inherits Active(
+class Pea inherits HandlesCollisions(
+    collitionHandler = { entity =>
+        if( self.isEnemy(entity) ) { 
+            state.apply(entity, self)
+        }
+    } 
+) and Active(
     actionModule = 
         new ActionModule(
             behaviors = #{
@@ -18,36 +24,39 @@ class Pea inherits Active(
             }
         )
 ) and Projectile(
-    defaultImageProvider = peaShotAnimation
+    defaultImageProvider = state.imageProvider()
 ){
     var property damage
-    var property frozen
-
-    var property objective = null
-    var property action = { => objective.takeDamage(damage)}
-    var property impactAnimation = peaShotImpactAnimation
-
-    override method collisionHandler(entity){
-        if( self.isEnemy(entity) ) { 
-            self.objective(entity)
-            action.apply()
-            self.handleRemoval()
-        }
+    var property state = noEffect
+    method state(newState){
+        state = newState
+        self.imageProvider(state.imageProvider())
     }
-    override method start(pos){
-        super(pos)
-        if(frozen){
-            action = { => objective.takeDamage(damage) objective.freeze() }
-            self.defaultImageProvider(frozenPeaAnimation)
-            self.useDefaultImageProvider()
-            impactAnimation = frozenPeaImpactAnimation
-        }
-    }
+
     override method handleRemoval(){
         self.actionModule().stop()
         animationCallback = { => self.cleanUp()} 
-        self.imageProvider(impactAnimation)
+        self.imageProvider(state.impactImageProvider())
         self.removeCollision()
+    }
+}
+
+object frozenState{
+    method imageProvider() = frozenPeaAnimation
+    method impactImageProvider() = frozenPeaImpactAnimation
+
+    method apply(entity, user){
+        entity.takeDamage(user.damage())
+        user.handleRemoval()
+    }
+}
+object noEffect{
+    method imageProvider() = peaShotAnimation
+    method impactImageProvider() = peaShotImpactAnimation
+
+    method apply(entity, user){
+        entity.takeDamage(user.damage())
+        user.handleRemoval()
     }
 }
 

@@ -116,3 +116,25 @@ mixin Alive{
     method lives() = health > 0
     method takeDamage(damage) { self.health(health-damage) }
 }
+
+mixin HandlesCollisions inherits Ticks{
+    var property collitionHandler
+
+    method allCollidingEntities()
+
+    override method position(newPosition){
+        super(newPosition)
+        self.handleCollitions()
+    }
+
+    override method tick(){
+        self.handleCollitions()
+        super()
+    }
+
+    method handleCollitions(){
+        self.allCollidingEntities().forEach({ e =>
+            collitionHandler.apply(e)
+        })
+    }
+}

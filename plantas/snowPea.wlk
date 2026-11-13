@@ -21,7 +21,7 @@ class SnowPea inherits Active(
                                     new Pea(
                                         team = user.team(),
                                         damage = 20,
-                                        frozen = true
+                                        state = frozenState
                                     )
                                 }
                         }}.apply(self),

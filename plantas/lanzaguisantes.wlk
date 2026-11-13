@@ -19,8 +19,7 @@ class LanzaGuisantes inherits Active(
                                 { user => 
                                     new Pea(
                                         team = user.team(),
-                                        damage = 20,
-                                        frozen = false
+                                        damage = 20
                                     )
                                 }
                         }}.apply(self),
