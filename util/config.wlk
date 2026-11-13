@@ -14,6 +14,8 @@ object config {
   const cellSize = 64
   const backGroundImage = "sprites/background.png"
 
+  const plantCards = [sunFlowerCard, peashooterCard, wallNutCard, snowPeaCard]
+
   const property upperBound = game.at(11, 5)
   const property lowerBound = game.at(2, 1)
 
@@ -42,13 +44,15 @@ object config {
 
   method configurarControles(){
     game.onClickDo({position => player.clickHandler(position)})
+    plantCards.size().times({ i =>
+      keyboard.num(i).onPressDo({ => player.clickHandler(game.at(1 + i, 0)) })
+    })
   }
 
   method startUIElements(){
-    sunFlowerCard.start(game.at(2,0))
-    peashooterCard.start(game.at(3,0))
-    wallNutCard.start(game.at(4,0))
-    snowPeaCard.start(game.at(5,0))
+    plantCards.size().times({ i =>
+      plantCards.get(i-1).start(game.at(1 + i, 0))
+    })
     sunCounter.start()
   }
 
