@@ -4,21 +4,31 @@ import proyectiles.projectile.*
 import proyectiles.pea.*
 import imageProvider.*
 import actionModule.*
+import behavior.*
 
 class SnowPea inherits Active(
-    actionModule = { caller =>
-        object inherits ConditionedShooter(
-            shotsPerSecond = 2/3,     
-            proyectileGenerator = { user => 
-                new Pea(
-                    team = user.team(),
-                    damage = 20,
-                    frozen = true
+    actionModule = 
+        new ActionModule(
+            behaviors = #{
+                new AnticipatedBehavior(
+                    name = "#PrimaryShooting",
+                    coolDownTracker = new CoolDownTracker( secondsPerUse = 3/2 ),
+                    anticipationAnimation = snowPeaAction,
+                    state = 
+                        {user => object{
+                            var property proyectileGenerator = 
+                                { user => 
+                                    new Pea(
+                                        team = user.team(),
+                                        damage = 20,
+                                        frozen = true
+                                    )
+                                }
+                        }}.apply(self),
+                    strategy = conditionalShootingStrategy
                 )
-            },
-            shootingAnticipationAnimation = snowPeaAction
-        ) and ActionModule{}
-    }.apply(self)
+            }
+        )
 ) and Planta(
     maxHealth = 300,
     defaultImageProvider = snowPeaIdle

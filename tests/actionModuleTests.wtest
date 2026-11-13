@@ -1,3 +1,4 @@
+import tests.behaviorTests.*
 import entity.*
 import entityTickingManager.*
 import imageProvider.*
@@ -9,386 +10,66 @@ import util.config.*
 import team.*
 import actionModule.*
 
-describe "Módulo de acción: zombies"{
+class TestBehavior{
+    var timesUsed = 0
+    method timesUsed() = timesUsed
+    var slowFactor = 0
+    method slowFactor() = slowFactor
 
-    method initialize(){
-        game.width(config.width())
-        game.height(config.height())
-    }
-
-    method tickear(entidad, veces){ veces.times({ i => entidad.tick() }) }
-
-    method nuevoZombie(pos){
-        const zombie = new ZombieBasico()
-        zombie.start(pos)
-        return zombie
-    }
-
-    test "Un zombie ataca a la planta con la que choca (una vez por segundo)"{
-        const planta = new Nuez()
-        planta.start(game.at(5, 2))
-        const zombie = self.nuevoZombie(game.at(5, 2))
-
-        self.tickear(zombie, 5)
-        assert.equals(planta.maxHealth(), planta.health())
-
-        self.tickear(zombie, 1)
-        assert.equals(planta.maxHealth() - 100, planta.health())
-    }
-
-    test "Un zombie no avanza mientras tenga una planta en su celda"{
-        const planta = new Nuez()
-        planta.start(game.at(5, 2))
-        const zombie = self.nuevoZombie(game.at(5, 2))
-        self.tickear(zombie, 30)
-        assert.equals(game.at(5, 2), zombie.position())
-    }
-
-    test "Un zombie sin obstáculos avanza hacia la izquierda"{
-        const zombie = self.nuevoZombie(game.at(8, 2))
-        self.tickear(zombie, 24)
-        assert.equals(game.at(7, 2), zombie.position())
-        assert.that(game.hasVisual(zombie))
-    }
-
-    test "Un zombie sigue avanzando después de comerse a la planta"{
-        const planta = new Girasol()
-        planta.start(game.at(8, 2))
-        const zombie = self.nuevoZombie(game.at(8, 2))
-        self.tickear(zombie, 60)
-        assert.that(not planta.lives())
-        assert.that(zombie.position().x() < 8)
+    method slowDown(factor){ slowFactor = factor }
+    method restoreSpeed(){ slowFactor = 0 }
+    method tick(user){}
+    method tryToUse(user){
+        timesUsed+=1
     }
 }
 
-
-describe "Módulo de acción: base"{
-
-    method initialize(){
-        game.width(config.width())
-        game.height(config.height())
-    }
-
-    test "El módulo le pasa a sus partes las entidades con las que choca, una sola vez por tick"{
-        const planta = new Nuez()
-        planta.start(game.at(5, 2))
-        const zombie = new ZombieBasico()
-        zombie.start(game.at(5, 2))
-        const consultas = []
-        const modulo = object inherits ActionModule{
-            override method act(user, touching){ consultas.add(touching) }
-        }
-
-        modulo.use(planta)
-
-        assert.equals([[zombie]], consultas)
-    }
-    
-    test "Un módulo detenido no actúa"{
-        const zombie = new ZombieBasico()
-        zombie.start(game.at(8, 2))
-
-        zombie.actionModule().stop()
-        30.times({ i => zombie.tick() })
-
-        assert.equals(game.at(8, 2), zombie.position())
+object testBehavior inherits TestBehavior{
+    override method tryToUse(user){
+        super(user)
+        moduloDeAccionDePrueba.stop()
     }
 }
+object testBehavior2 inherits TestBehavior{}
+object moduloDeAccionDePrueba inherits ActionModule(
+    behaviors = [
+        testBehavior,
+        testBehavior2
+    ]
+){}
 
+describe "Modulo de acción:"{
 
-// Una parte de prueba. registra cada vez que el modulo llega hasta ella
-mixin ParteQueRegistra{
-    const property veces = []
-
-    override method act(user, touching){
-        super(user, touching)
-        veces.add("actuó")
+    test "Llama efectivamente a sus comportamientos"{
+        moduloDeAccionDePrueba.use(null)
+        assert.equals(1, testBehavior.timesUsed())
     }
-}
-
-const entity = object {
-        var property collisionHandlerBlock = { otra => }
-        var property collides = true
-        method position() = game.at(5, 2)
-        method collisionHandler(otra){ collisionHandlerBlock.apply(otra) }
-        method allCollidingEntities() = self.position().allElements().filter({e => e != self && e.collides()})
+    test "Logra pausar el modulo de acción en ejecución"{
+        moduloDeAccionDePrueba.use(null)
+        assert.equals(0, testBehavior2.timesUsed())
     }
-
-describe "Módulo de acción: HandlesCollisions"{
-
-    method initialize(){
-        game.width(config.width())
-        game.height(config.height())
-    }
-
-    method nuevoZombie(pos){
-        const zombie = new ZombieBasico()
-        zombie.start(pos)
-        return zombie
-    }
-
-    test "Le avisa a la entidad con quién chocó"{
-        const zombie = self.nuevoZombie(game.at(5, 2))
-        const choques = []
-        entity.collisionHandlerBlock({ otra =>
-            choques.add(otra) 
+    test "Una vez pausado no se utilizan los comportamientos"{
+        2.times({ i =>
+            moduloDeAccionDePrueba.use(null)
         })
-        const modulo = object inherits HandlesCollisions and ActionModule{}
-
-        modulo.use(entity)
-
-        assert.equals([zombie], choques)
+        assert.equals(1, testBehavior.timesUsed())
+        assert.equals(0, testBehavior2.timesUsed())
     }
-
-    test "Si manejar una colisión detiene el módulo, ignora el resto de las colisiones y de las acciones"{
-        self.nuevoZombie(game.at(5, 2))
-        self.nuevoZombie(game.at(5, 2))
-        const choques = []
-        const modulo = object inherits HandlesCollisions and ParteQueRegistra and ActionModule{}
-        entity.collisionHandlerBlock({ otra =>
-            choques.add(otra) 
-            modulo.stop()
-        })
-
-        modulo.use(entity)
-
-        assert.equals(1, choques.size())
-        assert.equals([], modulo.veces())
+    test "Una vez se llama a resume los comportamientos vuelven a estar disponibles"{
+        moduloDeAccionDePrueba.use(null)
+        moduloDeAccionDePrueba.resume()
+        moduloDeAccionDePrueba.use(null)
+        assert.equals(2, testBehavior.timesUsed())
+        assert.equals(0, testBehavior2.timesUsed())
     }
-
-    test "Si no se detiene el módulo, después de manejar las colisiones sigue con el resto de las acciones"{
-        self.nuevoZombie(game.at(5, 2))
-        const modulo = object inherits HandlesCollisions and ParteQueRegistra and ActionModule{}
-        modulo.use(entity)
-
-        assert.equals(["actuó"], modulo.veces())
+    test "Realentiza efectivamente a todos sus comportamientos"{
+        moduloDeAccionDePrueba.slowDown(2)
+        assert.equals(2, testBehavior.slowFactor())
+        assert.equals(2, testBehavior2.slowFactor())
     }
-}
-
-describe "Módulo de acción: ralentizar"{
-
-    method initialize(){
-        game.width(config.width())
-        game.height(config.height())
-    }
-
-    method tickear(entidad, veces){ veces.times({ i => entidad.tick() }) }
-
-    method nuevoZombie(pos){
-        const zombie = new ZombieBasico()
-        zombie.start(pos)
-        return zombie
-    }
-
-    test "Un módulo ralentizado se mueve más lento"{
-        const zombie = self.nuevoZombie(game.at(8, 2))
-        zombie.actionModule().slowDown(2)
-
-        self.tickear(zombie, 30)
-        assert.equals(game.at(8, 2), zombie.position())
-
-        self.tickear(zombie, 20)
-        assert.equals(game.at(7, 2), zombie.position())
-    }
-
-    test "Al restaurar la velocidad el módulo se mueve a su ritmo normal sin perder el tiempo acumulado"{
-        const zombie = self.nuevoZombie(game.at(8, 2))
-        zombie.actionModule().slowDown(2)
-        self.tickear(zombie, 10)
-
-        zombie.actionModule().restoreSpeed()
-
-        self.tickear(zombie, 13)
-        assert.equals(game.at(8, 2), zombie.position())
-        self.tickear(zombie, 1)
-        assert.equals(game.at(7, 2), zombie.position())
-    }
-
-    
-    method nuevoModuloDeDisparo(disparos){
-        return object inherits UnconditionalShooter(
-            shotsPerSecond = 1,                                                   // 5 ticks
-            proyectileGenerator = { user => object { method start(pos){ disparos.add(pos) } } },
-            shootingAnticipationAnimation = noImageProvider
-        ) and ActionModule{}
-    }
-
-    test "Un módulo de disparo ralentizado dispara con más tiempo entre disparo y disparo"{
-        const disparos = []
-        const modulo = self.nuevoModuloDeDisparo(disparos)
-
-        modulo.slowDown(2)                                                        // ahora 10 ticks
-        10.times({ i => modulo.use(entity) })
-        assert.equals(0, disparos.size())
-
-        modulo.use(entity)
-        assert.equals(1, disparos.size())
-    }
-
-    test "Al restaurar la velocidad un módulo de disparo vuelve a disparar en su tiempo normal"{
-        const disparos = []
-        const modulo = self.nuevoModuloDeDisparo(disparos)
-
-        modulo.slowDown(2)
-        7.times({ i => modulo.use(entity) })
-
-        modulo.restoreSpeed()                                                     // vuelve a 5 ticks: ya se pasó
-        modulo.use(entity)
-        assert.equals(1, disparos.size())
-    }
-
-    test "Un zombie ralentizado ataca con más tiempo entre ataque y ataque"{
-        const planta = new Nuez()
-        planta.start(game.at(5, 2))
-        const zombie = self.nuevoZombie(game.at(5, 2))
-
-        zombie.actionModule().slowDown(2)                                         // ahora 2 segundos entre ataques
-        self.tickear(zombie, 10)
-        assert.equals(planta.maxHealth(), planta.health())
-
-        self.tickear(zombie, 1)
-        assert.equals(planta.maxHealth() - 100, planta.health())
-    }
-
-    test "Al restaurar la velocidad un zombie vuelve a atacar en su tiempo normal"{
-        const planta = new Nuez()
-        planta.start(game.at(5, 2))
-        const zombie = self.nuevoZombie(game.at(5, 2))
-
-        zombie.actionModule().slowDown(2)
-        self.tickear(zombie, 7)
-
-        zombie.actionModule().restoreSpeed()                                      // vuelve a 1 segundo: ya se pasó
-        self.tickear(zombie, 1)
-        assert.equals(planta.maxHealth() - 100, planta.health())
-    }
-}
-
-describe "Proyectiles: arvejas"{
-
-    method initialize(){
-        game.width(config.width())
-        game.height(config.height())
-    }
-
-    method tickear(entidad, veces){ veces.times({ i => entidad.tick() }) }
-
-    method nuevaArveja(pos){
-        const arveja = new Pea(team = plantsTeam, damage = 20, frozen = false)
-        arveja.start(pos)
-        return arveja
-    }
-
-    method nuevoZombie(pos){
-        const zombie = new ZombieBasico()
-        zombie.start(pos)
-        return zombie
-    }
-
-    test "Una arveja avanza una celda por tick"{
-        const arveja = self.nuevaArveja(game.at(3, 2))
-        arveja.tick()
-        assert.equals(game.at(4, 2), arveja.position())
-        assert.that(game.hasVisual(arveja))
-    }
-
-    test "Una arveja que sale del tablero se elimina"{
-        const arveja = self.nuevaArveja(game.at(config.width() - 2, 2))
-        arveja.tick()
-        assert.that(game.hasVisual(arveja))
-        arveja.tick()
-        assert.notThat(game.hasVisual(arveja))
-    }
-
-    test "Una arveja daña a un zombie cuando choca con él"{
-        const zombie = self.nuevoZombie(game.at(5, 2))
-        const arveja = self.nuevaArveja(game.at(4, 2))
-        self.tickear(arveja, 2)
-        assert.equals(zombie.maxHealth() - 20, zombie.health())
-    }
-
-    test "Después de chocar la arveja deja de actuar: ni avanza ni vuelve a dañar"{
-        const zombie = self.nuevoZombie(game.at(5, 2))
-        const arveja = self.nuevaArveja(game.at(4, 2))
-        self.tickear(arveja, 6)
-        assert.equals(game.at(5, 2), arveja.position())
-        assert.equals(zombie.maxHealth() - 20, zombie.health())
-    }
-
-    test "Una arveja solo daña a un zombie aunque haya dos en la misma celda"{
-        const zombie1 = self.nuevoZombie(game.at(5, 2))
-        const zombie2 = self.nuevoZombie(game.at(5, 2))
-        const arveja = self.nuevaArveja(game.at(4, 2))
-        self.tickear(arveja, 3)
-        const danioTotal = (zombie1.maxHealth() - zombie1.health()) + (zombie2.maxHealth() - zombie2.health())
-        assert.equals(20, danioTotal)
-    }
-
-    test "Una arveja no daña a las plantas"{
-        const planta = new Nuez()
-        planta.start(game.at(5, 2))
-        const arveja = self.nuevaArveja(game.at(4, 2))
-        self.tickear(arveja, 3)
-        assert.equals(planta.maxHealth(), planta.health())
-    }
-}
-
-
-describe "Zombies: congelamiento"{
-
-    method initialize(){
-        game.width(config.width())
-        game.height(config.height())
-    }
-
-    method tickear(entidad, veces){ veces.times({ i => entidad.tick() }) }
-
-    method nuevoZombie(pos){
-        const zombie = new ZombieBasico()
-        zombie.start(pos)
-        return zombie
-    }
-
-    test "Un zombie congelado avanza más lento"{
-        const zombie = self.nuevoZombie(game.at(8, 2))
-        zombie.freeze()
-
-        self.tickear(zombie, 30)
-        assert.equals(game.at(8, 2), zombie.position())
-
-        self.tickear(zombie, 20)
-        assert.equals(game.at(7, 2), zombie.position())
-    }
-
-    test "Cuando termina el congelamiento el zombie vuelve a su velocidad normal"{
-        const zombie = self.nuevoZombie(game.at(8, 2))
-        zombie.freeze()
-
-        self.tickear(zombie, 50)                              // dura 10 segundos
-        assert.equals(0, zombie.frozen())
-        assert.equals(game.at(7, 2), zombie.position())       // en ese tiempo avanzó una celda, lento
-
-        self.tickear(zombie, 24)
-        assert.equals(game.at(6, 2), zombie.position())       // ahora avanza otra a su ritmo normal
-    }
-
-    test "Volver a congelar a un zombie ya congelado reinicia el tiempo de congelamiento"{
-        const zombie = self.nuevoZombie(game.at(8, 2))
-        zombie.freeze()
-        self.tickear(zombie, 20)
-
-        zombie.freeze()
-
-        assert.equals(config.secondsToTicks(10), zombie.frozen())
-    }
-
-    test "Una arveja de hielo congela al zombie que golpea"{
-        const zombie = self.nuevoZombie(game.at(5, 2))
-        const arveja = new Pea(team = plantsTeam, damage = 20, frozen = true)
-        arveja.start(game.at(4, 2))
-
-        self.tickear(arveja, 2)
-
-        assert.that(zombie.frozen() > 0)
+    test "Logra restaurar effectivamente la velocidad de sus comportamientos"{
+        moduloDeAccionDePrueba.restoreSpeed()
+        assert.equals(0, testBehavior.slowFactor())
+        assert.equals(0, testBehavior2.slowFactor())
     }
 }

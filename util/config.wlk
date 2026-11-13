@@ -14,13 +14,16 @@ object config {
   const cellSize = 64
   const backGroundImage = "sprites/background.png"
 
-  method upperBound() = game.at(11, 5)
-  method lowerBound() = game.at(2, 1)
+  const property upperBound = game.at(11, 5)
+  const property lowerBound = game.at(2, 1)
 
   method secondsToTicks(seconds) = (seconds * ticksPerSecond).truncate(0)
   method secondsToAnimationTicks(seconds) = (seconds * animationTicksPerSecond).truncate(0)
   method ticksToAnimationTicks(ticks) = (ticks * animationTicksPerSecond / ticksPerSecond).truncate(0)
   method animationTicksToTicks(ticks) = (ticks * ticksPerSecond / animationTicksPerSecond ).truncate(0)
+
+  method isInGardenBounds(pos) = pos.x().between(lowerBound.x(), upperBound.x()) && pos.y().between(lowerBound.y(), upperBound.y())
+  method isInBounds(pos) = pos.x().between(0, width) && pos.y(0, height)
 
   method configuracionGeneral(){
     self.configurarVisuales()  

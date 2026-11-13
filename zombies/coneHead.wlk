@@ -4,21 +4,30 @@ import zombies.zombie.*
 import zombies.zombieBasico.*
 import entityTickingManager.*
 import actionModule.*
+import behavior.*
 
 class ConeHead inherits Zombie(
     maxHealth = 370,
     imageProviderSet = coneHeadImageProvidersSet,
     defaultImageProvider = imageProviderSet.walkingImageProvider(),
     deathHandler = coneHeadDeathHandler,
-    actionModule = { caller =>
-        object inherits Mobile(
-            cellsPerSecond = 1/4.7,
-            movingDirection = game.at(-1, 0)
-        ) and MeleeAttack(
-            meleeDamage = 100,
-            meleeAttacksPerSecond = 1
-        ) and ActionModule{}
-    }.apply(self)
+    actionModule = 
+        new ActionModule(
+            behaviors = #{
+                new Behavior(
+                    name = "#Movement",
+                    coolDownTracker = new CoolDownTracker( secondsPerUse = 4.7 ),
+                    state = object{ var property movingDirection = game.at(-1, 0) },
+                    strategy = movingStrategy
+                ),
+                new Behavior(
+                    name = "#MeleeAttack",
+                    coolDownTracker = new CoolDownTracker( secondsPerUse = 1 ),
+                    state = object{ var property damage = 100},
+                    strategy = meleeAttackStrategy
+                )
+            }
+        )
 ){}
 
 object coneHeadImageProvidersSet inherits ZombieImageProviderSet(

@@ -1,59 +1,78 @@
 import behavior.*
+import wollok.mirror.*
+import util.config.*
 
-// Un comportamiento de prueba que cuenta cuántas veces se activó
-class ComportamientoDePrueba inherits Behavior{
-    var property activaciones = 0
-
-    override method activate(user){ activaciones += 1 }
+object caller{
+    var activaciones = 0
+    method activaciones() = activaciones
+    method activar(){ activaciones += 1 }
 }
+object testStrategy inherits Strategy{
+    override method use(user, state){
+        user.activar()
+    }
+}
+const segundosPorUso = 1
+object coolDownTraker inherits CoolDownTracker(secondsPerUse = segundosPorUso){}
+object comportamientoDePrueba inherits Behavior(
+    name = "#Test",
+    coolDownTracker = coolDownTraker,
+    state = 1,
+    strategy = testStrategy
+){}
+object trackerMirror inherits ObjectMirror(target = coolDownTraker){}
 
 describe "Behavior"{
 
     method usar(comportamiento, veces){
-        veces.times({ i => comportamiento.use(null) })
+        veces.times({ i => 
+            comportamiento.tick(caller)
+            comportamiento.tryToUse(caller) 
+        })
     }
 
     test "Se activa cuando termina su tiempo de espera"{
-        const comportamiento = new ComportamientoDePrueba(secondsPerUse = 1)   // 5 ticks
-        self.usar(comportamiento, 5)
-        assert.equals(0, comportamiento.activaciones())
+        const seconds = 1
+        const comportamiento = comportamientoDePrueba
+        self.usar(comportamiento, config.secondsToTicks(segundosPorUso)-1)
+        assert.equals(0, caller.activaciones())
         self.usar(comportamiento, 1)
-        assert.equals(1, comportamiento.activaciones())
+        assert.equals(1, caller.activaciones())
     }
 
     test "Si su tiempo de espera se acorta mientras esperaba, se activa igual aunque ya se haya pasado"{
-        const comportamiento = new ComportamientoDePrueba(secondsPerUse = 1)   // 5 ticks
-        self.usar(comportamiento, 3)
-        comportamiento.secondsPerUse(0.2)                                        // ahora 1 tick: ya se pasó
+        const comportamiento = comportamientoDePrueba
+        self.usar(comportamiento, config.secondsToTicks(segundosPorUso)-1)
+        const secondsPerTick = 1/config.secondsToTicks(1)
+        comportamiento.slowDown(secondsPerTick)               // ahora 1 tick: ya se pasó
+        assert.that(coolDownTraker.ticksUntilUse() < 1)
         self.usar(comportamiento, 1)
-        assert.equals(1, comportamiento.activaciones())
+        assert.equals(1, caller.activaciones())
     }
 
     test "Un comportamiento ralentizado tarda más en activarse"{
-        const comportamiento = new ComportamientoDePrueba(secondsPerUse = 1)   // 5 ticks
-        comportamiento.slowDown(2)                                               // ahora 10 ticks
-        self.usar(comportamiento, 10)
-        assert.equals(0, comportamiento.activaciones())
-        self.usar(comportamiento, 1)
-        assert.equals(1, comportamiento.activaciones())
+        const comportamiento = comportamientoDePrueba   
+        comportamiento.slowDown(2)                                               // ahora el doble
+        self.usar(comportamiento, config.secondsToTicks(segundosPorUso))
+        assert.equals(0, caller.activaciones() )
+        self.usar(comportamiento, config.secondsToTicks(segundosPorUso))
+        assert.equals(1, caller.activaciones())
     }
 
     test "Al ralentizarlo no pierde el tiempo de espera que ya había acumulado"{
-        const comportamiento = new ComportamientoDePrueba(secondsPerUse = 1)   // 5 ticks
-        self.usar(comportamiento, 3)
-        comportamiento.slowDown(2)                                               // ahora 10 ticks en total
-        self.usar(comportamiento, 7)
-        assert.equals(0, comportamiento.activaciones())
-        self.usar(comportamiento, 1)
-        assert.equals(1, comportamiento.activaciones())
+        const comportamiento = comportamientoDePrueba
+        const ticksDeTesteo = 3
+        self.usar(comportamiento, ticksDeTesteo)
+        comportamiento.slowDown(4)
+        assert.equals(ticksDeTesteo, trackerMirror.resolve("ticksInCoolDown"))
     }
 
     test "Al restaurar la velocidad vuelve a activarse en su tiempo normal"{
-        const comportamiento = new ComportamientoDePrueba(secondsPerUse = 1)   // 5 ticks
+        const comportamiento = comportamientoDePrueba
         comportamiento.slowDown(2)
         self.usar(comportamiento, 7)
         comportamiento.restoreSpeed()                                            // vuelve a 5 ticks: ya se pasó
         self.usar(comportamiento, 1)
-        assert.equals(1, comportamiento.activaciones())
+        assert.equals(1, caller.activaciones())
     }
 }

@@ -54,6 +54,8 @@ class Entity{
         game.removeVisual(self)
     }
 
+    method outOfBounds(){ self.cleanUp() }
+
     method animationEnded(){ 
         animationCallback.apply() 
         self.animationCallback({=>})

@@ -3,13 +3,20 @@ import imageProvider.*
 import proyectiles.projectile.*
 import entityTickingManager.*
 import actionModule.*
+import behavior.*
 
 class Pea inherits Active(
-    actionModule =
-        object inherits HandlesCollisions and Mobile(
-            cellsPerSecond = 10,
-            movingDirection = game.at(1, 0)
-        ) and ActionModule{}
+    actionModule = 
+        new ActionModule(
+            behaviors = #{
+                new Behavior(
+                    name = "#Movement",
+                    coolDownTracker = new CoolDownTracker( secondsPerUse = 1/10 ),
+                    state = object{ var property movingDirection = game.at(1, 0) },
+                    strategy = movingStrategy
+                )
+            }
+        )
 ) and Projectile(
     defaultImageProvider = peaShotAnimation
 ){

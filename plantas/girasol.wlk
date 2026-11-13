@@ -1,24 +1,32 @@
 import planta.*
 import entity.*
-import util.config.*
-import entityTickingManager.*
 import proyectiles.sun.*
 import imageProvider.*
 import actionModule.*
+import behavior.*
 
 class Girasol inherits Active(
-    actionModule = { caller =>
-        object inherits UnconditionalShooter(
-            shotsPerSecond = 1/24.25,
-            proyectileGenerator = { user =>  
-                    new Sun( 
-                        team = user.team(),
-                        value = 25
-                    ) 
-                },
-            shootingAnticipationAnimation = sunFlowerActiveAnimation
-        ) and ActionModule{}
-    }.apply(self)
+    actionModule = 
+        new ActionModule(
+            behaviors = #{
+                new AnticipatedBehavior(
+                    name = "#PrimaryShooting",
+                    coolDownTracker = new CoolDownTracker( secondsPerUse = 24.25 ),
+                    anticipationAnimation = sunFlowerActiveAnimation,
+                    state = 
+                        {user => object{
+                            var property proyectileGenerator = 
+                                { user => 
+                                    new Sun(
+                                        team = user.team(),
+                                        value = 25
+                                    )
+                                }
+                        }}.apply(self),
+                    strategy = unconditionalShootingStrategy
+                )
+            }
+        )
 ) and Planta(
     maxHealth = 300,
     defaultImageProvider = sunFlowerIdleAnimation
