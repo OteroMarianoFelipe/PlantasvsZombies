@@ -49,6 +49,13 @@ class ImageProviderHandler{
         return
     }
 
+    method exitTempAnimation(){
+        if(self.onTempAnimation()){
+            timesToUseTempAnimation = 0
+            self.restoreFromTemporaryAnimation()
+        }
+    }
+
     method onTempAnimation() = timesToUseTempAnimation > 0
     method useTempAnimation(tempAnimation, times){
         stateTracker.resetTracker()

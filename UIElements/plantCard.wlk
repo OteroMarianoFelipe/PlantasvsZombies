@@ -1,3 +1,4 @@
+import imageProviderHandler.*
 import entity.*
 import player.player
 import plantas.lanzaguisantes.*
@@ -14,14 +15,20 @@ class PlantCard inherits Ticks and Entity(
     const property price
     const property createNewInstance
 
-    var property isAvailable = false
-    var property plantBuyCoolDown = false
+    var isAvailable = false
+    var plantBuyCoolDown = false
+
+    method reset(){
+        imageHandler.exitTempAnimation()
+        isAvailable = false
+        plantBuyCoolDown = false
+    }
 
     method newInstance() = createNewInstance.apply()
 
     var property currentBehaviour = {=>self.defaultTickBehavior()}
     method defaultTickBehavior(){
-        self.isAvailable( sunCounter.canPay( price ) )
+        isAvailable = sunCounter.canPay( price ) 
         if(isAvailable){
             self.imageProviderSetUse("#Available")
         }else{
@@ -50,8 +57,8 @@ class PlantCard inherits Ticks and Entity(
     }
 
     method startCoolDown(){
-        self.plantBuyCoolDown(true)
-        self.animationCallback({ => self.plantBuyCoolDown(false) })
+        plantBuyCoolDown true
+        self.animationCallback({ => plantBuyCoolDown = false })
         self.imageHandler().useTempAnimation(imageProviderSet.getProvider("#CoolDown"), 1)
     }
 }
