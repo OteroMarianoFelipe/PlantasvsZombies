@@ -10,7 +10,7 @@ class Girasol inherits Active(
         new ActionModule(
             behaviors = #{
                 new AnticipatedBehavior(
-                    name = "#PrimaryShooting",
+                    key = "#PrimaryShooting",
                     providerKey = "#Active",
                     coolDownTracker = new CoolDownTracker( secondsPerUse = 24.25 ),
                     state = 

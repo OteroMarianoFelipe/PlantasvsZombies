@@ -4,9 +4,9 @@ import entityTickingManager.*
 import imageProvider.*
 
 class CoolDownTracker{
-    var secondsPerUse
+    var property secondsPerUse
     var ticksInCoolDown = 0
-    var property slowDownFactor = 1
+    var slowDownFactor = 1
 
     method ticksPerUse() = config.secondsToTicks(secondsPerUse * slowDownFactor)
     method coolDown(){ ticksInCoolDown = 0 }
@@ -17,7 +17,7 @@ class CoolDownTracker{
 
     method ticksUntilUse() = self.ticksPerUse() - ticksInCoolDown 
     method shouldUseStrategy() = self.ticksUntilUse() <= 0
-    method shouldAnticipate(animation) = self.ticksUntilUse() == animation.durationInTicks()
+    method shouldAnticipate(animation) = self.ticksUntilUse() <= animation.durationInTicks()
 }
 
 class Strategy{
@@ -26,10 +26,10 @@ class Strategy{
 }
 
 class Behavior{
-    const property name
+    const property key
     const property strategy
     const property state
-    const providerKey
+    var property providerKey
 
     const coolDownTracker
     method coolDownTracker() = coolDownTracker
@@ -40,7 +40,7 @@ class Behavior{
     method getImageProvider(user){
         if(strategy.shouldTick(user)){
             return user.imageProviderSet().getProvider(providerKey)
-            debugger.info("Candidato no nulo en "+name)
+            debugger.info("Candidato no nulo en "+key)
         }
         return null
     }
@@ -74,10 +74,7 @@ class AnticipatedBehavior inherits Behavior{
 object movingStrategy inherits Strategy(){
     method newPosition(user, state) = user.position().right(state.movingDirection().x()).up(state.movingDirection().y())
 
-    method allObstacles(user) = user.allCollidingEntities().filter({ e => user.isEnemy(e) && e.blocksEnemyEntitiesMovement()})
-    method hasObstacle(user) = self.allObstacles(user).size() > 0
-
-    override method shouldTick(user) = not self.hasObstacle(user)
+    override method shouldTick(user) = not user.hasObstacle()
 
     override method use(user, state){
         const newPosition = self.newPosition(user, state)

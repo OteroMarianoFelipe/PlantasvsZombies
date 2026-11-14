@@ -16,7 +16,7 @@ class Pea inherits HandlesCollisions(
         new ActionModule(
             behaviors = #{
                 new Behavior(
-                    name = "#Movement",
+                    key = "#Movement",
                     providerKey = "#Moving",
                     coolDownTracker = new CoolDownTracker( secondsPerUse = 1/10 ),
                     state = object{ var property movingDirection = game.at(1, 0) },
