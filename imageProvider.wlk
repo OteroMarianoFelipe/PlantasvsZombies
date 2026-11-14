@@ -1,3 +1,5 @@
+import zombies.zombieBasico.*
+import util.debugger.*
 import util.config.*
 
 class ImageProvider{
@@ -49,8 +51,6 @@ class Animation inherits ImageProvider{
     override method getImage(user, traker) = "animations/"+animationDirectory+"/frame_"+self.frameNumber001Format(traker.frameNumber())+".png"
 }
 
-
-
 class HealthBasedImageProvider inherits ImageProvider{
     const imageProviderSet    
 
@@ -66,3 +66,46 @@ class HealthBasedImageProvider inherits ImageProvider{
 }
 
 object noImageProvider inherits Sprite(image = "sprites/missingTexture.png"){}
+
+class KeyProviderPair{
+    const property key
+    var property provider
+}
+
+class ImageProviderSet{
+    const entries = #{}
+
+    method hasKey(key) = entries.map({ p => p.key() }).findOrDefault({ k => k == key  }, null) != null
+
+    method get(key){
+        if( not self.hasKey(key)){
+            self.addEntry(key)
+        }
+        return entries.find({ pair => pair.key() == key })
+    }
+    method addEntry(key){ self.addEntry(key, null) }
+    method addEntry(key, provider){
+        if( self.hasKey(key) ){
+            debugger.warning("Key "+key+" allready in use")
+        }
+        entries.add( new KeyProviderPair(key = key, provider = provider) )
+    }
+
+    method removeEntry(key){ entries.remove(self.get(key)) }
+    method getProvider(key) = self.get(key).provider()
+
+    method pairForProvider(provider) = entries.findOrDefault({ pair => pair.provider() == provider }, null)
+    method keyFor(provider){
+        const result = self.pairForProvider(provider)
+        if(result == null){ return null }
+        return result.key()
+    }
+
+    method modifyProvider(key, provider){ 
+        self.get(key).provider(provider) 
+    }
+}
+
+object noImageProviderSet{
+    method getProvider(key) = null
+}

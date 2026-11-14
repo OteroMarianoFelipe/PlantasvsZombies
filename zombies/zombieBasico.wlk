@@ -6,20 +6,22 @@ import behavior.*
 
 class ZombieBasico inherits Zombie(
     maxHealth = 190,
-    imageProviderSet = basicZombieImageProvidersSet,
-    defaultImageProvider = imageProviderSet.walkingImageProvider(),
     deathHandler = defaultZombieDeathHandler,
+    imageProviderSet = basicZombieImageProvidersSet,
+    defaultImageProviderKey = "#Moving",
     actionModule = 
         object inherits ActionModule(
             behaviors = #{
                 new Behavior(
                     name = "#Movement",
+                    providerKey = "#Moving",
                     coolDownTracker = new CoolDownTracker( secondsPerUse = 4.7 ),
                     state = object{ var property movingDirection = game.at(-1, 0) },
                     strategy = movingStrategy
                 ),
                 new Behavior(
                     name = "#MeleeAttack",
+                    providerKey = "#MeleeAttacking",
                     coolDownTracker = new CoolDownTracker( secondsPerUse = 1 ),
                     state = object{ var property damage = 100},
                     strategy = meleeAttackStrategy
@@ -28,22 +30,35 @@ class ZombieBasico inherits Zombie(
         ){}    
 ){}
 
-object basicZombieImageProvidersSet inherits ZombieImageProviderSet(
-    walkingImageProvider = new HealthBasedImageProvider( 
-        imageProviderSet=[
-            zombieWalkingDying,
-            zombieWalkingHurt,
-            zombieWalkingFH
-        ]
-    ),
-    eatingImageProvider = new HealthBasedImageProvider(
-        imageProviderSet=[
-            zombieEatingDying,
-            zombieEatingHurt,
-            zombieEatingFH
-        ]
-    ),
-    deathAnimation = zombieDying
+object basicZombieImageProvidersSet inherits ImageProviderSet(
+    entries = #{
+        new KeyProviderPair(
+            key = "#Moving",
+            provider =
+                new HealthBasedImageProvider( 
+                    imageProviderSet=[
+                        zombieWalkingDying,
+                        zombieWalkingHurt,
+                        zombieWalkingFH
+                    ]
+                )
+        ),
+        new KeyProviderPair(
+            key = "#MeleeAttack",
+            provider =
+                new HealthBasedImageProvider(
+                    imageProviderSet=[
+                        zombieEatingDying,
+                        zombieEatingHurt,
+                        zombieEatingFH
+                    ]
+                )
+        ),
+        new KeyProviderPair(
+            key = "#Death",
+            provider = zombieDying
+        )
+    }
 ){} 
 
 object zombieWalkingDying inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/basic/walkingDying"){}

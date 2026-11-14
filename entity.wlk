@@ -4,11 +4,14 @@ import imageProviderHandler.*
 import entityTickingManager.*
 import behavior.*
 import util.config.*
+import util.debugger.*
 import team.*
 
 class Entity{
     var property team = neutralTeam
-    const property imageHandler = new ImageProviderHandler( user = self, imageProvider = defaultImageProvider )
+    var property imageProviderSet
+    const property defaultImageProviderKey
+    const property imageHandler = new ImageProviderHandler( user = self, imageProvider = imageProviderSet.getProvider(defaultImageProviderKey) )
     
     var collides = false
     method collides() = collides
@@ -23,10 +26,13 @@ class Entity{
     method blocksEnemyEntitiesMovement() = false
     method canBeKilled() = false
 
-    var property defaultImageProvider = noImageProvider
-    method defaultImageProvider(newImageProvider){
-        if(newImageProvider != defaultImageProvider){
-            defaultImageProvider =  newImageProvider 
+    method updateImageProvider(){}
+    method imageProviderSetUse(key){
+        const provider = imageProviderSet.getProvider(key)
+        if(provider == null){
+            debugger.warning("Proveedor no encontrado")
+        }else{
+            self.imageProvider(provider)
         }
     }
 
@@ -37,8 +43,9 @@ class Entity{
         game.at(x, position.y()).allElements()
         }).flatten()
 
-    method imageProvider() =  imageHandler.imageProvider()
+    method imageProvider() =  imageHandler.currentProvider()
     method imageProvider(newImageProvider){
+        if(newImageProvider == null){ self.error("Un proveedor de imagen no puede ser nulo") }
         imageHandler.imageProvider(newImageProvider)
     }
 
@@ -61,7 +68,7 @@ class Entity{
         self.animationCallback({=>})
     }
     method useDefaultImageProvider(){ 
-        self.imageProvider(defaultImageProvider) 
+        self.imageProvider(imageProviderSet.provider(defaultImageProviderKey)) 
     }
 
     method animate() = imageHandler.update()
@@ -87,12 +94,25 @@ mixin Active{
     var property actionModule 
 
     method imageHandler()
+    method imageProviderSetUse(key)
+    method defaultImageProviderKey()
+    method imageProvider(newImageProvider)
+
+    override method updateImageProvider(){
+        const actionProvider = actionModule.getImageProvider(self)
+        if(actionProvider != null){
+            self.imageProvider(actionProvider)
+        }else{
+            self.imageProviderSetUse(self.defaultImageProviderKey())
+        }
+    }
 
     method anticipateBehavior(behaviorImageProvider){ 
         self.imageHandler().useTempAnimation(behaviorImageProvider, 1)
     }
     override method tick(){
         super()
+        self.updateImageProvider()
         actionModule.use(self)
     }
 }

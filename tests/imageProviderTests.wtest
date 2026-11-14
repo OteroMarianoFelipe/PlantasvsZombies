@@ -5,7 +5,7 @@ import util.config.*
 
 object handler inherits ImageProviderHandler( imageProvider = noImageProvider, user = caller ){}
 object handlerMirror inherits ObjectMirror(target = handler){}
-const tracker = handlerMirror.resolve("imageStateTracker")
+const tracker = handlerMirror.resolve("stateTracker")
 object caller {
     var endedAnimation = false
     method endedAnimation() = endedAnimation
@@ -33,27 +33,27 @@ describe "Image provider handler"{
 
     test "Cambia efectivamente a un proveedor de imagen temporal"{
         self.changeImageProviderTemporarily(handler)        
-        assert.equals(testingAnimation1, handlerMirror.resolve("imageProviderToRestoreTo"))
-        assert.equals(testingAnimation2, handlerMirror.resolve("imageProvider"))
+        assert.equals(testingAnimation1, handler.imageProvider())
+        assert.equals(testingAnimation2, handler.currentProvider())
         assert.equals(1, tracker.ticksInFrame())
         assert.equals(1, tracker.frameNumber())
     }
 
     test "Transiciona efectivamente toda la animación temporal"{
         self.changeImageProviderTemporarily(handler)        
-        handler.imageProvider().framesInAnimation().times({ f =>
-            handler.imageProvider().animationTicksPerFrame().times({ t =>
-                assert.equals(testingAnimation2 ,handler.imageProvider())
+        handler.currentProvider().framesInAnimation().times({ f =>
+            handler.currentProvider().animationTicksPerFrame().times({ t =>
+                assert.equals(testingAnimation2 ,handler.currentProvider())
                 handler.update() 
             })
         })
-        assert.equals(testingAnimation1 ,handler.imageProvider())
+        assert.equals(testingAnimation1 ,handler.currentProvider())
     }
     
     test "Cambia de vuelta a su proveedor original una vez se terminan las repeticiones del temporal"{
         self.changeImageProviderTemporarily(handler)
-        tracker.frameNumber(handler.imageProvider().framesInAnimation())
-        tracker.ticksInFrame(handler.imageProvider().animationTicksPerFrame())
+        tracker.frameNumber(handler.currentProvider().framesInAnimation())
+        tracker.ticksInFrame(handler.currentProvider().animationTicksPerFrame())
         handler.update()
         assert.equals(testingAnimation1, handlerMirror.resolve("imageProvider"))
         assert.equals(1, tracker.frameNumber())

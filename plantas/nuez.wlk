@@ -3,10 +3,20 @@ import planta.*
 
 class Nuez inherits Planta(
     maxHealth = 4000,
-    defaultImageProvider =  wallNutImageProvider
+    defaultImageProviderKey =  "#Idle",
+    imageProviderSet = wallNutImageProviderSet
 ){}
 
-object wallNutImageProvider inherits HealthBasedImageProvider( 
+object wallNutImageProviderSet inherits ImageProviderSet(
+    entries = #{
+        new KeyProviderPair(
+            key = "#Idle",
+            provider = wallNutIdleImageProvider
+        )
+    }
+){}
+
+object wallNutIdleImageProvider inherits HealthBasedImageProvider( 
     imageProviderSet=[
         wallNutDying,
         wallNutHurt,

@@ -17,33 +17,47 @@ class Pea inherits HandlesCollisions(
             behaviors = #{
                 new Behavior(
                     name = "#Movement",
+                    providerKey = "#Moving",
                     coolDownTracker = new CoolDownTracker( secondsPerUse = 1/10 ),
                     state = object{ var property movingDirection = game.at(1, 0) },
                     strategy = movingStrategy
                 )
             }
         )
-) and Projectile(
-    defaultImageProvider = state.imageProvider()
+) and Projectile( 
+    defaultImageProviderKey = "#Moving",
+    imageProviderSet = state.imageProviderSet() 
 ){
     var property damage
     var property state = noEffect
     method state(newState){
         state = newState
-        self.imageProvider(state.imageProvider())
+        self.imageProviderSet(state.imageProviderSet())
+        self.updateImageProvider()
     }
 
     override method handleRemoval(){
         self.actionModule().stop()
         animationCallback = { => self.cleanUp()} 
-        self.imageProvider(state.impactImageProvider())
+        self.imageProvider(state.imageProviderSet().getProvider("#Impact"))
         self.removeCollision()
     }
 }
 
 object frozenState{
-    method imageProvider() = frozenPeaAnimation
-    method impactImageProvider() = frozenPeaImpactAnimation
+    const property imageProviderSet = 
+        new ImageProviderSet(
+            entries = #{
+                new KeyProviderPair(
+                    key = "#Moving",
+                    provider = frozenPeaAnimation
+                ),
+                new KeyProviderPair(
+                    key = "#Impact",
+                    provider = frozenPeaImpactAnimation
+                )
+            }
+        )
 
     method apply(entity, user){
         entity.takeDamage(user.damage())
@@ -51,8 +65,19 @@ object frozenState{
     }
 }
 object noEffect{
-    method imageProvider() = peaShotAnimation
-    method impactImageProvider() = peaShotImpactAnimation
+    const property imageProviderSet = 
+        new ImageProviderSet(
+            entries = #{
+                new KeyProviderPair(
+                    key = "#Moving",
+                    provider = peaShotAnimation
+                ),
+                new KeyProviderPair(
+                    key = "#Impact",
+                    provider = peaShotImpactAnimation
+                )
+            }
+        )
 
     method apply(entity, user){
         entity.takeDamage(user.damage())

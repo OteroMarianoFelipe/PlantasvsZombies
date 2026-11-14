@@ -3,8 +3,9 @@ import util.config.*
 import UIElements.sunCounter.*
 import imageProvider.*
 
-class Sun inherits Projectile(
-    defaultImageProvider =  self.getProperAnimation()
+class Sun inherits Projectile( 
+    imageProviderSet = sunAnimationSet ,
+    defaultImageProviderKey = self.getProperAnimationKey()
 ){
     const property value
 
@@ -12,12 +13,10 @@ class Sun inherits Projectile(
     var property ticksUntilDesapearing = config.secondsToTicks(secondsForDesapearing)
     method isBig() = self.value() >= 25
 
-    method getProperAnimation(){
-        if(self.isBig()){
-            return bigSunAnimation
-        }else{
-            return smallSunAnimation
-        }
+    method getProperAnimationKey() = if(self.isBig()) "#BigSun" else "#SmallSun"
+    
+    override method updateImageProvider(){
+        self.imageProvider( imageProviderSet.getProvider(self.getProperAnimationKey()) )
     }
 
     override method tick(){
@@ -34,5 +33,26 @@ class Sun inherits Projectile(
     }
     override method handleRemoval(){ self.cleanUp() }
 }
-object bigSunAnimation inherits Animation(durationInSeconds = 0.4, framesInAnimation = 2, animationDirectory = "projectiles/sun/big" ){}
-object smallSunAnimation inherits Animation(durationInSeconds = 0.4, framesInAnimation = 2, animationDirectory = "projectiles/sun/small" ){}
+
+object sunAnimationSet inherits ImageProviderSet(
+    entries = #{
+        new KeyProviderPair(
+            key = "#SmallSun",
+            provider = 
+                object inherits Animation(
+                    durationInSeconds = 0.4,
+                    framesInAnimation = 2,
+                    animationDirectory = "projectiles/sun/small" 
+                ){}
+        ),
+        new KeyProviderPair(
+            key = "#BigSun",
+            provider = 
+                object inherits Animation(
+                    durationInSeconds = 0.4,
+                    framesInAnimation = 2,
+                    animationDirectory = "projectiles/sun/big"
+                ){}
+        )
+    }
+){}

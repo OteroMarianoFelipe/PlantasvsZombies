@@ -26,39 +26,43 @@ class ImageProviderStateTracker{
 }
 
 class ImageProviderHandler{
-    var timesToUseTempAnimation = 0
-    var imageProviderToRestoreTo = noImageProvider
     const user
 
-    const imageStateTracker = new ImageProviderStateTracker( owner = self )
+    var timesToUseTempAnimation = 0
+    var tempImageProvider = noImageProvider
+    const stateTracker = new ImageProviderStateTracker( owner = self )
+
+    method currentProvider() = if(self.onTempAnimation()) tempImageProvider else imageProvider
 
     var imageProvider
     method imageProvider() = imageProvider
     method imageProvider(newImageProvider){
         if(imageProvider == newImageProvider){return}
         if(
+            not self.onTempAnimation() &&
             not newImageProvider.hasFamily() || 
-            not imageProvider.sameFamily(newImageProvider) 
+            not imageProvider.sameFamily(newImageProvider)
         ){
-            imageStateTracker.resetTracker()
+            stateTracker.resetTracker()
         }
         imageProvider = newImageProvider
         return
     }
 
+    method onTempAnimation() = timesToUseTempAnimation > 0
     method useTempAnimation(tempAnimation, times){
+        stateTracker.resetTracker()
         timesToUseTempAnimation = times
-        imageProviderToRestoreTo = imageProvider
-        self.imageProvider(tempAnimation)
+        tempImageProvider = tempAnimation
     }
     method restoreFromTemporaryAnimation(){
-        self.imageProvider(imageProviderToRestoreTo)
-        imageProviderToRestoreTo = noImageProvider
+        stateTracker.resetTracker()
+        tempImageProvider = noImageProvider
     }
     method checkTemporaryAnimationState(){
-        if (timesToUseTempAnimation > 0){
+        if(self.onTempAnimation()){
             timesToUseTempAnimation-=1
-            if(timesToUseTempAnimation == 0){
+            if(not self.onTempAnimation()){
                 self.restoreFromTemporaryAnimation()
             }
         }
@@ -69,7 +73,7 @@ class ImageProviderHandler{
         user.animationEnded() 
     }
 
-    method update(){ imageProvider.update(user, imageStateTracker) }
+    method update(){ self.currentProvider().update(user, stateTracker) }
 
-    method getImage() = imageProvider.getImage(user, imageStateTracker)
+    method getImage() = self.currentProvider().getImage(user, stateTracker)
 }

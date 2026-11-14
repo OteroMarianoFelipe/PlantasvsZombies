@@ -8,20 +8,22 @@ import behavior.*
 
 class ConeHead inherits Zombie(
     maxHealth = 370,
-    imageProviderSet = coneHeadImageProvidersSet,
-    defaultImageProvider = imageProviderSet.walkingImageProvider(),
     deathHandler = coneHeadDeathHandler,
+    imageProviderSet = coneHeadImageProvidersSet,
+    defaultImageProviderKey = "#Moving",
     actionModule = 
         new ActionModule(
             behaviors = #{
                 new Behavior(
                     name = "#Movement",
+                    providerKey = "#Moving",
                     coolDownTracker = new CoolDownTracker( secondsPerUse = 4.7 ),
                     state = object{ var property movingDirection = game.at(-1, 0) },
                     strategy = movingStrategy
                 ),
                 new Behavior(
                     name = "#MeleeAttack",
+                    providerKey = "#MeleeAttack",
                     coolDownTracker = new CoolDownTracker( secondsPerUse = 1 ),
                     state = object{ var property damage = 100},
                     strategy = meleeAttackStrategy
@@ -30,22 +32,36 @@ class ConeHead inherits Zombie(
         )
 ){}
 
-object coneHeadImageProvidersSet inherits ZombieImageProviderSet(
-    walkingImageProvider = new HealthBasedImageProvider(
-        imageProviderSet = [
-            coneHeadWalkingDying,
-            coneHeadWalkingHurt,
-            coneHeadWalkingFH
-        ]
-    ),
-    eatingImageProvider = new HealthBasedImageProvider(
-        imageProviderSet = [
-            coneHeadEatingDying,
-            coneHeadEatingHurt,
-            coneHeadEatingFH
-        ]
-    ),
-    deathAnimation = noImageProvider
+
+object coneHeadImageProvidersSet inherits ImageProviderSet(
+    entries = #{
+        new KeyProviderPair(
+            key = "#Moving",
+            provider =
+                new HealthBasedImageProvider(
+                    imageProviderSet = [
+                        coneHeadWalkingDying,
+                        coneHeadWalkingHurt,
+                        coneHeadWalkingFH
+                    ]
+                )
+        ),
+        new KeyProviderPair(
+            key = "#MeleeAttack",
+            provider =
+                new HealthBasedImageProvider(
+                    imageProviderSet = [
+                        coneHeadEatingDying,
+                        coneHeadEatingHurt,
+                        coneHeadEatingFH
+                    ]
+                )
+        ),
+        new KeyProviderPair(
+            key = "#Death",
+            provider = noImageProvider
+        )
+    }
 ){} 
 
 object coneHeadDeathHandler{

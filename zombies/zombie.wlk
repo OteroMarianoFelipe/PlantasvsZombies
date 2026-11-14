@@ -10,7 +10,6 @@ class Zombie inherits Alive and Active and Ticks and Entity(
     team = zombiesTeam,
     collides = true
 ){
-    var property imageProviderSet
     var property frozen = 0
 
     method freeze(){
@@ -39,7 +38,7 @@ class Zombie inherits Alive and Active and Ticks and Entity(
 object defaultZombieDeathHandler{
     method apply(user){
         user.animationCallback({ => user.cleanUp()}) 
-        user.imageProvider(user.imageProviderSet().deathAnimation())
+        user.imageProvider(user.imageProviderSet().getProvider("#Death"))
         user.removeCollision()
     }
 }

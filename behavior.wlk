@@ -1,4 +1,5 @@
 import util.config.*
+import util.debugger.*
 import entityTickingManager.*
 import imageProvider.*
 
@@ -28,12 +29,21 @@ class Behavior{
     const property name
     const property strategy
     const property state
+    const providerKey
 
     const coolDownTracker
     method coolDownTracker() = coolDownTracker
 
     method slowDown(factor){ coolDownTracker.slowDown(factor) }
     method restoreSpeed(){ coolDownTracker.restoreSpeed() }
+
+    method getImageProvider(user){
+        if(strategy.shouldTick(user)){
+            return user.imageProviderSet().getProvider(providerKey)
+            debugger.info("Candidato no nulo en "+name)
+        }
+        return null
+    }
 
     method tick(user){
         if(strategy.shouldTick(user)){
@@ -52,12 +62,11 @@ class Behavior{
 }
 
 class AnticipatedBehavior inherits Behavior{
-    const anticipationAnimation
-
     override method tryToUse(user){
         super(user)
-        if( coolDownTracker.shouldAnticipate(anticipationAnimation) ){
-            user.anticipateBehavior( anticipationAnimation )
+        const providerForAnticipation = user.imageProviderSet().getProvider(providerKey)
+        if( coolDownTracker.shouldAnticipate(providerForAnticipation) ){
+            user.anticipateBehavior( providerForAnticipation )
         }
     }
 }

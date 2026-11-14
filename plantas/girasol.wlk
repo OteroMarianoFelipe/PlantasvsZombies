@@ -11,8 +11,8 @@ class Girasol inherits Active(
             behaviors = #{
                 new AnticipatedBehavior(
                     name = "#PrimaryShooting",
+                    providerKey = "#Active",
                     coolDownTracker = new CoolDownTracker( secondsPerUse = 24.25 ),
-                    anticipationAnimation = sunFlowerActiveAnimation,
                     state = 
                         {user => object{
                             var property proyectileGenerator = 
@@ -29,8 +29,29 @@ class Girasol inherits Active(
         )
 ) and Planta(
     maxHealth = 300,
-    defaultImageProvider = sunFlowerIdleAnimation
+    defaultImageProviderKey = "#Idle",
+    imageProviderSet = sunFlowerImageProviderSet
 ){}
 
-object sunFlowerIdleAnimation inherits Animation(durationInSeconds = 1, framesInAnimation = 9, animationDirectory = "plants/sunFlower/idle"){}
-object sunFlowerActiveAnimation inherits Animation(durationInSeconds = 1, framesInAnimation = 9, animationDirectory = "plants/sunFlower/active"){}
+object sunFlowerImageProviderSet inherits ImageProviderSet(
+    entries = #{
+        new KeyProviderPair(
+            key = "#Idle",
+            provider = 
+                object inherits Animation(
+                    durationInSeconds = 1,
+                    framesInAnimation = 9,
+                    animationDirectory = "plants/sunFlower/idle"
+                ){}
+        ),
+        new KeyProviderPair(
+            key = "#Active",
+            provider = 
+                object inherits Animation(
+                    durationInSeconds = 1,
+                    framesInAnimation = 9,
+                    animationDirectory = "plants/sunFlower/active"
+                ){}
+        )
+    }
+){}

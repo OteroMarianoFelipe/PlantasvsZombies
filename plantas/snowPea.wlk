@@ -12,8 +12,8 @@ class SnowPea inherits Active(
             behaviors = #{
                 new AnticipatedBehavior(
                     name = "#PrimaryShooting",
+                    providerKey = "#Shooting",
                     coolDownTracker = new CoolDownTracker( secondsPerUse = 3/2 ),
-                    anticipationAnimation = snowPeaAction,
                     state = 
                         {user => object{
                             var property proyectileGenerator = 
@@ -31,8 +31,19 @@ class SnowPea inherits Active(
         )
 ) and Planta(
     maxHealth = 300,
-    defaultImageProvider = snowPeaIdle
+    defaultImageProviderKey = "#Idle",
+    imageProviderSet = snowPeaImageProviderSet
 ){}
 
-object snowPeaIdle inherits Animation(durationInSeconds = 1, framesInAnimation = 8, animationDirectory = "plants/snowPea/idle"){}
-object snowPeaAction inherits Animation(durationInSeconds = 0.5, framesInAnimation = 4, animationDirectory = "plants/snowPea/active"){}
+object snowPeaImageProviderSet inherits ImageProviderSet(
+    entries = #{
+        new KeyProviderPair(
+            key = "#Idle",
+            provider = new Animation(durationInSeconds = 1, framesInAnimation = 8, animationDirectory = "plants/snowPea/idle")
+        ),
+        new KeyProviderPair(
+            key = "#Shooting",
+            provider = new Animation(durationInSeconds = 0.5, framesInAnimation = 4, animationDirectory = "plants/snowPea/active")
+        )
+    }
+){}

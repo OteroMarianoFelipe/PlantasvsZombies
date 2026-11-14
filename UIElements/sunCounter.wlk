@@ -1,7 +1,7 @@
 import imageProvider.*
 import entity.*
 
-object sunCounter inherits Entity{
+object sunCounter{
     var property suns = 200
 
     method canPay(cost) = suns >= cost

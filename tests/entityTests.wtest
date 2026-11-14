@@ -4,9 +4,38 @@ import entity.*
 import entityTickingManager.*
 import team.*
 
-describe "Manejo propio"{
-    const entidadPlana = object inherits Entity{}
+const proveedorDeEjemplo = new Sprite( image = "" )
+const entidadPlana = 
+    object inherits Entity(
+        imageProviderSet = 
+            new ImageProviderSet( 
+                entries = [
+                    new KeyProviderPair(
+                        key = "#Default",
+                        provider = proveedorDeEjemplo
+                    )
+                ] 
+            ),
+        defaultImageProviderKey = "#Default"
+    ){}
+const entidadViva = 
+    object inherits Alive(
+        deathHandler = { user => user.dead(true) },
+        maxHealth = 200
+    ) and Entity(
+        imageProviderSet = 
+            new ImageProviderSet( 
+                entries = [
+                    new KeyProviderPair(
+                        key = "#Default",
+                        provider = proveedorDeEjemplo
+                    )
+                ] 
+            ),
+        defaultImageProviderKey = "#Default"
+    ){ var property dead = false }
 
+describe "Manejo propio"{
     test "Logra iniciar correctamente"{
         entidadPlana.start(game.at(-33, 99))
         assert.that(game.hasVisual(entidadPlana) && entidadPlana.position() == game.at(-33, 99))
@@ -27,7 +56,6 @@ describe "Manejo propio"{
     }
 }
 describe "Mensajes de consulta"{
-    const entidadPlana = object inherits Entity{}
     test "Logra determinar correctamente si una entidad es o no enemiga"{
         const resultadosEsperados = [false, true, false, true, false, false, false, false, false]
         const resultadosObtenidos = []
@@ -35,44 +63,20 @@ describe "Mensajes de consulta"{
         equiposAProbar.forEach({ i =>
             entidadPlana.team(i)
             equiposAProbar.forEach({ t =>
-                resultadosObtenidos.add(entidadPlana.isEnemy(new Entity(team = t)))
+                entidadViva.team(t)
+                resultadosObtenidos.add(entidadPlana.isEnemy(entidadViva))
             })
         })
         assert.equals(resultadosEsperados, resultadosObtenidos)
     }
 }
-describe "Manejo de proveedores de imagen"{
-    const proveedorDeEjemplo = new Sprite( image = "" ) 
-    const entidadPlana = object inherits Entity(
-        imageHandler = 
-            new ImageProviderHandler(
-                imageProvider = proveedorDeEjemplo,
-                user = self 
-            ),
-        defaultImageProvider = proveedorDeEjemplo
-    ){}
-
+describe "Manejo de proveedores de imagen"{ 
     test "Logra cambiar de proveedor de imagen" {
         entidadPlana.imageProvider(noImageProvider)
         assert.equals(noImageProvider, entidadPlana.imageProvider())
     }
-    test "Logra cambiar el proveedor de imagen default"{
-        entidadPlana.defaultImageProvider(noImageProvider)
-        assert.equals(noImageProvider, entidadPlana.defaultImageProvider())
-    }
-    test "Logra cambiar correctamente al proveedor de imagen default"{
-        entidadPlana.defaultImageProvider(noImageProvider)
-        entidadPlana.useDefaultImageProvider()
-        assert.equals(entidadPlana.defaultImageProvider(), entidadPlana.imageProvider())
-    }
 }
 describe "Entidad viva"{
-    const entidadViva = 
-        object inherits Alive(
-            deathHandler = { user => user.dead(true) },
-            maxHealth = 200
-        ) and Entity{ var property dead = false }
-
     test "Recibe la cantidad correcta de daño"{
         entidadViva.health(200)
         entidadViva.takeDamage(100)

@@ -11,8 +11,8 @@ class LanzaGuisantes inherits Active(
             behaviors = #{
                 new AnticipatedBehavior(
                     name = "#PrimaryShooting",
+                    providerKey = "#Shooting",
                     coolDownTracker = new CoolDownTracker( secondsPerUse = 3/2 ),
-                    anticipationAnimation = peaShooterActionAnimation,
                     state = 
                         {user => object{
                             var property proyectileGenerator = 
@@ -29,8 +29,29 @@ class LanzaGuisantes inherits Active(
         )
 ) and Planta(
     maxHealth = 300,
-    defaultImageProvider = peaShooterIdleAnimation
+    defaultImageProviderKey = "#Idle",
+    imageProviderSet = peaShooterProviderSet
 ){}
 
-object peaShooterIdleAnimation inherits Animation( durationInSeconds = 1, framesInAnimation = 8, animationDirectory = "plants/peashooter/idle"){}
-object peaShooterActionAnimation inherits Animation( durationInSeconds = 0.5, framesInAnimation = 4, animationDirectory = "plants/peashooter/active"){}
+object peaShooterProviderSet inherits ImageProviderSet(
+    entries = #{
+        new KeyProviderPair(
+            key = "#Idle",
+            provider = 
+                object inherits Animation(
+                    durationInSeconds = 1,
+                    framesInAnimation = 8,
+                    animationDirectory = "plants/peashooter/idle"
+                ){}
+        ),
+        new KeyProviderPair(
+            key = "#Shooting",
+            provider = 
+                object inherits Animation(
+                    durationInSeconds = 0.5,
+                    framesInAnimation = 4,
+                    animationDirectory = "plants/peashooter/active"
+                ){}
+        )
+    }
+){}

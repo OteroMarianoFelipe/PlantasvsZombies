@@ -17,6 +17,13 @@ class ActionModule{
         }
     }
 
+    method getImageProvider(user){
+        const proposedProviders = behaviors.map({ behavior =>
+            behavior.getImageProvider(user)
+        }).filter({ p => p != null })
+        return proposedProviders.head()  
+    }
+
     method slowDown(factor){
         behaviors.forEach({ b => b.slowDown(factor) })
     }
