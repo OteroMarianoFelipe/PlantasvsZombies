@@ -69,6 +69,7 @@ object config {
   }
 
   method lose(){
+    self.clear()
     game.addVisual(gameOver)
   }
 
