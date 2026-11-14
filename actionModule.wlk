@@ -20,11 +20,7 @@ class ActionModule{
     }
 
     method addBehavior(behavior){
-        if(self.hasBehavior(behavior.key())){
-            debugger.warning("Comportamiento de key "+behavior.key()+" ya presente")
-        }else{
-            behaviors.add(behavior)
-        }
+        behaviors.add(behavior)
     }
 
     method removeBehavior(key){

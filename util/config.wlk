@@ -42,9 +42,13 @@ object config {
   method setUpNewGame(){
     self.controlsConfiguration()
     entityTickingManager.startTicking()
-    spawningManager.startSpawning()
+    //spawningManager.startSpawning()
+    spawningManager.startSunSpawning() // temp
+    scriptedSpawner.startScript()
     self.startUIElements()
   }
+
+  method shouldResetScript() = not game.hasVisual(gameOver)
 
   method controlsConfiguration(){
     game.onClickDo({position => player.clickHandler(position)})

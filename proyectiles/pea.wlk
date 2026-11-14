@@ -40,12 +40,12 @@ class Pea inherits HandlesCollisions(
 
     override method handleRemoval(){
         if(removalHandled){ 
-            self.error("Second time removal")
             self.cleanUp() 
         }else{
             removalHandled = true
             self.removeCollision()
             self.actionModule().clear()
+            self.actionModule().stop()
             animationCallback = { => self.cleanUp()} 
             imageHandler.useTempAnimation(state.imageProviderSet().getProvider("#Impact"), 1)
         }

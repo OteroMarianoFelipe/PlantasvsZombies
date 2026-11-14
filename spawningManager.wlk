@@ -8,14 +8,86 @@ import imageProvider.*
 import entity.*
 import proyectiles.sun.*
 import team.*
+import entityTickingManager.*
+
+class ScriptEntry{
+    const property timeInSeconds
+    const property entityToSpawn
+}
+
+object script{
+    const property entries = [
+        new ScriptEntry(timeInSeconds = 23 , entityToSpawn = new ZombieBasico()),
+        new ScriptEntry(timeInSeconds = 49 , entityToSpawn = new ZombieBasico()),
+        new ScriptEntry(timeInSeconds = 76 , entityToSpawn = new ZombieBasico()),
+        new ScriptEntry(timeInSeconds = 98 , entityToSpawn = new ConeHead()),
+        new ScriptEntry(timeInSeconds = 120, entityToSpawn = new ConeHead()),
+        new ScriptEntry(timeInSeconds = 140, entityToSpawn = new PoleVaulter()),
+        new ScriptEntry(timeInSeconds = 155, entityToSpawn = new ConeHead()),
+        new ScriptEntry(timeInSeconds = 156, entityToSpawn = new ZombieBasico()),
+        new ScriptEntry(timeInSeconds = 174, entityToSpawn = new ZombieBasico()),
+        new ScriptEntry(timeInSeconds = 176, entityToSpawn = new PoleVaulter()),
+        new ScriptEntry(timeInSeconds = 187, entityToSpawn = new ZombieBasico()),
+        new ScriptEntry(timeInSeconds = 188, entityToSpawn = new ZombieBasico()),
+        new ScriptEntry(timeInSeconds = 188, entityToSpawn = new ZombieBasico()),
+        new ScriptEntry(timeInSeconds = 213, entityToSpawn = new ZombieBasico()), // Should be flag zombie
+        new ScriptEntry(timeInSeconds = 215, entityToSpawn = new PoleVaulter()),
+        new ScriptEntry(timeInSeconds = 216, entityToSpawn = new ZombieBasico()),
+        new ScriptEntry(timeInSeconds = 216, entityToSpawn = new ZombieBasico()),
+        new ScriptEntry(timeInSeconds = 216, entityToSpawn = new ZombieBasico()),
+        new ScriptEntry(timeInSeconds = 218, entityToSpawn = new ConeHead()),
+        new ScriptEntry(timeInSeconds = 218, entityToSpawn = new ZombieBasico()),
+        new ScriptEntry(timeInSeconds = 218, entityToSpawn = new ZombieBasico())
+    ]
+}
+
+object scriptedSpawner{
+    var tickCounter = 0
+    var ownScript = []
+    const allLines = (config.lowerBound().y() .. config.upperBound().y()).map({ i => i }).asList()
+    var linesAvailable = allLines.copy()
+
+    method getRandomLine(){
+        if(linesAvailable.size() == 0){ linesAvailable = allLines.copy() }
+        const selectedLine = linesAvailable.get(random.numberBetween(0, linesAvailable.size()-1))
+        linesAvailable.remove(selectedLine)
+        return selectedLine
+    }
+    
+    method instancePosition() = game.at(config.upperBound().x(), self.getRandomLine())
+
+    method animate(){}
+    method tick(){
+        tickCounter += 1
+        const seconds = config.ticksToSeconds(tickCounter)
+        3.times({ i =>
+            const entry = ownScript.get(i-1)
+            if(entry.timeInSeconds() <= seconds){
+                entry.entityToSpawn().start(self.instancePosition())
+                ownScript.remove(entry)
+            }
+        })
+    }
+
+    method startScript(){ 
+        ownScript = script.entries().copy()
+        tickCounter = 0
+        entityTickingManager.add(self) 
+    }
+}
 
 object spawningManager{
     const spawners = [ basicZombieSpawner, coneHeadZombieSpawner, poleVaulterZombieSpawner, sunSpawner ]
+
+    method startSunSpawning(){
+        sunSpawner.setPeriodicalWaves(10, 1)
+    }
+
     method startSpawning(){        
         basicZombieSpawner.setPeriodicalWaves(20, 2)
         coneHeadZombieSpawner.setPeriodicalWaves(40, 1)
         poleVaulterZombieSpawner.setPeriodicalWaves(20, 1)
-        sunSpawner.setPeriodicalWaves(10, 1)
+        self.startSunSpawning()
     }
     method stopSpawning(){
         spawners.forEach({ spawner =>
