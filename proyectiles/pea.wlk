@@ -1,47 +1,92 @@
+import entity.*
 import imageProvider.*
 import proyectiles.projectile.*
-import assets.peaShooter.*
-import assets.snowPea.*
+import entityTickingManager.*
+import actionModule.*
 import behavior.*
-import entityManager.*
 
-class Pea inherits Projectile(
-    defaultImageProvider =  new PeaShot(),
-    behaviors = [
-        new CollitionBehavior(),
-        new MovingBehavior(
-            secondsPerUse = 0.1,
-            movingDirection = game.at(1, 0)
-        ),
-        new CollitionBehavior()
-    ]
+class Pea inherits HandlesCollisions(
+    collitionHandler = { entity =>
+        if( self.isEnemy(entity) ) { 
+            state.apply(entity, self)
+        }
+    } 
+) and Active(
+    actionModule = 
+        new ActionModule(
+            behaviors = #{
+                new Behavior(
+                    name = "#Movement",
+                    providerKey = "#Moving",
+                    coolDownTracker = new CoolDownTracker( secondsPerUse = 1/10 ),
+                    state = object{ var property movingDirection = game.at(1, 0) },
+                    strategy = movingStrategy
+                )
+            }
+        )
+) and Projectile( 
+    defaultImageProviderKey = "#Moving",
+    imageProviderSet = state.imageProviderSet() 
 ){
     var property damage
-    var property frozen
-
-    var property objective = null
-    var property action = { => objective.takeDamage(damage)}
-    var property impactAnimation = new PeaShotImpact()
-
-    override method collisionHandler(entity){
-        if( self.isEnemy(entity) ) { 
-            self.objective(entity)
-            action.apply()
-            self.handleRemoval()
-        }
+    var property state = noEffect
+    method state(newState){
+        state = newState
+        self.imageProviderSet(state.imageProviderSet())
+        self.updateImageProvider()
     }
-    override method start(pos){
-        super(pos)
-        if(frozen){
-            action = { => objective.takeDamage(damage) objective.freeze() }
-            self.changeAndUseDefaultImageProvider(new FrozenPea())
-            impactAnimation = new FrozenPeaImpact()
-        }
-    }
+
     override method handleRemoval(){
-        behaviors = []
+        self.actionModule().stop()
         animationCallback = { => self.cleanUp()} 
-        self.imageProvider(impactAnimation)
-        entitiesMap.remove(self)        
+        self.imageProvider(state.imageProviderSet().getProvider("#Impact"))
+        self.removeCollision()
     }
 }
+
+object frozenState{
+    const property imageProviderSet = 
+        new ImageProviderSet(
+            entries = #{
+                new KeyProviderPair(
+                    key = "#Moving",
+                    provider = frozenPeaAnimation
+                ),
+                new KeyProviderPair(
+                    key = "#Impact",
+                    provider = frozenPeaImpactAnimation
+                )
+            }
+        )
+
+    method apply(entity, user){
+        entity.takeDamage(user.damage())
+        user.handleRemoval()
+    }
+}
+object noEffect{
+    const property imageProviderSet = 
+        new ImageProviderSet(
+            entries = #{
+                new KeyProviderPair(
+                    key = "#Moving",
+                    provider = peaShotAnimation
+                ),
+                new KeyProviderPair(
+                    key = "#Impact",
+                    provider = peaShotImpactAnimation
+                )
+            }
+        )
+
+    method apply(entity, user){
+        entity.takeDamage(user.damage())
+        user.handleRemoval()
+    }
+}
+
+object peaShotAnimation inherits Sprite( image = "sprites/projectiles/pea.png" ){}
+object peaShotImpactAnimation inherits Animation( durationInSeconds = 0.1, framesInAnimation = 4, animationDirectory = "projectiles/pea/impact"){}
+
+object frozenPeaAnimation inherits Sprite( image = "sprites/projectiles/frozenPea.png" ){}
+object frozenPeaImpactAnimation inherits Animation(durationInSeconds = 0.15, framesInAnimation = 6, animationDirectory = "projectiles/frozenPea/impact"){}

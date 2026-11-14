@@ -4,13 +4,15 @@ import zombies.zombieBasico.*
 import zombies.coneHead.*
 import util.config.*
 import util.random.*
+import imageProvider.*
 import entity.*
 import proyectiles.sun.*
+import team.*
 
 object spawningManager{
     method startSpawning(){
-        basicZombieSpawner.setPeriodicalWaves(5, 3)
-        coneHeadZombieSpawner.setPeriodicalWaves(40, 2)
+        basicZombieSpawner.setPeriodicalWaves(20, 2)
+        coneHeadZombieSpawner.setPeriodicalWaves(40, 1)
         sunSpawner.setPeriodicalWaves(10, 1)
     }
     method stopSpawning(){
@@ -49,12 +51,12 @@ class Spawner{
     }
 }
 class ZombieSpawner inherits Spawner{
-    const allLines = (config.lowerBound().y() .. config.upperBound().y()).map({ i => i }).asList()
-    var linesAvailable = [allLines].flatten()
+    method allLines() = (config.lowerBound().y() .. config.upperBound().y()).map({ i => i }).asList()
+    var linesAvailable = []
 
     method getRandomLine(){
         if(linesAvailable.size() == 0){
-            linesAvailable = [allLines].flatten()
+            linesAvailable = self.allLines()
         }
         const selectedLine = linesAvailable.get(random.numberBetween(0, linesAvailable.size()-1))
         linesAvailable.remove(selectedLine)
@@ -64,7 +66,7 @@ class ZombieSpawner inherits Spawner{
     override method instancePosition() = game.at(config.upperBound().x(), self.getRandomLine())
     override method stopWaves(){
         super()
-        linesAvailable = allLines
+        linesAvailable = []
     }
 }
 
@@ -97,6 +99,6 @@ object sunSpawner inherits Spawner(
     override method newInstance() = 
         new Sun(
             value = 25,
-            team="PLANTAS"
+            team=plantsTeam
         )
 }

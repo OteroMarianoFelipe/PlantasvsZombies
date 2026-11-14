@@ -1,9 +1,10 @@
 import wollok.game.*
-import entityManager.*
+import entityTickingManager.*
 import player.*
 import UIElements.plantCard.*
 import UIElements.sunCounter.*
 import spawningManager.*
+import UIElements.gameOver.*
 
 object config {
   const property height = 7
@@ -13,23 +14,22 @@ object config {
   const cellSize = 64
   const backGroundImage = "sprites/background.png"
 
-  method upperBound() = game.at(11, 5)
-  method lowerBound() = game.at(2, 1)
+  const startingSuns = 200
+
+  const plantCards = [sunFlowerCard, peashooterCard, wallNutCard, snowPeaCard]
+
+  const property upperBound = game.at(11, 5)
+  const property lowerBound = game.at(2, 1)
 
   method secondsToTicks(seconds) = (seconds * ticksPerSecond).truncate(0)
   method secondsToAnimationTicks(seconds) = (seconds * animationTicksPerSecond).truncate(0)
   method ticksToAnimationTicks(ticks) = (ticks * animationTicksPerSecond / ticksPerSecond).truncate(0)
   method animationTicksToTicks(ticks) = (ticks * ticksPerSecond / animationTicksPerSecond ).truncate(0)
 
-  method configuracionGeneral(){
-    self.configurarVisuales()  
-    self.configurarControles()
-    entityManager.startTicking()
-    entitiesMap.initializeEntitiesMap()
-    spawningManager.startSpawning()
-  }
+  method isInGardenBounds(pos) = pos.x().between(lowerBound.x(), upperBound.x()) && pos.y().between(lowerBound.y(), upperBound.y())
+  method isInBounds(pos) = pos.x().between(0, width) && pos.y(0, height)
 
-  method configurarVisuales(){
+  method gameConfigurations(){
     game.title("Line Defense - Plants vs Zombies")
     game.height(height)
     game.width(width)
@@ -37,15 +37,44 @@ object config {
     game.boardGround(backGroundImage)
   }
 
-  method configurarControles(){
+  method setUpNewGame(){
+    self.controlsConfiguration()
+    entityTickingManager.startTicking()
+    spawningManager.startSpawning()
+    self.startUIElements()
+  }
+
+  method controlsConfiguration(){
     game.onClickDo({position => player.clickHandler(position)})
+    plantCards.size().times({ i =>
+      keyboard.num(i).onPressDo({ => player.clickHandler(game.at(1 + i, 0)) })
+    })
+    keyboard.r().onPressDo({ => self.resetGame()})
   }
 
   method startUIElements(){
-    sunFlowerCard.start(game.at(2,0))
-    peashooterCard.start(game.at(3,0))
-    wallNutCard.start(game.at(4,0))
-    snowPeaCard.start(game.at(5,0))
+    plantCards.size().times({ i =>
+      const card = plantCards.get(i-1)
+      card.start(game.at(1 + i, 0))
+      card.reset()
+    })
+    sunCounter.suns(startingSuns)
     sunCounter.start()
+  }
+
+  method clear(){
+    game.clear()
+    entityTickingManager.clear()
+    spawningManager.stopSpawning()
+  }
+
+  method lose(){
+    self.clear()
+    game.addVisual(gameOver)
+  }
+
+  method resetGame(){
+    self.clear()
+    self.setUpNewGame()
   }
 }

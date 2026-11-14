@@ -1,0 +1,75 @@
+import tests.behaviorTests.*
+import entity.*
+import entityTickingManager.*
+import imageProvider.*
+import zombies.zombieBasico.*
+import plantas.nuez.*
+import plantas.girasol.*
+import proyectiles.pea.*
+import util.config.*
+import team.*
+import actionModule.*
+
+class TestBehavior{
+    var timesUsed = 0
+    method timesUsed() = timesUsed
+    var slowFactor = 0
+    method slowFactor() = slowFactor
+
+    method slowDown(factor){ slowFactor = factor }
+    method restoreSpeed(){ slowFactor = 0 }
+    method tick(user){}
+    method tryToUse(user){
+        timesUsed+=1
+    }
+}
+
+object testBehavior inherits TestBehavior{
+    override method tryToUse(user){
+        super(user)
+        moduloDeAccionDePrueba.stop()
+    }
+}
+object testBehavior2 inherits TestBehavior{}
+object moduloDeAccionDePrueba inherits ActionModule(
+    behaviors = [
+        testBehavior,
+        testBehavior2
+    ]
+){}
+
+describe "Modulo de acción:"{
+
+    test "Llama efectivamente a sus comportamientos"{
+        moduloDeAccionDePrueba.use(null)
+        assert.equals(1, testBehavior.timesUsed())
+    }
+    test "Logra pausar el modulo de acción en ejecución"{
+        moduloDeAccionDePrueba.use(null)
+        assert.equals(0, testBehavior2.timesUsed())
+    }
+    test "Una vez pausado no se utilizan los comportamientos"{
+        2.times({ i =>
+            moduloDeAccionDePrueba.use(null)
+        })
+        assert.equals(1, testBehavior.timesUsed())
+        assert.equals(0, testBehavior2.timesUsed())
+    }
+    test "Una vez se llama a resume los comportamientos vuelven a estar disponibles"{
+        moduloDeAccionDePrueba.use(null)
+        moduloDeAccionDePrueba.resume()
+        moduloDeAccionDePrueba.use(null)
+        assert.equals(2, testBehavior.timesUsed())
+        assert.equals(0, testBehavior2.timesUsed())
+    }
+    test "Realentiza efectivamente a todos sus comportamientos"{
+        moduloDeAccionDePrueba.slowDown(2)
+        assert.equals(2, testBehavior.slowFactor())
+        assert.equals(2, testBehavior2.slowFactor())
+    }
+    test "Logra restaurar effectivamente la velocidad de sus comportamientos"{
+        moduloDeAccionDePrueba.restoreSpeed()
+        assert.equals(0, testBehavior.slowFactor())
+        assert.equals(0, testBehavior2.slowFactor())
+    }
+}

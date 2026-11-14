@@ -1,0 +1,80 @@
+import entityTickingManager.*
+import spawningManager.*
+import zombies.zombieBasico.*
+import plantas.nuez.*
+import UIElements.gameOver.*
+import util.config.*
+import wollok.mirror.*
+
+const entityTickingManagerMirror = new ObjectMirror(target = entityTickingManager)
+
+describe "Perder la partida"{
+
+
+    method initialize(){
+        game.width(config.width())
+        game.height(config.height())
+    }
+
+    test "Al perder se eliminan las visuales de todas las entidades y se vacía el administrador"{
+        const zombie = new ZombieBasico()
+        zombie.start(game.at(5, 2))
+        const planta = new Nuez()
+        planta.start(game.at(3, 2))
+
+        config.lose()
+
+        assert.notThat(game.hasVisual(zombie))
+        assert.notThat(game.hasVisual(planta))
+        assert.equals(0, entityTickingManagerMirror.resolve("entities").size())
+    }
+
+    test "Al perder aparece la pantalla de game over"{
+
+        config.lose()
+
+        assert.that(game.hasVisual(gameOver))
+    }
+
+    test "Al perder se frenan los ticks de las entidades y los spawners"{
+        entityTickingManager.startTicking()
+        spawningManager.startSpawning()
+
+        config.lose()
+
+        assert.notThat(io.containsTimeEvent("tickEntities"))
+        assert.notThat(io.containsTimeEvent("AnimateEntities"))
+        assert.notThat(io.containsTimeEvent(basicZombieSpawner.wavesEventName()))
+        assert.notThat(io.containsTimeEvent(coneHeadZombieSpawner.wavesEventName()))
+        assert.notThat(io.containsTimeEvent(sunSpawner.wavesEventName()))
+    }
+}
+
+
+describe "Administrador de entidades: clear"{
+
+    method initialize(){
+        game.width(config.width())
+        game.height(config.height())
+    }
+
+    test "clear vacía el administrador de entidades"{
+        const zombie = new ZombieBasico()
+        zombie.start(game.at(5, 2))
+        const planta = new Nuez()
+        planta.start(game.at(3, 2))
+
+        entityTickingManager.clear()
+
+        assert.equals(0, entityTickingManagerMirror.resolve("entities").size())
+    }
+
+    test "clear solo se ocupa de las entidades: no frena los eventos del juego"{
+        entityTickingManager.startTicking()
+
+        entityTickingManager.clear()
+
+        assert.that(io.containsTimeEvent("tickEntities"))
+        assert.that(io.containsTimeEvent("AnimateEntities"))
+    }
+}

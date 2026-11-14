@@ -1,78 +1,82 @@
 import imageProvider.*
+import imageProviderHandler.*
 import entity.*
-import entityManager.*
+import entityTickingManager.*
+import team.*
+
+const proveedorDeEjemplo = new Sprite( image = "" )
+const entidadPlana = 
+    object inherits Entity(
+        imageProviderSet = 
+            new ImageProviderSet( 
+                entries = [
+                    new KeyProviderPair(
+                        key = "#Default",
+                        provider = proveedorDeEjemplo
+                    )
+                ] 
+            ),
+        defaultImageProviderKey = "#Default"
+    ){}
+const entidadViva = 
+    object inherits Alive(
+        deathHandler = { user => user.dead(true) },
+        maxHealth = 200
+    ) and Entity(
+        imageProviderSet = 
+            new ImageProviderSet( 
+                entries = [
+                    new KeyProviderPair(
+                        key = "#Default",
+                        provider = proveedorDeEjemplo
+                    )
+                ] 
+            ),
+        defaultImageProviderKey = "#Default"
+    ){ var property dead = false }
 
 describe "Manejo propio"{
-    const entidadPlana = object inherits Entity(team = "NEUTRAL"){}
-
     test "Logra iniciar correctamente"{
         entidadPlana.start(game.at(-33, 99))
         assert.that(game.hasVisual(entidadPlana) && entidadPlana.position() == game.at(-33, 99))
     }
     test "Logra eliminarse correctamente"{
-        entitiesMap.initializeEntitiesMap()
         entidadPlana.start(game.at(0, 0))
         entidadPlana.cleanUp()
         assert.that(not game.hasVisual(entidadPlana))
     }
     test "Logra cambiar su posición correctamente"{
-        entitiesMap.initializeEntitiesMap()
+        const nuevaPosición = game.at(2, 2)
+        game.addVisual(entidadPlana)
         entidadPlana.position(game.at(3, 3))
-        entitiesMap.add(entidadPlana)
-        entidadPlana.updatePosition(game.at(2, 2))
-        assert.that(entidadPlana.position() == game.at(2, 2) && entitiesMap.allEntitiesAt(game.at(2, 2)).contains(entidadPlana))
+        entidadPlana.position(nuevaPosición)
+        assert.equals(entidadPlana.position(), nuevaPosición)
+        assert.equals([entidadPlana], nuevaPosición.allElements())
+        assert.that(nuevaPosición.allElements().contains(entidadPlana))
     }
 }
 describe "Mensajes de consulta"{
-    const entidadPlana = object inherits Entity(team = "NEUTRAL"){}
     test "Logra determinar correctamente si una entidad es o no enemiga"{
-        const resultadosEsperados = [false, true, false, true, false, false, true, true, false]
+        const resultadosEsperados = [false, true, false, true, false, false, false, false, false]
         const resultadosObtenidos = []
-        const equiposAProbar=["PLANTAS", "ZOMBIES", "NEUTRAL"]
+        const equiposAProbar=[plantsTeam, zombiesTeam, neutralTeam]
         equiposAProbar.forEach({ i =>
             entidadPlana.team(i)
-            equiposAProbar.forEach({ j =>
-                resultadosObtenidos.add(entidadPlana.isEnemy(new Entity(team = j)))
+            equiposAProbar.forEach({ t =>
+                entidadViva.team(t)
+                resultadosObtenidos.add(entidadPlana.isEnemy(entidadViva))
             })
         })
         assert.equals(resultadosEsperados, resultadosObtenidos)
     }
 }
-describe "Manejo de proveedores de imagen"{
-    const entidadPlana = object inherits Entity(team = "NEUTRAL"){}
-
+describe "Manejo de proveedores de imagen"{ 
     test "Logra cambiar de proveedor de imagen" {
-        const newImgProv = noImageProvider
-        entidadPlana.imageProvider(newImgProv)
-        assert.equals(newImgProv, entidadPlana.imageProvider())
+        entidadPlana.imageProvider(noImageProvider)
+        assert.equals(noImageProvider, entidadPlana.imageProvider())
     }
-    test "Logra cambiar correctamente al proveedor de imagen default"{
-        entidadPlana.imageProvider(null)
-        entidadPlana.defaultImageProvider(null)
-        entidadPlana.useDefaultImageProvider()
-        assert.equals(entidadPlana.defaultImageProvider(), entidadPlana.imageProvider())
-    }
-    test "Logra cambiar el proveedor de imagen default"{
-        entidadPlana.defaultImageProvider(null)
-        assert.equals(null, entidadPlana.defaultImageProvider())
-    }
-
-    test "Logra cambiar de proveedor de image default y cambia al mismo"{
-        entidadPlana.imageProvider(1)
-        entidadPlana.defaultImageProvider(2)
-        entidadPlana.changeAndUseDefaultImageProvider(3)
-        assert.equals(entidadPlana.imageProvider(), entidadPlana.defaultImageProvider())
-    }    
 }
 describe "Entidad viva"{
-    const entidadViva = 
-        object inherits Alive(
-            deathHandler = { user => user.dead(true) },
-            maxHealth = 200
-        ) and Entity(
-            team = "NEUTRAL"
-        ){ var property dead = false }
-
     test "Recibe la cantidad correcta de daño"{
         entidadViva.health(200)
         entidadViva.takeDamage(100)

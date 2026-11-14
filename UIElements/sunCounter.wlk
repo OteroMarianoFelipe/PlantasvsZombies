@@ -1,8 +1,8 @@
 import imageProvider.*
 import entity.*
 
-object sunCounter inherits Entity(team = "NEUTRAL"){
-    var property suns = 200
+object sunCounter{
+    var property suns = 0
 
     method canPay(cost) = suns >= cost
     method addSuns(amount) {
@@ -30,9 +30,10 @@ object sunCounter inherits Entity(team = "NEUTRAL"){
 
 }
 
-object sunCounterIcoWithHundreds inherits StaticAnimation( image = "sprites/sunCounter/iconWithHundreds/"){
+object sunCounterIcoWithHundreds inherits Sprite( image = "sprites/sunCounter/iconWithHundreds/"){
     const property position = game.at(0,0)
     var property hundreds = 0
+    method beClicked(){}
     method changeHundreds(newNumber){
         if(newNumber!=hundreds and newNumber.between(0,9)){
             self.hundreds(newNumber)
@@ -41,9 +42,10 @@ object sunCounterIcoWithHundreds inherits StaticAnimation( image = "sprites/sunC
     override method image() = image + hundreds + ".png"
 }
 
-object sunCounterTens inherits StaticAnimation( image = "sprites/sunCounter/tens/"){
+object sunCounterTens inherits Sprite( image = "sprites/sunCounter/tens/"){
     const property position = game.at(1,0)
     var property tens = 0
+    method beClicked(){}
     method numberHasSprite(num) = [0, 25, 50, 75].contains(num)
     method changeTens(newNumber){
         if(newNumber != tens and self.numberHasSprite(newNumber)){

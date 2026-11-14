@@ -1,36 +1,55 @@
 import zombies.zombie.*
 import imageProvider.*
-import entityManager.*
+import imageProviderHandler.*
+import entityTickingManager.*
 import behavior.*
+import util.config.*
 import util.debugger.*
+import team.*
 
 class Entity{
-    var property team
+    var property team = neutralTeam
+    var property imageProviderSet
+    const property defaultImageProviderKey
+    const property imageHandler = new ImageProviderHandler( user = self, imageProvider = imageProviderSet.getProvider(defaultImageProviderKey) )
+    
+    var collides = false
+    method collides() = collides
+
+    method removeCollision(){ collides = false }
+    method restoreCollision(){ collides = true }
 
     var property animationCallback = {=>}
     var property position = game.at(0,0)
-    var property previousPosition = self.position()
 
     method blocksPlantPlacement() = false
     method blocksEnemyEntitiesMovement() = false
     method canBeKilled() = false
 
-    var defaultImageProvider = noImageProvider
-    method defaultImageProvider() = defaultImageProvider
-    method defaultImageProvider(newImageProvider){
-        if(newImageProvider != defaultImageProvider){
-            defaultImageProvider =  newImageProvider 
+    method updateImageProvider(){}
+    method imageProviderSetUse(key){
+        const provider = imageProviderSet.getProvider(key)
+        if(provider == null){
+            debugger.warning("Proveedor no encontrado")
+        }else{
+            self.imageProvider(provider)
         }
     }
 
-    var imageProvider = defaultImageProvider
-    method imageProvider() = imageProvider
+    method allIntersectingElements() = position.allElements().filter({ e => e != self && e.collides()})
+    method allCollidingEntities() = self.allIntersectingElements().filter({ e => e.collides() })
+    method allEntitiesAtOwnLine() =
+        (config.lowerBound().x() .. config.upperBound().x()).map({ x =>
+        game.at(x, position.y()).allElements()
+        }).flatten()
+
+    method imageProvider() =  imageHandler.currentProvider()
     method imageProvider(newImageProvider){
-        imageProvider = newImageProvider
-        return newImageProvider
+        if(newImageProvider == null){ self.error("Un proveedor de imagen no puede ser nulo") }
+        imageHandler.imageProvider(newImageProvider)
     }
 
-    method isEnemy(other) = other.team()!=self.team() && other.team()!="NEUTRAL"
+    method isEnemy(other) = team.isEnemy(other)
 
     method start(pos){
         self.position(pos)
@@ -42,49 +61,19 @@ class Entity{
         game.removeVisual(self)
     }
 
-    method updatePosition(newPosition){
-        self.previousPosition(position)
-        self.position(newPosition)        
-        self.updateMapPosition()
+    method outOfBounds(){ self.cleanUp() }
+
+    method animationEnded(){ 
+        animationCallback.apply() 
+        self.animationCallback({=>})
     }
-    method updateMapPosition(){
-        entitiesMap.updatePosition(self)
-        self.previousPosition(self.position())
-    }
-   
-    method imageProviderSeamlessly(newImageProvider){
-        newImageProvider.transitionSeamlessly(imageProvider)
-        return self.imageProvider(newImageProvider)
+    method useDefaultImageProvider(){ 
+        self.imageProvider(imageProviderSet.provider(defaultImageProviderKey)) 
     }
 
-    method animationEnded(){ animationCallback.apply() }
-    method endNonLoopingAnimation() { self.useDefaultImageProvider() }
-    method useDefaultImageProvider(){ imageProvider = defaultImageProvider }
-    method changeAndUseDefaultImageProvider(newImageProvider){
-        self.defaultImageProvider(newImageProvider)
-        self.useDefaultImageProvider()
-    }
+    method animate() = imageHandler.update()
 
-    method animate() = imageProvider.update(self)
-
-    method image() = imageProvider.getImage()
-}
-
-mixin Alive{
-    var property maxHealth
-    var property health = maxHealth
-
-    var property deathHandler
-
-    override method canBeKilled() = true
-
-    method lives() = health > 0
-    method takeDamage(damage) {
-        health = 0.max(health - damage)
-        if(not self.lives()){
-            deathHandler.apply(self)
-        }
-    }
+    method image() = imageHandler.getImage()
 }
 
 mixin Ticks{
@@ -92,123 +81,80 @@ mixin Ticks{
 
     override method start(pos){
         super(pos)
-        entityManager.add(self)
+        entityTickingManager.add(self)
     }
     override method cleanUp(){
+        entityTickingManager.remove(self)
         super()
-        entityManager.remove(self)
     }
+
 }
 
-mixin Collides{
-    override method start(pos){
-        super(pos)
-        entitiesMap.add(self)
-    }
-    override method cleanUp(){
-        super()
-        entitiesMap.remove(self)
-    }
-}
-
-mixin ActiveEntity{
+mixin Active{
     var property actionModule 
 
+    method imageHandler()
+    method imageProviderSetUse(key)
+    method defaultImageProviderKey()
     method imageProvider(newImageProvider)
 
-    method anticipateBehavior(behaviorImageProvider){ self.imageProvider(behaviorImageProvider) }
+    override method updateImageProvider(){
+        const actionProvider = actionModule.getImageProvider(self)
+        if(actionProvider != null){
+            self.imageProvider(actionProvider)
+        }else{
+            self.imageProviderSetUse(self.defaultImageProviderKey())
+        }
+    }
+
+    method anticipateBehavior(behaviorImageProvider){ 
+        self.imageHandler().useTempAnimation(behaviorImageProvider, 1)
+    }
     override method tick(){
         super()
+        self.updateImageProvider()
         actionModule.use(self)
     }
 }
 
-class ActionModule{
-    method use(user){}
-}
+mixin Alive{
+    var property maxHealth
+    var property deathHandler
 
-mixin Shooter {
-    var property shotsPerSecond
-    var property proyectileGenerator
-    var property shootingAnticipationAnimation
-
-    var property shootingBehavior = 
-        new ShootingBehavior(
-            secondsPerUse = 1/shotsPerSecond,
-            createNewProyectileInstance = { user => proyectileGenerator.apply(user) },
-            anticipationAnimation = shootingAnticipationAnimation
-        )
-
-    method hasEnemyInSight(user){
-        const entitiesInLine = entitiesMap.allEntitiesAtLine(user.position().y())
-        return entitiesInLine.any({ entity => user.isEnemy(entity) })
-    }
-}
-mixin ConditionedShooter inherits Shooter{
-    override method use(user){
-        super(user)
-        if(self.hasEnemyInSight(user)){
-            shootingBehavior.use(user)
+    var property health = maxHealth
+    method health(newHealth){
+        health = newHealth
+        if(not self.lives()){
+            deathHandler.apply(self)
         }
     }
+
+    method healthPercentage() = health/maxHealth
+
+    override method canBeKilled() = true
+
+    method lives() = health > 0
+    method takeDamage(damage) { self.health(health-damage) }
 }
-mixin UnconditionalShooter inherits Shooter{
-    override method use(user){
-        super(user)
-        shootingBehavior.use(user)
+
+mixin HandlesCollisions inherits Ticks{
+    var property collitionHandler
+
+    method allCollidingEntities()
+
+    override method position(newPosition){
+        super(newPosition)
+        self.handleCollitions()
     }
-}
 
-mixin MeleeAttack{
-    var property meleeDamage
-    var property meleeAttacksPerSecond
-
-    var property meleeAttackingBehavior = new MeleeAttackBehavior( secondsPerUse = 1/meleeAttacksPerSecond ) 
-
-    method hasAttackObjective(user) = entitiesMap.allEntitiesAt(user.position()).any({ e => user.isEnemy(e) && e.canBeKilled()})
-
-    override method use(user){
-        super(user)
-        if(self.hasAttackObjective(user)){
-            meleeAttackingBehavior.use(user)
-        }
+    override method tick(){
+        self.handleCollitions()
+        super()
     }
-}
 
-mixin Mobile{
-    var property cellsPerSecond
-    var property movingDirection
-
-    var property movingBehavior = 
-        new MovingBehavior(
-            secondsPerUse = 1/cellsPerSecond,
-            movingDirection = movingDirection
-        )
-    
-    method hasObstacle(user){
-        return entitiesMap.allEntitiesAt(user.position()).any({ entity =>
-            user.isEnemy(entity) && entity.blocksEnemyEntitiesMovement()
+    method handleCollitions(){
+        self.allCollidingEntities().forEach({ e =>
+            collitionHandler.apply(e)
         })
-    }
-
-    override method use(user){
-        super(user)
-        if(not self.hasObstacle(user)){
-            movingBehavior.use(user)
-        }else{
-            debugger.info("Se determino que hay un obstaculo")
-        }
-    }
-}
-
-
-// Para que logre usarse tanto al inicio como al final debe ser como primer mixin
-mixin Collide{
-    const property collitionBehavior = new CollitionBehavior()
-
-    override method use(user){
-        collitionBehavior.use(user)
-        super(user)
-        collitionBehavior.use(user)
     }
 }

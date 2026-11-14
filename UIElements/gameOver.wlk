@@ -1,11 +1,10 @@
-import entityManager.*
 import entity.*
+import imageProvider.*
 
-object gameOver inherits Entity(team = "NEUTRAL", position = game.at(1,1)){
+object gameOver inherits Entity(
+    position = game.at(2, 0),
+    imageProviderSet = noImageProviderSet,
+    defaultImageProviderKey = "#None"
+){
     override method image() = "sprites/gameOver.png"
-
-    method trigger(){
-        game.addVisual(self)
-        entityManager.clear()
-    }
 }

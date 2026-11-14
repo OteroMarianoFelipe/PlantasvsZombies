@@ -1,24 +1,18 @@
 import entity.*
-import entityManager.entityManager
+import entityTickingManager.entityTickingManager
 import imageProvider.*
 import proyectiles.projectile.*
 import proyectiles.pea.*
 import util.config.config
 import util.debugger.*
+import team.*
 
 class Planta inherits Alive( 
     deathHandler = { user => user.cleanUp() } 
-) and Collides and Ticks and Entity(
-    team = "PLANTAS",
-    defaultImageProvider = imageProviderSet.idle()
+) and Ticks and Entity(
+    team = plantsTeam,
+    collides = true
 ){
-    var property imageProviderSet
-
     override method blocksPlantPlacement() = true
     override method blocksEnemyEntitiesMovement() = true
-}
-
-class PlantImageProviderSet{
-    var property idle
-    var property actionAnticipation = idle
 }

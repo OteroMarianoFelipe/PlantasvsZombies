@@ -1,29 +1,49 @@
 import planta.*
 import entity.*
-import assets.snowPea.*
 import proyectiles.projectile.*
 import proyectiles.pea.*
+import imageProvider.*
+import actionModule.*
+import behavior.*
 
-class SnowPea inherits ActiveEntity(
-    actionModule = { caller =>
-        object inherits ConditionedShooter(
-            shotsPerSecond = 2/3,     
-            proyectileGenerator = { user => 
-                new Pea(
-                    team = user.team(),
-                    damage = 20,
-                    frozen = true
+class SnowPea inherits Active(
+    actionModule = 
+        new ActionModule(
+            behaviors = #{
+                new AnticipatedBehavior(
+                    name = "#PrimaryShooting",
+                    providerKey = "#Shooting",
+                    coolDownTracker = new CoolDownTracker( secondsPerUse = 3/2 ),
+                    state = 
+                        {user => object{
+                            var property proyectileGenerator = 
+                                { user => 
+                                    new Pea(
+                                        team = user.team(),
+                                        damage = 20,
+                                        state = frozenState
+                                    )
+                                }
+                        }}.apply(self),
+                    strategy = conditionalShootingStrategy
                 )
-            },
-            shootingAnticipationAnimation = caller.imageProviderSet().actionAnticipation()
-        ) and ActionModule{}
-    }.apply(self)
+            }
+        )
 ) and Planta(
     maxHealth = 300,
-    imageProviderSet = new SnowPeaImageProviderSet()
+    defaultImageProviderKey = "#Idle",
+    imageProviderSet = snowPeaImageProviderSet
 ){}
 
-class SnowPeaImageProviderSet inherits PlantImageProviderSet(
-    idle = new SnowPeaIdle(),
-    actionAnticipation = new SnowPeaAction()
+object snowPeaImageProviderSet inherits ImageProviderSet(
+    entries = #{
+        new KeyProviderPair(
+            key = "#Idle",
+            provider = new Animation(durationInSeconds = 1, framesInAnimation = 8, animationDirectory = "plants/snowPea/idle")
+        ),
+        new KeyProviderPair(
+            key = "#Shooting",
+            provider = new Animation(durationInSeconds = 0.5, framesInAnimation = 4, animationDirectory = "plants/snowPea/active")
+        )
+    }
 ){}
