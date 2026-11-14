@@ -4,6 +4,7 @@ import proyectiles.projectile.*
 import entityTickingManager.*
 import actionModule.*
 import behavior.*
+import util.debugger.*
 
 class Pea inherits HandlesCollisions(
     collitionHandler = { entity =>
@@ -30,6 +31,7 @@ class Pea inherits HandlesCollisions(
 ){
     var property damage
     var property state = noEffect
+    var removalHandled = false
     method state(newState){
         state = newState
         self.imageProviderSet(state.imageProviderSet())
@@ -37,10 +39,16 @@ class Pea inherits HandlesCollisions(
     }
 
     override method handleRemoval(){
-        self.actionModule().stop()
-        animationCallback = { => self.cleanUp()} 
-        self.imageProvider(state.imageProviderSet().getProvider("#Impact"))
-        self.removeCollision()
+        if(removalHandled){ 
+            self.error("Second time removal")
+            self.cleanUp() 
+        }else{
+            removalHandled = true
+            self.removeCollision()
+            self.actionModule().clear()
+            animationCallback = { => self.cleanUp()} 
+            imageHandler.useTempAnimation(state.imageProviderSet().getProvider("#Impact"), 1)
+        }
     }
 }
 

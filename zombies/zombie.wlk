@@ -37,9 +37,10 @@ class Zombie inherits Alive and Active and Ticks and Entity(
 
 object defaultZombieDeathHandler{
     method apply(user){
-        user.animationCallback({ => user.cleanUp()}) 
-        user.imageProvider(user.imageProviderSet().getProvider("#Death"))
+        user.actionModule().clear()
         user.removeCollision()
+        user.animationCallback({ => user.cleanUp()})
+        user.imageHandler().useTempAnimation(user.imageProviderSet().getProvider("#Death"), 1)
     }
 }
 

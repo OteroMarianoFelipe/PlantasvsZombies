@@ -55,7 +55,7 @@ class HealthBasedImageProvider inherits ImageProvider{
     const imageProviderSet    
     const property durationInTicks = imageProviderSet.average({p=>p.durationInTicks()}).truncate(0)
 
-    method getIndexFromHealth(user) = (user.health()/user.maxHealth()*imageProviderSet.size()).roundUp(0)-1
+    method getIndexFromHealth(user) = ((user.health()/user.maxHealth()*imageProviderSet.size()).roundUp(0)-1).max(0)
 
     method imageProvider(user) = imageProviderSet.get(self.getIndexFromHealth(user))
 

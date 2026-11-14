@@ -94,7 +94,7 @@ mixin Ticks{
 }
 
 mixin Active{
-    var actionModule 
+    const actionModule 
     method actionModule() = actionModule
 
     method imageHandler()

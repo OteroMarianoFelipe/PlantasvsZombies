@@ -1,3 +1,4 @@
+import zombies.zombieBasico.*
 import wollok.game.*
 import entityTickingManager.*
 import player.*
@@ -23,6 +24,7 @@ object config {
 
   method secondsToTicks(seconds) = (seconds * ticksPerSecond).truncate(0)
   method secondsToAnimationTicks(seconds) = (seconds * animationTicksPerSecond).truncate(0)
+  method ticksToSeconds(ticks) = (ticks / ticksPerSecond)
   method ticksToAnimationTicks(ticks) = (ticks * animationTicksPerSecond / ticksPerSecond).truncate(0)
   method animationTicksToTicks(ticks) = (ticks * ticksPerSecond / animationTicksPerSecond ).truncate(0)
 
@@ -49,6 +51,10 @@ object config {
     plantCards.size().times({ i =>
       keyboard.num(i).onPressDo({ => player.clickHandler(game.at(1 + i, 0)) })
     })
+    keyboard.y().onPressDo({ => basicZombieSpawner.spawnNewWave(1)})
+    keyboard.u().onPressDo({ => coneHeadZombieSpawner.spawnNewWave(1)})
+    keyboard.i().onPressDo({ => poleVaulterZombieSpawner.spawnNewWave(1)})
+    keyboard.k().onPressDo({ => console.println(game.allVisuals().map({visual => visual.image()}))})
     keyboard.r().onPressDo({ => self.resetGame()})
   }
 

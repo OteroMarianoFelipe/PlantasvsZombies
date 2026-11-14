@@ -31,19 +31,19 @@ class Behavior{
     const property state
     var property providerKey
 
+    method provider(user) = user.imageProviderSet().getProvider(providerKey)
+
     const coolDownTracker
     method coolDownTracker() = coolDownTracker
 
     method slowDown(factor){ coolDownTracker.slowDown(factor) }
     method restoreSpeed(){ coolDownTracker.restoreSpeed() }
 
-    method getImageProvider(user){
-        if(strategy.shouldTick(user)){
-            return user.imageProviderSet().getProvider(providerKey)
-            debugger.info("Candidato no nulo en "+key)
-        }
-        return null
-    }
+    method shouldSendProviderCandidate(user) = strategy.shouldTick(user)
+
+    method getImageProvider(user) = 
+        if(self.shouldSendProviderCandidate(user)) self.provider(user) 
+        else null
 
     method tick(user){
         if(strategy.shouldTick(user)){
@@ -62,6 +62,9 @@ class Behavior{
 }
 
 class AnticipatedBehavior inherits Behavior{
+    override method shouldSendProviderCandidate(user) = 
+        super(user) && coolDownTracker.shouldAnticipate(self.provider(user))
+
     override method tryToUse(user){
         super(user)
         const providerForAnticipation = user.imageProviderSet().getProvider(providerKey)
