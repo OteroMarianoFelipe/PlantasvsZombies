@@ -11,7 +11,7 @@ class SnowPea inherits Active(
         new ActionModule(
             behaviors = #{
                 new AnticipatedBehavior(
-                    name = "#PrimaryShooting",
+                    key = "#PrimaryShooting",
                     providerKey = "#Shooting",
                     coolDownTracker = new CoolDownTracker( secondsPerUse = 3/2 ),
                     state = 

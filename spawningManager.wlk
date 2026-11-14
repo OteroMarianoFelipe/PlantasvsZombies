@@ -2,6 +2,7 @@ import util.debugger.*
 import zombies.zombie.*
 import zombies.zombieBasico.*
 import zombies.coneHead.*
+import zombies.poleVaulter.*
 import util.config.*
 import util.random.*
 import imageProvider.*
@@ -10,15 +11,17 @@ import proyectiles.sun.*
 import team.*
 
 object spawningManager{
-    method startSpawning(){
+    const spawners = [ basicZombieSpawner, coneHeadZombieSpawner, poleVaulterZombieSpawner, sunSpawner ]
+    method startSpawning(){        
         basicZombieSpawner.setPeriodicalWaves(20, 2)
         coneHeadZombieSpawner.setPeriodicalWaves(40, 1)
+        poleVaulterZombieSpawner.setPeriodicalWaves(20, 1)
         sunSpawner.setPeriodicalWaves(10, 1)
     }
     method stopSpawning(){
-        basicZombieSpawner.stopWaves()
-        coneHeadZombieSpawner.stopWaves()
-        sunSpawner.stopWaves()
+        spawners.forEach({ spawner =>
+            spawner.stopWaves()
+        })
     }
 }
 
@@ -84,6 +87,13 @@ object coneHeadZombieSpawner inherits ZombieSpawner(
     wavesEventName = "Basic Zombie Waves"
 ){
     override method newInstance() = new ConeHead()
+}
+object poleVaulterZombieSpawner inherits ZombieSpawner(
+    secondsBetweenWaveInstances = 6,
+    secondsOfVariationForWaveInstances = 0.75,
+    wavesEventName = "Pole Vaulter Waves"
+){
+    override method newInstance() = new PoleVaulter()
 }
 
 object sunSpawner inherits Spawner(

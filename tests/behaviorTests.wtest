@@ -15,7 +15,7 @@ object testStrategy inherits Strategy{
 const segundosPorUso = 1
 object coolDownTraker inherits CoolDownTracker(secondsPerUse = segundosPorUso){}
 object comportamientoDePrueba inherits Behavior(
-    name = "#Test",
+    key = "#Test",
     providerKey = "#Test",
     coolDownTracker = coolDownTraker,
     state = 1,

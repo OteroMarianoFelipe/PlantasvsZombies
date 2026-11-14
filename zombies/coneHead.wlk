@@ -15,14 +15,14 @@ class ConeHead inherits Zombie(
         new ActionModule(
             behaviors = #{
                 new Behavior(
-                    name = "#Movement",
+                    key = "#Movement",
                     providerKey = "#Moving",
                     coolDownTracker = new CoolDownTracker( secondsPerUse = 4.7 ),
                     state = object{ var property movingDirection = game.at(-1, 0) },
                     strategy = movingStrategy
                 ),
                 new Behavior(
-                    name = "#MeleeAttack",
+                    key = "#MeleeAttack",
                     providerKey = "#MeleeAttack",
                     coolDownTracker = new CoolDownTracker( secondsPerUse = 1 ),
                     state = object{ var property damage = 100},
@@ -80,10 +80,10 @@ object coneHeadDeathHandler{
     }
 }
 
-object coneHeadWalkingDying inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/coneHead/walkingDying"){}
-object coneHeadWalkingHurt inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/coneHead/walkingHurt"){}
-object coneHeadWalkingFH inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/coneHead/walkingFH"){}
+object coneHeadWalkingDying inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/coneHead/walking/dying"){}
+object coneHeadWalkingHurt inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/coneHead/walking/hurt"){}
+object coneHeadWalkingFH inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/coneHead/walking/FH"){}
 
-object coneHeadEatingDying inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/coneHead/eatingDying"){}
-object coneHeadEatingHurt inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/coneHead/eatingHurt"){}
-object coneHeadEatingFH inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/coneHead/eatingFH"){}
+object coneHeadEatingDying inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/coneHead/eating/dying"){}
+object coneHeadEatingHurt inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/coneHead/eating/hurt"){}
+object coneHeadEatingFH inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/coneHead/eating/FH"){}

@@ -19,6 +19,9 @@ class Entity{
     method removeCollision(){ collides = false }
     method restoreCollision(){ collides = true }
 
+    method allObstacles() = self.allCollidingEntities().filter({ e => self.isEnemy(e) && e.blocksEnemyEntitiesMovement()})
+    method hasObstacle() = self.allObstacles().size() > 0
+
     var property animationCallback = {=>}
     var property position = game.at(0,0)
 
@@ -91,7 +94,8 @@ mixin Ticks{
 }
 
 mixin Active{
-    var property actionModule 
+    const actionModule 
+    method actionModule() = actionModule
 
     method imageHandler()
     method imageProviderSetUse(key)
