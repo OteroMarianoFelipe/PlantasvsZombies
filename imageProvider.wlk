@@ -53,6 +53,7 @@ class Animation inherits ImageProvider{
 
 class HealthBasedImageProvider inherits ImageProvider{
     const imageProviderSet    
+    const property durationInTicks = imageProviderSet.average({p=>p.durationInTicks()}).truncate(0)
 
     method getIndexFromHealth(user) = (user.health()/user.maxHealth()*imageProviderSet.size()).roundUp(0)-1
 
@@ -62,7 +63,6 @@ class HealthBasedImageProvider inherits ImageProvider{
         self.imageProvider(user).update(user, traker)
     }   
     override method getImage(user, traker) = self.imageProvider(user).getImage(user, traker) 
-    override method durationInTicks() = null 
 }
 
 object noImageProvider inherits Sprite(image = "sprites/missingTexture.png"){}
