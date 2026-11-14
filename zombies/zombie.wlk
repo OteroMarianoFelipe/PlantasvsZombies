@@ -30,7 +30,7 @@ class Zombie inherits Alive and Active and Ticks and Entity(
     override method position(newPos){
         super(newPos)
         if(self.crossedTheYard()){
-            config.perderPartida()
+            config.lose()
         }
     }
 }

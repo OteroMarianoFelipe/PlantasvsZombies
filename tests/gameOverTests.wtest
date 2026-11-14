@@ -22,7 +22,7 @@ describe "Perder la partida"{
         const planta = new Nuez()
         planta.start(game.at(3, 2))
 
-        config.perderPartida()
+        config.lose()
 
         assert.notThat(game.hasVisual(zombie))
         assert.notThat(game.hasVisual(planta))
@@ -31,7 +31,7 @@ describe "Perder la partida"{
 
     test "Al perder aparece la pantalla de game over"{
 
-        config.perderPartida()
+        config.lose()
 
         assert.that(game.hasVisual(gameOver))
     }
@@ -40,7 +40,7 @@ describe "Perder la partida"{
         entityTickingManager.startTicking()
         spawningManager.startSpawning()
 
-        config.perderPartida()
+        config.lose()
 
         assert.notThat(io.containsTimeEvent("tickEntities"))
         assert.notThat(io.containsTimeEvent("AnimateEntities"))

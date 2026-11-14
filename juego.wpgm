@@ -2,7 +2,7 @@ import wollok.game.*
 import util.config.config
 
 program juego {
-  config.configuracionGeneral()
+  config.gameConfigurations()
   game.start()
-  config.startUIElements()
+  config.setUpNewGame()
 }
