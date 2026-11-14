@@ -21,7 +21,7 @@ class ActionModule{
         const proposedProviders = behaviors.map({ behavior =>
             behavior.getImageProvider(user)
         }).filter({ p => p != null })
-        return proposedProviders.head()  
+        return proposedProviders.findOrDefault({ p => true}, null)
     }
 
     method slowDown(factor){
