@@ -30,28 +30,25 @@ class Girasol inherits Active(
 ) and Planta(
     maxHealth = 300,
     defaultImageProviderKey = "#Idle",
-    imageProviderSet = sunFlowerImageProviderSet
-){}
-
-object sunFlowerImageProviderSet inherits ImageProviderSet(
-    entries = #{
-        new KeyProviderPair(
-            key = "#Idle",
-            provider = 
-                object inherits Animation(
-                    durationInSeconds = 1,
-                    framesInAnimation = 9,
-                    animationDirectory = "plants/sunFlower/idle"
-                ){}
-        ),
-        new KeyProviderPair(
-            key = "#Active",
-            provider = 
-                object inherits Animation(
-                    durationInSeconds = 1,
-                    framesInAnimation = 9,
-                    animationDirectory = "plants/sunFlower/active"
-                ){}
-        )
-    }
+    imageProviderSet = 
+        new ImageProviderSet().initialize([
+            new ImageProviderEntry(
+                key = "#Idle",
+                value = 
+                    object inherits Animation(
+                        durationInSeconds = 1,
+                        framesInAnimation = 9,
+                        animationDirectory = "plants/sunFlower/idle"
+                    ){}
+            ),
+            new ImageProviderEntry(
+                key = "#Active",
+                value = 
+                    object inherits Animation(
+                        durationInSeconds = 1,
+                        framesInAnimation = 9,
+                        animationDirectory = "plants/sunFlower/active"
+                    ){}
+            )
+        ])
 ){}

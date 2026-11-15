@@ -31,7 +31,7 @@ class Behavior{
     const property state
     var property providerKey
 
-    method provider(user) = user.imageProviderSet().getProvider(providerKey)
+    method provider(user) = user.imageProviderSet().get(providerKey)
 
     const coolDownTracker
     method coolDownTracker() = coolDownTracker
@@ -39,7 +39,7 @@ class Behavior{
     method slowDown(factor){ coolDownTracker.slowDown(factor) }
     method restoreSpeed(){ coolDownTracker.restoreSpeed() }
 
-    method shouldSendProviderCandidate(user) = strategy.shouldTick(user)
+    method shouldSendProviderCandidate(user) = true
 
     method getImageProvider(user) = 
         if(self.shouldSendProviderCandidate(user)) self.provider(user) 
@@ -47,6 +47,7 @@ class Behavior{
 
     method tick(user){
         if(strategy.shouldTick(user)){
+            user.actionModule().providerCandidates().add(self.getImageProvider(user))
             coolDownTracker.tickUp()
         }else{
             coolDownTracker.coolDown()
@@ -62,12 +63,11 @@ class Behavior{
 }
 
 class AnticipatedBehavior inherits Behavior{
-    override method shouldSendProviderCandidate(user) = 
-        super(user) && coolDownTracker.shouldAnticipate(self.provider(user))
+    override method shouldSendProviderCandidate(user) = false
 
     override method tryToUse(user){
         super(user)
-        const providerForAnticipation = user.imageProviderSet().getProvider(providerKey)
+        const providerForAnticipation = user.imageProviderSet().get(providerKey)
         if( coolDownTracker.shouldAnticipate(providerForAnticipation) ){
             user.anticipateBehavior( providerForAnticipation )
         }

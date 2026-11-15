@@ -82,6 +82,9 @@ object spawningManager{
     method startSunSpawning(){
         sunSpawner.setPeriodicalWaves(10, 1)
     }
+    method stopSunSpawning(){
+        sunSpawner.stopWaves()
+    }
 
     method startSpawning(){        
         basicZombieSpawner.setPeriodicalWaves(20, 2)

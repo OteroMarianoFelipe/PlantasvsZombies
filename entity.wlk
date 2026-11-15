@@ -11,7 +11,7 @@ class Entity{
     var property team = neutralTeam
     var property imageProviderSet
     const property defaultImageProviderKey
-    const property imageHandler = new ImageProviderHandler( user = self, imageProvider = imageProviderSet.getProvider(defaultImageProviderKey) )
+    const property imageHandler = new ImageProviderHandler( user = self, imageProvider = noImageProvider )
     
     var collides = false
     method collides() = collides
@@ -31,7 +31,7 @@ class Entity{
 
     method updateImageProvider(){}
     method imageProviderSetUse(key){
-        const provider = imageProviderSet.getProvider(key)
+        const provider = imageProviderSet.get(key)
         if(provider == null){
             debugger.warning("Proveedor no encontrado")
         }else{
@@ -55,6 +55,10 @@ class Entity{
     method isEnemy(other) = team.isEnemy(other)
 
     method start(pos){
+        const set = imageProviderSet
+        var diccionario = set.entries()
+        var proveedor = diccionario.basicGet(defaultImageProviderKey)
+        self.imageProvider(proveedor)
         self.position(pos)
         game.addVisual(self)
     }

@@ -41,7 +41,7 @@ object defaultZombieDeathHandler{
         user.actionModule().stop()
         user.removeCollision()
         user.animationCallback({ => user.cleanUp()})
-        user.imageHandler().useTempAnimation(user.imageProviderSet().getProvider("#Death"), 1)
+        user.imageHandler().useTempAnimation(user.imageProviderSet().get("#Death"), 1)
     }
 }
 

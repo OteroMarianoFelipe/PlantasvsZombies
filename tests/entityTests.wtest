@@ -8,14 +8,12 @@ const proveedorDeEjemplo = new Sprite( image = "" )
 const entidadPlana = 
     object inherits Entity(
         imageProviderSet = 
-            new ImageProviderSet( 
-                entries = [
-                    new KeyProviderPair(
+            new ImageProviderSet().initialize([
+                    new ImageProviderEntry(
                         key = "#Default",
-                        provider = proveedorDeEjemplo
+                        value = proveedorDeEjemplo
                     )
-                ] 
-            ),
+            ]),
         defaultImageProviderKey = "#Default"
     ){}
 const entidadViva = 
@@ -24,14 +22,12 @@ const entidadViva =
         maxHealth = 200
     ) and Entity(
         imageProviderSet = 
-            new ImageProviderSet( 
-                entries = [
-                    new KeyProviderPair(
-                        key = "#Default",
-                        provider = proveedorDeEjemplo
-                    )
-                ] 
-            ),
+            new ImageProviderSet().initialize([
+                new ImageProviderEntry(
+                    key = "#Default",
+                    value = proveedorDeEjemplo
+                )
+            ]),
         defaultImageProviderKey = "#Default"
     ){ var property dead = false }
 

@@ -32,18 +32,25 @@ class SnowPea inherits Active(
 ) and Planta(
     maxHealth = 300,
     defaultImageProviderKey = "#Idle",
-    imageProviderSet = snowPeaImageProviderSet
-){}
-
-object snowPeaImageProviderSet inherits ImageProviderSet(
-    entries = #{
-        new KeyProviderPair(
-            key = "#Idle",
-            provider = new Animation(durationInSeconds = 1, framesInAnimation = 8, animationDirectory = "plants/snowPea/idle")
-        ),
-        new KeyProviderPair(
-            key = "#Shooting",
-            provider = new Animation(durationInSeconds = 0.5, framesInAnimation = 4, animationDirectory = "plants/snowPea/active")
-        )
-    }
+    imageProviderSet = 
+        new ImageProviderSet().initialize([
+            new ImageProviderEntry(
+                key = "#Idle",
+                value = 
+                    new Animation(
+                        durationInSeconds = 1,
+                        framesInAnimation = 8,
+                        animationDirectory = "plants/snowPea/idle"
+                    )
+            ),
+            new ImageProviderEntry(
+                key = "#Shooting",
+                value = 
+                    new Animation(
+                        durationInSeconds = 0.5,
+                        framesInAnimation = 4,
+                        animationDirectory = "plants/snowPea/active"
+                    )
+            )
+        ])
 ){}

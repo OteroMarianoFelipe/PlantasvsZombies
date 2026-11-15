@@ -4,6 +4,10 @@ import behavior.*
 class ActionModule{
     const behaviors // = #{}
     var forceStopped = false
+    method forceStopped() = forceStopped
+
+    var providerCandidates = []
+    method providerCandidates() = providerCandidates
     
     method stop() { forceStopped = true }
     method resume(){ forceStopped = false }
@@ -44,10 +48,10 @@ class ActionModule{
     }
 
     method getImageProvider(user){
-        const proposedProviders = behaviors.map({ behavior =>
-            behavior.getImageProvider(user)
-        }).filter({ p => p != null })
-        return proposedProviders.findOrDefault({ p => true}, null)
+        providerCandidates.add(null)
+        const returnValue = providerCandidates.head()
+        providerCandidates = [].copy()
+        return returnValue
     }
 
     method slowDown(factor){

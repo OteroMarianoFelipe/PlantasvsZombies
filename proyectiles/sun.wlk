@@ -4,7 +4,27 @@ import UIElements.sunCounter.*
 import imageProvider.*
 
 class Sun inherits Projectile( 
-    imageProviderSet = sunAnimationSet ,
+    imageProviderSet = 
+        new ImageProviderSet().initialize([
+            new ImageProviderEntry(
+                key = "#SmallSun",
+                value = 
+                    object inherits Animation(
+                        durationInSeconds = 0.4,
+                        framesInAnimation = 2,
+                        animationDirectory = "projectiles/sun/small" 
+                    ){}
+            ),
+            new ImageProviderEntry(
+                key = "#BigSun",
+                value = 
+                    object inherits Animation(
+                        durationInSeconds = 0.4,
+                        framesInAnimation = 2,
+                        animationDirectory = "projectiles/sun/big"
+                    ){}
+            )
+        ]),
     defaultImageProviderKey = self.getProperAnimationKey()
 ){
     const property value
@@ -16,7 +36,7 @@ class Sun inherits Projectile(
     method getProperAnimationKey() = if(self.isBig()) "#BigSun" else "#SmallSun"
     
     override method updateImageProvider(){
-        self.imageProvider( imageProviderSet.getProvider(self.getProperAnimationKey()) )
+        self.imageProvider( imageProviderSet.get(self.getProperAnimationKey()) )
     }
 
     override method tick(){
@@ -33,26 +53,3 @@ class Sun inherits Projectile(
     }
     override method handleRemoval(){ self.cleanUp() }
 }
-
-object sunAnimationSet inherits ImageProviderSet(
-    entries = #{
-        new KeyProviderPair(
-            key = "#SmallSun",
-            provider = 
-                object inherits Animation(
-                    durationInSeconds = 0.4,
-                    framesInAnimation = 2,
-                    animationDirectory = "projectiles/sun/small" 
-                ){}
-        ),
-        new KeyProviderPair(
-            key = "#BigSun",
-            provider = 
-                object inherits Animation(
-                    durationInSeconds = 0.4,
-                    framesInAnimation = 2,
-                    animationDirectory = "projectiles/sun/big"
-                ){}
-        )
-    }
-){}

@@ -23,35 +23,32 @@ class LanzaGuisantes inherits Active(
                                     )
                                 }
                         }}.apply(self),
-                    strategy = conditionalShootingStrategy
+                    strategy = unconditionalShootingStrategy
                 )
             }
         )
 ) and Planta(
     maxHealth = 300,
     defaultImageProviderKey = "#Idle",
-    imageProviderSet = peaShooterProviderSet
-){}
-
-object peaShooterProviderSet inherits ImageProviderSet(
-    entries = #{
-        new KeyProviderPair(
-            key = "#Idle",
-            provider = 
-                object inherits Animation(
-                    durationInSeconds = 1,
-                    framesInAnimation = 8,
-                    animationDirectory = "plants/peashooter/idle"
-                ){}
-        ),
-        new KeyProviderPair(
-            key = "#Shooting",
-            provider = 
-                object inherits Animation(
-                    durationInSeconds = 0.5,
-                    framesInAnimation = 4,
-                    animationDirectory = "plants/peashooter/active"
-                ){}
-        )
-    }
+    imageProviderSet = 
+        new ImageProviderSet().initialize([
+            new ImageProviderEntry(
+                key = "#Idle",
+                value = 
+                    object inherits Animation(
+                        durationInSeconds = 1,
+                        framesInAnimation = 8,
+                        animationDirectory = "plants/peashooter/idle"
+                    ){}
+            ),
+            new ImageProviderEntry(
+                key = "#Shooting",
+                value = 
+                    object inherits Animation(
+                        durationInSeconds = 0.5,
+                        framesInAnimation = 4,
+                        animationDirectory = "plants/peashooter/active"
+                    ){}
+            )
+        ])
 ){}

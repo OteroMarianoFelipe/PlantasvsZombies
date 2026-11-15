@@ -8,7 +8,56 @@ import util.config.*
 class PoleVaulter inherits Zombie(
     maxHealth = 190,
     deathHandler = defaultZombieDeathHandler,
-    imageProviderSet = poleVaulterImageProvidersSet,
+    imageProviderSet = 
+        new ImageProviderSet().initialize([
+            new ImageProviderEntry(
+                key = "#Running",
+                value =
+                    new HealthBasedImageProvider( 
+                        imageProviderSet=[
+                            poleVaulterRunningDying,
+                            poleVaulterRunningHurt,
+                            poleVaulterRunningFH
+                        ]
+                    )
+            ),
+            new ImageProviderEntry(
+                key = "#Walking",
+                value =
+                    new HealthBasedImageProvider( 
+                        imageProviderSet=[
+                            poleVaulterWalkingDying,
+                            poleVaulterWalkingHurt,
+                            poleVaulterWalkingFH
+                        ]
+                    )
+            ),
+            new ImageProviderEntry(
+                key = "#Jumping",
+                value =
+                    new HealthBasedImageProvider( 
+                        imageProviderSet=[
+                            poleVaulterJumpingHurt,
+                            poleVaulterJumpingFH
+                        ]
+                    )
+            ),
+            new ImageProviderEntry(
+                key = "#MeleeAttacking",
+                value =
+                    new HealthBasedImageProvider(
+                        imageProviderSet = [
+                            poleVaulterEatingDying,
+                            poleVaulterEatingHurt,
+                            poleVaulterEatingFH
+                        ]
+                    )
+            ),
+            new ImageProviderEntry(
+                key = "#Death",
+                value = poleVaulterDying
+            )
+        ]),
     defaultImageProviderKey = "#Running",
     actionModule = 
         object inherits ActionModule(
@@ -92,58 +141,6 @@ object vaultingStrategy inherits Strategy{
         })
     }
 }
-
-object poleVaulterImageProvidersSet inherits ImageProviderSet(
-    entries = #{
-        new KeyProviderPair(
-            key = "#Running",
-            provider =
-                new HealthBasedImageProvider( 
-                    imageProviderSet=[
-                        poleVaulterRunningDying,
-                        poleVaulterRunningHurt,
-                        poleVaulterRunningFH
-                    ]
-                )
-        ),
-        new KeyProviderPair(
-            key = "#Walking",
-            provider =
-                new HealthBasedImageProvider( 
-                    imageProviderSet=[
-                        poleVaulterWalkingDying,
-                        poleVaulterWalkingHurt,
-                        poleVaulterWalkingFH
-                    ]
-                )
-        ),
-        new KeyProviderPair(
-            key = "#Jumping",
-            provider =
-                new HealthBasedImageProvider( 
-                    imageProviderSet=[
-                        poleVaulterJumpingHurt,
-                        poleVaulterJumpingFH
-                    ]
-                )
-        ),
-        new KeyProviderPair(
-            key = "#MeleeAttacking",
-            provider =
-                new HealthBasedImageProvider(
-                    imageProviderSet=[
-                        poleVaulterEatingDying,
-                        poleVaulterEatingHurt,
-                        poleVaulterEatingFH
-                    ]
-                )
-        ),
-        new KeyProviderPair(
-            key = "#Death",
-            provider = poleVaulterDying
-        )
-    }
-){} 
 
 object poleVaulterWalkingDying inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/poleVaulter/walking/dying"){}
 object poleVaulterWalkingHurt  inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/poleVaulter/walking/hurt"){}

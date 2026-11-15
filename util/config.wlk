@@ -10,12 +10,26 @@ import UIElements.gameOver.*
 object config {
   const property height = 7
   const property width = 12
-  const property animationTicksPerSecond = 30
+  const property animationTicksPerSecond = 10
   const property ticksPerSecond = 5
   const cellSize = 64
   const backGroundImage = "sprites/background.png"
 
   const startingSuns = 200
+
+  var paused = false
+
+  method switchPausedState(){
+    if(paused){
+      game.removeTickEvent("tickEntities")
+      game.removeTickEvent("AnimateEntities")
+      spawningManager.startSunSpawning()
+    }else{
+      entityTickingManager.startTicking()
+      spawningManager.stopSunSpawning()
+    }
+      paused = not paused
+  }
 
   const plantCards = [sunFlowerCard, peashooterCard, wallNutCard, snowPeaCard]
 
@@ -59,6 +73,7 @@ object config {
     keyboard.u().onPressDo({ => coneHeadZombieSpawner.spawnNewWave(1)})
     keyboard.i().onPressDo({ => poleVaulterZombieSpawner.spawnNewWave(1)})
     keyboard.k().onPressDo({ => console.println(game.allVisuals().map({visual => visual.image()}))})
+    keyboard.p().onPressDo({ => self.switchPausedState()})
     keyboard.r().onPressDo({ => self.resetGame()})
   }
 

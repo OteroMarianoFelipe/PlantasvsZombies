@@ -59,62 +59,54 @@ class PlantCard inherits Ticks and Entity(
     method startCoolDown(){
         plantBuyCoolDown true
         self.animationCallback({ => plantBuyCoolDown = false })
-        self.imageHandler().useTempAnimation(imageProviderSet.getProvider("#CoolDown"), 1)
+        self.imageHandler().useTempAnimation(imageProviderSet.get("#CoolDown"), 1)
     }
 }
 
 object sunFlowerCard inherits PlantCard(
     price = 50,
     imageProviderSet = 
-        new ImageProviderSet(
-            entries = #{
-                new KeyProviderPair(key = "#Available", provider = new Sprite( image = "sprites/cards/sunFlower/available.png")),
-                new KeyProviderPair(key = "#Unavailable", provider = new Sprite( image = "sprites/cards/sunFlower/unavailable.png")),
-                new KeyProviderPair(key = "#Selected", provider = new Sprite( image = "sprites/cards/sunFlower/selected.png")),
-                new KeyProviderPair(key = "#CoolDown", provider = new Animation(framesInAnimation = 15, durationInSeconds = 7.5, animationDirectory = "cards/sunflower/coolDown"))
-            }
-        ),
+        new ImageProviderSet().initialize([
+            new ImageProviderEntry(key = "#Available", value = new Sprite( image = "sprites/cards/sunFlower/available.png")),
+            new ImageProviderEntry(key = "#Unavailable", value = new Sprite( image = "sprites/cards/sunFlower/unavailable.png")),
+            new ImageProviderEntry(key = "#Selected", value = new Sprite( image = "sprites/cards/sunFlower/selected.png")),
+            new ImageProviderEntry(key = "#CoolDown", value = new Animation(framesInAnimation = 15, durationInSeconds = 7.5, animationDirectory = "cards/sunflower/coolDown"))
+        ]),
     createNewInstance = { => new Girasol() }
 ){}
 
 object peashooterCard inherits PlantCard(
     price = 100,
     imageProviderSet =
-        new ImageProviderSet(
-            entries = #{
-                new KeyProviderPair(key = "#Available", provider = new Sprite( image = "sprites/cards/peashooter/available.png")),
-                new KeyProviderPair(key = "#Unavailable", provider = new Sprite( image = "sprites/cards/peashooter/unavailable.png")),
-                new KeyProviderPair(key = "#Selected", provider = new Sprite( image = "sprites/cards/peashooter/selected.png")),
-                new KeyProviderPair(key = "#CoolDown", provider = new Animation(framesInAnimation = 15, durationInSeconds = 7.5, animationDirectory = "cards/peashooter/coolDown"))
-            }
-        ),
+        new ImageProviderSet().initialize([
+            new ImageProviderEntry(key = "#Available", value = new Sprite( image = "sprites/cards/peashooter/available.png")),
+            new ImageProviderEntry(key = "#Unavailable", value = new Sprite( image = "sprites/cards/peashooter/unavailable.png")),
+            new ImageProviderEntry(key = "#Selected", value = new Sprite( image = "sprites/cards/peashooter/selected.png")),
+            new ImageProviderEntry(key = "#CoolDown", value = new Animation(framesInAnimation = 15, durationInSeconds = 7.5, animationDirectory = "cards/peashooter/coolDown"))
+        ]),
     createNewInstance = { => new LanzaGuisantes()}
 ){}
 
 object wallNutCard inherits PlantCard(
     price = 50,
     imageProviderSet =
-        new ImageProviderSet(
-            entries = #{
-                new KeyProviderPair(key = "#Available", provider = new Sprite( image = "sprites/cards/wallNut/available.png")),
-                new KeyProviderPair(key = "#Unavailable", provider = new Sprite( image = "sprites/cards/wallNut/unavailable.png")),
-                new KeyProviderPair(key = "#Selected", provider = new Sprite( image = "sprites/cards/wallNut/selected.png")),
-                new KeyProviderPair(key = "#CoolDown", provider = new Animation(framesInAnimation = 15, durationInSeconds = 30, animationDirectory = "cards/wallNut/coolDown"))
-            }
-        ),
+        new ImageProviderSet().initialize([
+            new ImageProviderEntry(key = "#Available", value = new Sprite( image = "sprites/cards/wallNut/available.png")),
+            new ImageProviderEntry(key = "#Unavailable", value = new Sprite( image = "sprites/cards/wallNut/unavailable.png")),
+            new ImageProviderEntry(key = "#Selected", value = new Sprite( image = "sprites/cards/wallNut/selected.png")),
+            new ImageProviderEntry(key = "#CoolDown", value = new Animation(framesInAnimation = 15, durationInSeconds = 30, animationDirectory = "cards/wallNut/coolDown"))  
+        ]),
     createNewInstance = { => new Nuez()}
 ){}
 
 object snowPeaCard inherits PlantCard(
     price = 175,
     imageProviderSet =
-        new ImageProviderSet(
-            entries = #{
-                new KeyProviderPair(key = "#Available", provider = new Sprite( image = "sprites/cards/snowPea/available.png")),
-                new KeyProviderPair(key = "#Unavailable", provider = new Sprite( image = "sprites/cards/snowPea/unavailable.png")),
-                new KeyProviderPair(key = "#Selected", provider = new Sprite( image = "sprites/cards/snowPea/selected.png")),
-                new KeyProviderPair(key = "#CoolDown", provider = new Animation(framesInAnimation = 15, durationInSeconds = 7.5, animationDirectory = "cards/snowPea/coolDown"))
-            }
-        ),
+        new ImageProviderSet().initialize([
+            new ImageProviderEntry(key = "#Available", value = new Sprite( image = "sprites/cards/snowPea/available.png")),
+            new ImageProviderEntry(key = "#Unavailable", value = new Sprite( image = "sprites/cards/snowPea/unavailable.png")),
+            new ImageProviderEntry(key = "#Selected", value = new Sprite( image = "sprites/cards/snowPea/selected.png")),
+            new ImageProviderEntry(key = "#CoolDown", value = new Animation(framesInAnimation = 15, durationInSeconds = 7.5, animationDirectory = "cards/snowPea/coolDown"))  
+        ]),
     createNewInstance = { => new SnowPea()}
 ){}
