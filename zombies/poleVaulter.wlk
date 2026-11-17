@@ -8,8 +8,82 @@ import util.config.*
 class PoleVaulter inherits Zombie(
     maxHealth = 190,
     deathHandler = defaultZombieDeathHandler,
-    imageProviderSet = 
-        new ImageProviderSet().initialize([
+    imageProviderSet = new PoleVaulterImageProvider(),
+    defaultImageProviderKey = "#Running",
+    actionModule = 
+        object inherits ActionModule(
+            behaviors = #{
+                new Behavior(
+                    key = "#Running",
+                    providerKey = "#Running",
+                    coolDownTracker = new CoolDownTracker( secondsPerUse = 2.5 ),
+                    state = object{ var property movingDirection = game.at(-1, 0) },
+                    strategy = movingStrategy
+                ),
+                new AnticipatedBehavior(
+                    key = "#Vaulting",
+                    providerKey = "#Jumping",
+                    coolDownTracker = new CoolDownTracker( secondsPerUse = 1+config.ticksToSeconds(1) ),
+                    state = null,
+                    strategy = vaultingStrategy
+                )
+            }
+        ){}    
+){
+    method stopVaulting(){ actionModule.removeBehavior("#Vaulting") }
+    method stopRunning(){ actionModule.removeBehavior("#Running") }
+    method startWalking(){ 
+        actionModule.addBehavior(
+            new Behavior(
+                key = "#Movement",
+                providerKey = "#Walking",
+                coolDownTracker = new CoolDownTracker( secondsPerUse = 4.7 ),
+                state = object{ var property movingDirection = game.at(-1, 0) },
+                strategy = movingStrategy
+            )
+        )
+    }
+
+    method startMeleeAttack(){
+        actionModule.addBehavior(
+            new Behavior(
+                key = "#MeleeAttack",
+                providerKey = "#MeleeAttack",
+                coolDownTracker = new CoolDownTracker( secondsPerUse = 1 ),
+                state = object{ var property damage = 100},
+                strategy = meleeAttackStrategy
+            )
+        )
+    }
+
+    override method health(newHealthTotal){
+        if(newHealthTotal < maxHealth/3 && not actionModule.hasBehavior("#MeleeAttack")){
+            self.stopVaulting()
+            self.startMeleeAttack()
+        }
+        super(newHealthTotal)
+    }
+}
+
+object vaultingStrategy inherits Strategy{
+    override method shouldTick(user) = user.hasObstacle()
+
+    override method use(user, state){
+        user.removeVaulting(user)
+        user.stopRunning(user)
+        user.imageProviderSetUse("#Walking")
+        user.animationCallback({ =>
+            user.position(user.position().left(1))
+            user.startWalking()
+            user.startMeleeAttack()
+            user.updateImageProvider()
+        })
+    }
+}
+
+class PoleVaulterImageProvider inherits ImageProviderSet{
+    method initialize() = 
+        self.initialize([
             new ImageProviderEntry(
                 key = "#Running",
                 value =
@@ -57,89 +131,7 @@ class PoleVaulter inherits Zombie(
                 key = "#Death",
                 value = poleVaulterDying
             )
-        ]),
-    defaultImageProviderKey = "#Running",
-    actionModule = 
-        object inherits ActionModule(
-            behaviors = #{
-                new Behavior(
-                    key = "#Movement",
-                    providerKey = "#Running",
-                    coolDownTracker = new CoolDownTracker( secondsPerUse = 2.5 ),
-                    state = object{ var property movingDirection = game.at(-1, 0) },
-                    strategy = movingStrategy
-                ),
-                new AnticipatedBehavior(
-                    key = "#Vaulting",
-                    providerKey = "#Jumping",
-                    coolDownTracker = new CoolDownTracker( secondsPerUse = 1+config.ticksToSeconds(1) ),
-                    state = null,
-                    strategy = vaultingStrategy
-                )
-            }
-        ){}    
-){
-    override method health(newHealthTotal){
-        if(newHealthTotal < maxHealth/3 && not actionModule.hasBehavior("#MeleeAttack")){
-            actionModule.removeBehavior("#Vaulting")
-            actionModule.addBehavior(
-                new Behavior(
-                    key = "#MeleeAttack",
-                    providerKey = "#MeleeAttack",
-                    coolDownTracker = new CoolDownTracker( secondsPerUse = 1 ),
-                    state = object{ var property damage = 100},
-                    strategy = meleeAttackStrategy
-                )
-            )
-        }
-        super(newHealthTotal)
-    }
-}
-
-object vaultingStrategy inherits Strategy{
-    override method shouldTick(user) = user.hasObstacle()
-
-    method stopRunning(user){user.actionModule().removeBehavior("#Movement") }
-
-    method startWalking(user){
-        user.actionModule().addBehavior(
-            new Behavior(
-                key = "#Movement",
-                providerKey = "#Walking",
-                coolDownTracker = new CoolDownTracker( secondsPerUse = 4.7 ),
-                state = object{ var property movingDirection = game.at(-1, 0) },
-                strategy = movingStrategy
-            )
-        )
-    }
-
-    method removeVaulting(user){
-        user.actionModule().removeBehavior("#Vaulting")
-    }
-
-    method addMeleeAttacking(user){
-        user.actionModule().addBehavior(
-            new Behavior(
-                key = "#MeleeAttack",
-                providerKey = "#MeleeAttack",
-                coolDownTracker = new CoolDownTracker( secondsPerUse = 1 ),
-                state = object{ var property damage = 100},
-                strategy = meleeAttackStrategy
-            )
-        )
-    }
-
-    override method use(user, state){
-        self.removeVaulting(user)
-        self.stopRunning(user)
-        user.imageProviderSetUse("#Walking")
-        user.animationCallback({ =>
-            user.position(user.position().left(1))
-            self.startWalking(user)
-            self.addMeleeAttacking(user)
-            user.updateImageProvider()
-        })
-    }
+        ])
 }
 
 object poleVaulterWalkingDying inherits Sprite(image = "animations/zombies/poleVaulter/walking/dying.gif"){}

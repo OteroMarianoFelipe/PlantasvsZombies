@@ -7,8 +7,32 @@ import behavior.*
 class ZombieBasico inherits Zombie(
     maxHealth = 190,
     deathHandler = defaultZombieDeathHandler,
-    imageProviderSet = 
-        new ImageProviderSet().initialize([
+    imageProviderSet = new BasicZombieImageProvider(),
+    defaultImageProviderKey = "#Moving",
+    actionModule = 
+        object inherits ActionModule(
+            behaviors = #{
+                new Behavior(
+                    key = "#Movement",
+                    providerKey = "#Moving",
+                    coolDownTracker = new CoolDownTracker( secondsPerUse = 4.7 ),
+                    state = object{ var property movingDirection = game.at(-1, 0) },
+                    strategy = movingStrategy
+                ),
+                new Behavior(
+                    key = "#MeleeAttack",
+                    providerKey = "#MeleeAttack",
+                    coolDownTracker = new CoolDownTracker( secondsPerUse = 1 ),
+                    state = object{ var property damage = 100},
+                    strategy = meleeAttackStrategy
+                )
+            }
+        ){}    
+){}
+
+class BasicZombieImageProvider inherits ImageProviderSet{
+    method initialize() = 
+        self.initialize([
             new ImageProviderEntry(
                 key = "#Moving",
                 value =
@@ -35,28 +59,8 @@ class ZombieBasico inherits Zombie(
                 key = "#Death",
                 value = zombieDying
             )
-        ]),
-    defaultImageProviderKey = "#Moving",
-    actionModule = 
-        object inherits ActionModule(
-            behaviors = #{
-                new Behavior(
-                    key = "#Movement",
-                    providerKey = "#Moving",
-                    coolDownTracker = new CoolDownTracker( secondsPerUse = 4.7 ),
-                    state = object{ var property movingDirection = game.at(-1, 0) },
-                    strategy = movingStrategy
-                ),
-                new Behavior(
-                    key = "#MeleeAttack",
-                    providerKey = "#MeleeAttack",
-                    coolDownTracker = new CoolDownTracker( secondsPerUse = 1 ),
-                    state = object{ var property damage = 100},
-                    strategy = meleeAttackStrategy
-                )
-            }
-        ){}    
-){}
+        ])
+}
 
 object zombieWalkingDying inherits Sprite(image = "animations/zombies/basic/walking/dying.gif"){}
 object zombieWalkingHurt inherits Sprite(image = "animations/zombies/basic/walking/hurt.gif"){}
