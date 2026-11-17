@@ -6,7 +6,7 @@ import util.config.*
 import imageProvider.*
 import team.*
 
-class Zombie inherits Alive and Active and Ticks and Entity(
+class Zombie inherits Alive and Active and Entity(
     team = zombiesTeam,
     collides = true
 ){

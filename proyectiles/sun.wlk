@@ -4,6 +4,7 @@ import UIElements.sunCounter.*
 import imageProvider.*
 
 class Sun inherits Projectile( 
+    defaultImageProviderKey = self.getProperAnimationKey(),
     imageProviderSet = 
         new ImageProviderSet().initialize([
             new ImageProviderEntry(
@@ -14,8 +15,7 @@ class Sun inherits Projectile(
                 key = "#BigSun",
                 value = new Sprite(image = "animations/projectiles/sun/big.gif")
             )
-        ]),
-    defaultImageProviderKey = self.getProperAnimationKey()
+        ])
 ){
     const property value
 
@@ -24,10 +24,6 @@ class Sun inherits Projectile(
     method isBig() = self.value() >= 25
 
     method getProperAnimationKey() = if(self.isBig()) "#BigSun" else "#SmallSun"
-    
-    override method updateImageProvider(){
-        self.imageProvider( imageProviderSet.get(self.getProperAnimationKey()) )
-    }
 
     override method tick(){
         if(ticksUntilDesapearing == 0){

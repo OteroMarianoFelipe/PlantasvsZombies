@@ -91,7 +91,7 @@ object movingStrategy inherits Strategy(){
 
 object meleeAttackStrategy inherits Strategy(){
     method getFirstMeleeAttackObjective(user) = 
-        user.allCollidingEntities().findOrDefault({ e => user.isEnemy(e) && e.canBeKilled() }, null)
+        user.collidingEntities().findOrDefault({ e => user.isEnemy(e) && e.canBeKilled() }, null)
 
     method hasAttackTarget(user) = self.getFirstMeleeAttackObjective(user) != null
 
@@ -113,7 +113,7 @@ object unconditionalShootingStrategy inherits ShootingStrategy{}
 
 object conditionalShootingStrategy inherits ShootingStrategy{
     method allEnemiesInLineOfSight(user) = 
-        user.allEntitiesAtOwnLine().filter({ e => user.isEnemy(e) && e.canBeKilled()})
+        user.entitiesAtOwnLine().filter({ e => user.isEnemy(e) && e.canBeKilled()})
 
     method hasTarget(user) = 
         self.allEnemiesInLineOfSight(user).size() > 0

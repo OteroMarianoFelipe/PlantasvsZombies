@@ -25,7 +25,7 @@ describe "Image provider handler"{
         animationDirectory = "plants/peashooter/active"
     )
     method changeImageProviderTemporarily(handler){
-        handler.imageProvider(testingAnimation1)
+        handler.changeImageProvider(testingAnimation1)
         tracker.frameNumber(3)
         tracker.ticksInFrame(2)
         handler.useTempAnimation(testingAnimation2, 1)

@@ -14,5 +14,5 @@ class Planta inherits Alive(
     collides = true
 ){
     override method blocksPlantPlacement() = true
-    override method blocksEnemyEntitiesMovement() = true
+    override method blocksEnemyMovement() = true
 }
