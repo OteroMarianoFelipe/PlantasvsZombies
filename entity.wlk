@@ -55,10 +55,7 @@ class Entity{
     method isEnemy(other) = team.isEnemy(other)
 
     method start(pos){
-        const set = imageProviderSet
-        var diccionario = set.entries()
-        var proveedor = diccionario.basicGet(defaultImageProviderKey)
-        self.imageProvider(proveedor)
+        self.imageProvider(imageProviderSet.get(defaultImageProviderKey))
         self.position(pos)
         game.addVisual(self)
     }
