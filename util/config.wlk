@@ -6,6 +6,7 @@ import UIElements.plantCard.*
 import UIElements.sunCounter.*
 import spawningManager.*
 import UIElements.gameOver.*
+import util.debugger.*
 
 object config {
   const property height = 7
@@ -88,14 +89,15 @@ object config {
   }
 
   method clear(){
-    game.clear()
+    gameOver.cleanUp()
     entityTickingManager.clear()
     spawningManager.stopSpawning()
+    game.clear()
   }
 
   method lose(){
     self.clear()
-    game.addVisual(gameOver)
+    gameOver.trigger()
   }
 
   method resetGame(){
