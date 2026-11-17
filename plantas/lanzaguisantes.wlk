@@ -34,12 +34,7 @@ class LanzaGuisantes inherits Active(
         new ImageProviderSet().initialize([
             new ImageProviderEntry(
                 key = "#Idle",
-                value = 
-                    object inherits Animation(
-                        durationInSeconds = 1,
-                        framesInAnimation = 8,
-                        animationDirectory = "plants/peashooter/idle"
-                    ){}
+                value = new Sprite(image = "animations/plants/peashooter/idle.gif")
             ),
             new ImageProviderEntry(
                 key = "#Shooting",

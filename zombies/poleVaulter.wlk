@@ -43,7 +43,7 @@ class PoleVaulter inherits Zombie(
                     )
             ),
             new ImageProviderEntry(
-                key = "#MeleeAttacking",
+                key = "#MeleeAttack",
                 value =
                     new HealthBasedImageProvider(
                         imageProviderSet = [
@@ -85,7 +85,7 @@ class PoleVaulter inherits Zombie(
             actionModule.addBehavior(
                 new Behavior(
                     key = "#MeleeAttack",
-                    providerKey = "#MeleeAttacking",
+                    providerKey = "#MeleeAttack",
                     coolDownTracker = new CoolDownTracker( secondsPerUse = 1 ),
                     state = object{ var property damage = 100},
                     strategy = meleeAttackStrategy

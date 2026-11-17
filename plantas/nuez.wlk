@@ -21,6 +21,6 @@ object wallNutIdleImageProvider inherits HealthBasedImageProvider(
     ]
 ){}
 
-object wallNutDying inherits Animation(durationInSeconds = 1, framesInAnimation = 4, animationDirectory = "plants/wallNut/dying"){}
-object wallNutHurt inherits Animation(durationInSeconds = 1, framesInAnimation = 4, animationDirectory = "plants/wallNut/hurt"){}
-object wallNutIdle inherits Animation(durationInSeconds = 1, framesInAnimation = 4, animationDirectory = "plants/wallNut/idle"){}
+object wallNutDying inherits Sprite(image = "animations/plants/wallNut/dying.gif"){}
+object wallNutHurt inherits Sprite(image = "animations/plants/wallNut/hurt.gif"){}
+object wallNutIdle inherits Sprite(image = "animations/plants/wallNut/fullHealth.gif"){}

@@ -14,9 +14,9 @@ class ZombieBasico inherits Zombie(
                 value =
                     new HealthBasedImageProvider( 
                         imageProviderSet=[
-                            zombieWalkingDying,
-                            zombieWalkingHurt,
-                            zombieWalkingFH
+                            new Sprite(image = "animations/zombies/basic/walking/dying.gif"),
+                            new Sprite(image = "animations/zombies/basic/walking/hurt.gif"),
+                            new Sprite(image = "animations/zombies/basic/walking/fullHealth.gif")
                         ]
                     )
             ),
@@ -25,9 +25,9 @@ class ZombieBasico inherits Zombie(
                 value =
                     new HealthBasedImageProvider(
                         imageProviderSet=[
-                            zombieEatingDying,
-                            zombieEatingHurt,
-                            zombieEatingFH
+                            new Sprite(image = "animations/zombies/basic/eating/dying.gif"),
+                            new Sprite(image = "animations/zombies/basic/eating/hurt.gif"),
+                            new Sprite(image = "animations/zombies/basic/eating/fullHealth.gif")
                         ]
                     )
             ),
@@ -49,7 +49,7 @@ class ZombieBasico inherits Zombie(
                 ),
                 new Behavior(
                     key = "#MeleeAttack",
-                    providerKey = "#MeleeAttacking",
+                    providerKey = "#MeleeAttack",
                     coolDownTracker = new CoolDownTracker( secondsPerUse = 1 ),
                     state = object{ var property damage = 100},
                     strategy = meleeAttackStrategy
@@ -58,12 +58,12 @@ class ZombieBasico inherits Zombie(
         ){}    
 ){}
 
-object zombieWalkingDying inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/basic/walking/dying"){}
-object zombieWalkingHurt inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/basic/walking/hurt"){}
-object zombieWalkingFH inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/basic/walking/FH"){}
+object zombieWalkingDying inherits Sprite(image = "animations/zombies/basic/walking/dying.gif"){}
+object zombieWalkingHurt inherits Sprite(image = "animations/zombies/basic/walking/hurt.gif"){}
+object zombieWalkingFH inherits Sprite(image = "animations/zombies/basic/walking/fullHealth.gif"){}
 
-object zombieEatingDying inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/basic/eating/dying"){}
-object zombieEatingHurt inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/basic/eating/hurt"){}
-object zombieEatingFH inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/basic/eating/FH"){}
+object zombieEatingDying inherits Sprite(image = "animations/zombies/basic/eating/dying.gif"){}
+object zombieEatingHurt inherits Sprite(image = "animations/zombies/basic/eating/hurt.gif"){}
+object zombieEatingFH inherits Sprite(image = "animations/zombies/basic/eating/fullHealth.gif"){}
 
 object zombieDying inherits Animation(durationInSeconds = 1, framesInAnimation = 9, animationDirectory = "zombies/basic/death"){}
