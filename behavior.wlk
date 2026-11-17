@@ -54,7 +54,8 @@ class Behavior{
         }
     }
 
-    method tryToUse(user){ 
+    method tryToUse(user){
+        self.tick(user)
         if( coolDownTracker.shouldUseStrategy() ){
             coolDownTracker.coolDown()
             strategy.use(user, state)

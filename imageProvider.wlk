@@ -1,6 +1,3 @@
-// imageProvider.wlk
-// imageProvider.wlk
-// imageProvider.wlk
 import zombies.zombieBasico.*
 import util.debugger.*
 import util.config.*

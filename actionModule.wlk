@@ -41,7 +41,6 @@ class ActionModule{
         if( not forceStopped ){
             behaviors.forEach({ b =>
                 if(forceStopped){return}
-                b.tick(user)
                 b.tryToUse(user)
             })
         }

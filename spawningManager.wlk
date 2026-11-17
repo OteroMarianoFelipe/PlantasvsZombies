@@ -56,17 +56,23 @@ object scriptedSpawner{
     
     method instancePosition() = game.at(config.upperBound().x(), self.getRandomLine())
 
-    method animate(){}
-    method tick(){
-        tickCounter += 1
-        const seconds = config.ticksToSeconds(tickCounter)
-        3.times({ i =>
-            const entry = ownScript.get(i-1)
+    method finished() = ownScript.size() == 0
+
+    method trySpawn(seconds){
+        if(not self.finished()){
+            const entry = ownScript.head()
             if(entry.timeInSeconds() <= seconds){
                 entry.entityToSpawn().start(self.instancePosition())
                 ownScript.remove(entry)
+                self.trySpawn(seconds)
             }
-        })
+        }
+    }
+
+    method animate(){}
+    method tick(){
+        tickCounter += 1
+        self.trySpawn(config.ticksToSeconds(tickCounter))
     }
 
     method startScript(){ 
