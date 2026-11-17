@@ -121,7 +121,7 @@ object vaultingStrategy inherits Strategy{
         user.actionModule().addBehavior(
             new Behavior(
                 key = "#MeleeAttack",
-                providerKey = "#MeleeAttacking",
+                providerKey = "#MeleeAttack",
                 coolDownTracker = new CoolDownTracker( secondsPerUse = 1 ),
                 state = object{ var property damage = 100},
                 strategy = meleeAttackStrategy
@@ -136,25 +136,25 @@ object vaultingStrategy inherits Strategy{
         user.animationCallback({ =>
             user.position(user.position().left(1))
             self.startWalking(user)
-            user.updateImageProvider()
             self.addMeleeAttacking(user)
+            user.updateImageProvider()
         })
     }
 }
 
-object poleVaulterWalkingDying inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/poleVaulter/walking/dying"){}
-object poleVaulterWalkingHurt  inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/poleVaulter/walking/hurt"){}
-object poleVaulterWalkingFH    inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/poleVaulter/walking/FH"){}
+object poleVaulterWalkingDying inherits Sprite(image = "animations/zombies/poleVaulter/walking/dying.gif"){}
+object poleVaulterWalkingHurt  inherits Sprite(image = "animations/zombies/poleVaulter/walking/hurt.gif"){}
+object poleVaulterWalkingFH    inherits Sprite(image = "animations/zombies/poleVaulter/walking/fullHealth.gif"){}
 
-object poleVaulterEatingDying inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/poleVaulter/eating/dying"){}
-object poleVaulterEatingHurt  inherits Animation(durationInSeconds = 1, framesInAnimation = 8, animationDirectory = "zombies/poleVaulter/eating/hurt"){}
-object poleVaulterEatingFH    inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/poleVaulter/eating/FH"){}
+object poleVaulterEatingDying inherits Sprite(image = "animations/zombies/poleVaulter/eating/dying.gif"){}
+object poleVaulterEatingHurt  inherits Sprite(image = "animations/zombies/poleVaulter/eating/hurt.gif"){}
+object poleVaulterEatingFH    inherits Sprite(image = "animations/zombies/poleVaulter/eating/fullHealth.gif"){}
 
-object poleVaulterRunningDying inherits Animation(durationInSeconds = 1, framesInAnimation = 8, animationDirectory = "zombies/poleVaulter/running/dying"){}
-object poleVaulterRunningHurt  inherits Animation(durationInSeconds = 1, framesInAnimation = 8, animationDirectory = "zombies/poleVaulter/running/hurt"){}
-object poleVaulterRunningFH    inherits Animation(durationInSeconds = 1, framesInAnimation = 8, animationDirectory = "zombies/poleVaulter/running/FH"){}
+object poleVaulterRunningDying inherits Sprite(image = "animations/zombies/poleVaulter/running/dying.gif"){}
+object poleVaulterRunningHurt  inherits Sprite(image = "animations/zombies/poleVaulter/running/hurt.gif"){}
+object poleVaulterRunningFH    inherits Sprite(image = "animations/zombies/poleVaulter/running/fullHealth.gif"){}
 
 object poleVaulterJumpingHurt  inherits Animation(durationInSeconds = 1, framesInAnimation = 6, animationDirectory = "zombies/poleVaulter/jumping/hurt"){}
 object poleVaulterJumpingFH inherits Animation(durationInSeconds = 1, framesInAnimation = 6, animationDirectory = "zombies/poleVaulter/jumping/FH"){}
 
-object poleVaulterDying inherits Animation(durationInSeconds = 1, framesInAnimation = 4, animationDirectory = "zombies/poleVaulter/death"){}
+object poleVaulterDying inherits Animation(durationInSeconds = 1, framesInAnimation = 8, animationDirectory = "zombies/poleVaulter/death"){}

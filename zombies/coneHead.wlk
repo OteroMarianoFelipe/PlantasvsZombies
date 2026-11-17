@@ -109,6 +109,6 @@ object coneHeadWalkingDying inherits Sprite(image = "animations/zombies/coneHead
 object coneHeadWalkingHurt inherits Sprite(image = "animations/zombies/coneHead/walking/hurt.gif"){}
 object coneHeadWalkingFH inherits Sprite(image = "animations/zombies/coneHead/walking/fullHealth.gif"){}
 
-object coneHeadEatingDying inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/coneHead/eating/dying"){}
-object coneHeadEatingHurt inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/coneHead/eating/hurt"){}
-object coneHeadEatingFH inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/coneHead/eating/FH"){}
+object coneHeadEatingDying inherits Sprite(image = "animations/zombies/coneHead/eating/dying.gif"){}
+object coneHeadEatingHurt inherits Sprite(image = "animations/zombies/coneHead/eating/hurt.gif"){}
+object coneHeadEatingFH inherits Sprite(image = "animations/zombies/coneHead/eating/fullHealth.gif"){}

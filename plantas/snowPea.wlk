@@ -36,12 +36,7 @@ class SnowPea inherits Active(
         new ImageProviderSet().initialize([
             new ImageProviderEntry(
                 key = "#Idle",
-                value = 
-                    new Animation(
-                        durationInSeconds = 1,
-                        framesInAnimation = 8,
-                        animationDirectory = "plants/snowPea/idle"
-                    )
+                value = new Sprite(image = "animations/plants/snowPea/idle.gif")
             ),
             new ImageProviderEntry(
                 key = "#Shooting",

@@ -8,21 +8,11 @@ class Sun inherits Projectile(
         new ImageProviderSet().initialize([
             new ImageProviderEntry(
                 key = "#SmallSun",
-                value = 
-                    object inherits Animation(
-                        durationInSeconds = 0.4,
-                        framesInAnimation = 2,
-                        animationDirectory = "projectiles/sun/small" 
-                    ){}
+                value = new Sprite(image = "animations/projectiles/sun/small.gif")
             ),
             new ImageProviderEntry(
                 key = "#BigSun",
-                value = 
-                    object inherits Animation(
-                        durationInSeconds = 0.4,
-                        framesInAnimation = 2,
-                        animationDirectory = "projectiles/sun/big"
-                    ){}
+                value = new Sprite(image = "animations/projectiles/sun/big.gif")
             )
         ]),
     defaultImageProviderKey = self.getProperAnimationKey()
