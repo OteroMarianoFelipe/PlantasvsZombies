@@ -1,4 +1,5 @@
 import imageProvider.*
+import util.debugger.*
 
 class ImageProviderStateTracker{
     var property ticksInFrame = 1

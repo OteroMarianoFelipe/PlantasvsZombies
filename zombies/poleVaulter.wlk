@@ -4,6 +4,7 @@ import imageProvider.*
 import actionModule.*
 import behavior.*
 import util.config.*
+import util.debugger.*
 
 class PoleVaulter inherits Zombie(
     maxHealth = 190,
@@ -20,9 +21,10 @@ class PoleVaulter inherits Zombie(
                     state = object{ var property movingDirection = game.at(-1, 0) },
                     strategy = movingStrategy
                 ),
-                new AnticipatedBehavior(
+                new Behavior(
                     key = "#Vaulting",
                     providerKey = "#Jumping",
+                    sendsProviderCandidate = false,
                     coolDownTracker = new CoolDownTracker( secondsPerUse = 1+config.ticksToSeconds(1) ),
                     state = null,
                     strategy = vaultingStrategy
@@ -31,7 +33,6 @@ class PoleVaulter inherits Zombie(
         ){}    
 ){
     method stopVaulting(){ actionModule.removeBehavior("#Vaulting") }
-    method stopRunning(){ actionModule.removeBehavior("#Running") }
     method startWalking(){ 
         actionModule.addBehavior(
             new Behavior(
@@ -69,9 +70,9 @@ object vaultingStrategy inherits Strategy{
     override method shouldTick(user) = user.hasObstacle()
 
     override method use(user, state){
-        user.removeVaulting(user)
-        user.stopRunning(user)
+        user.actionModule().clear()
         user.imageProviderSetUse("#Walking")
+        user.anticipateBehavior( user.imageProviderSet().get("#Jumping") )
         user.animationCallback({ =>
             user.position(user.position().left(1))
             user.startWalking()

@@ -30,6 +30,7 @@ class Behavior{
     const property strategy
     const property state
     var property providerKey
+    const sendsProviderCandidate = true
 
     method provider(user) = user.imageProviderSet().get(providerKey)
 
@@ -39,10 +40,8 @@ class Behavior{
     method slowDown(factor){ coolDownTracker.slowDown(factor) }
     method restoreSpeed(){ coolDownTracker.restoreSpeed() }
 
-    method shouldSendProviderCandidate(user) = true
-
     method getImageProvider(user) = 
-        if(self.shouldSendProviderCandidate(user)) self.provider(user) 
+        if(sendsProviderCandidate) self.provider(user) 
         else null
 
     method tick(user){
@@ -63,8 +62,7 @@ class Behavior{
     }
 }
 
-class AnticipatedBehavior inherits Behavior{
-    override method shouldSendProviderCandidate(user) = false
+class AnticipatedBehavior inherits Behavior( sendsProviderCandidate = false ){
 
     override method tryToUse(user){
         super(user)
