@@ -34,16 +34,18 @@ class Girasol inherits Active(
         new ImageProviderSet().initialize([
             new ImageProviderEntry(
                 key = "#Idle",
-                value = new Sprite(image = "animations/plants/sunFlower/idle.gif")
+                value = sunFlowerIdle
             ),
             new ImageProviderEntry(
                 key = "#Active",
-                value = 
-                    object inherits Animation(
-                        durationInSeconds = 1,
-                        framesInAnimation = 9,
-                        animationDirectory = "plants/sunFlower/active"
-                    ){}
+                value = sunFlowerActive
             )
         ])
+){}
+
+object sunFlowerIdle inherits Sprite( image = "animations/plants/sunFlower/idle.gif" ){}
+object sunFlowerActive inherits Animation(
+    durationInSeconds = 1,
+    framesInAnimation = 9,
+    animationDirectory = "plants/sunFlower/active"
 ){}

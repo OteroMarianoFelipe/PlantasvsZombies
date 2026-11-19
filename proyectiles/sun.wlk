@@ -9,11 +9,11 @@ class Sun inherits Projectile(
         new ImageProviderSet().initialize([
             new ImageProviderEntry(
                 key = "#SmallSun",
-                value = new Sprite(image = "animations/projectiles/sun/small.gif")
+                value = sunSmall
             ),
             new ImageProviderEntry(
                 key = "#BigSun",
-                value = new Sprite(image = "animations/projectiles/sun/big.gif")
+                value = sunBig
             )
         ])
 ){
@@ -39,3 +39,6 @@ class Sun inherits Projectile(
     }
     override method handleRemoval(){ self.cleanUp() }
 }
+
+object sunSmall inherits Sprite(image = "animations/projectiles/sun/small.gif"){}
+object sunBig inherits Sprite(image = "animations/projectiles/sun/big.gif"){}

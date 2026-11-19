@@ -38,9 +38,9 @@ class BasicZombieImageProvider inherits ImageProviderSet{
                 value =
                     new HealthBasedImageProvider( 
                         imageProviderSet=[
-                            new Sprite(image = "animations/zombies/basic/walking/dying.gif"),
-                            new Sprite(image = "animations/zombies/basic/walking/hurt.gif"),
-                            new Sprite(image = "animations/zombies/basic/walking/fullHealth.gif")
+                            zombieWalkingDying,
+                            zombieWalkingHurt,
+                            zombieWalkingFH
                         ]
                     )
             ),
@@ -49,9 +49,9 @@ class BasicZombieImageProvider inherits ImageProviderSet{
                 value =
                     new HealthBasedImageProvider(
                         imageProviderSet=[
-                            new Sprite(image = "animations/zombies/basic/eating/dying.gif"),
-                            new Sprite(image = "animations/zombies/basic/eating/hurt.gif"),
-                            new Sprite(image = "animations/zombies/basic/eating/fullHealth.gif")
+                            zombieEatingDying,
+                            zombieEatingHurt,
+                            zombieEatingFH
                         ]
                     )
             ),
