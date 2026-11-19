@@ -9,10 +9,7 @@ object player {
     self.cardSelected().deselected()
     self.cardSelected(null) 
   }
-  method selectCard(card){ 
-    self.cardSelected(card) 
-    card.selected()
-  }
+  method selectCard(card){ self.cardSelected(card) }
 
   method cellIsUnblocked(entities) = not entities.any({e => e.blocksPlantPlacement()})
 

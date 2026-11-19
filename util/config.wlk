@@ -79,12 +79,12 @@ object config {
   }
 
   method startUIElements(){
+    sunCounter.suns(startingSuns)
     plantCards.size().times({ i =>
       const card = plantCards.get(i-1)
       card.start(game.at(1 + i, 0))
       card.reset()
     })
-    sunCounter.suns(startingSuns)
     sunCounter.start()
   }
 
