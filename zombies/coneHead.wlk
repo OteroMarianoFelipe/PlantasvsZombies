@@ -53,9 +53,9 @@ class ConeHeadImageProvider inherits ImageProviderSet{
                 value =
                     new HealthBasedImageProvider( 
                         imageProviderSet=[
-                            zombieWalkingDying,
-                            zombieWalkingHurt,
-                            zombieWalkingFH
+                            coneHeadWalkingDying,
+                            coneHeadWalkingHurt,
+                            coneHeadWalkingFH
                         ]
                     )
             ),
@@ -64,9 +64,9 @@ class ConeHeadImageProvider inherits ImageProviderSet{
                 value =
                     new HealthBasedImageProvider(
                         imageProviderSet=[
-                            zombieEatingDying,
-                            zombieEatingHurt,
-                            zombieEatingFH
+                            coneHeadEatingDying,
+                            coneHeadEatingHurt,
+                            coneHeadEatingFH
                         ]
                     )
             ),
