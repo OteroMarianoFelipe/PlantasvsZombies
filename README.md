@@ -1,5 +1,7 @@
 # Wollok Game: PlantasvsZombies
 
+![Imagen Principal del juego](ImagenPrincipal.png)
+
 **Integrantes:**
 - Mariano Felipe Otero
 
