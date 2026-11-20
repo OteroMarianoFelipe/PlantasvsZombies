@@ -3,16 +3,14 @@ import entity.*
 
 object sunCounter{
     var property suns = 0
+    method suns(newAmount){
+        suns = newAmount.max(0).min(975) 
+        self.updateCount()
+    }
 
     method canPay(cost) = suns >= cost
-    method addSuns(amount) {
-        suns += amount 
-        self.updateCount()
-    }
-    method spendSuns(amount) { 
-        suns -= amount 
-        self.updateCount()
-    }
+    method addSuns(amount) { self.suns(suns + amount) }
+    method spendSuns(amount) { self.suns(suns - amount) }
 
     method hundreds() = (suns/100).truncate(0)
     method tens() = suns - self.hundreds()*100
