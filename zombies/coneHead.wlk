@@ -34,8 +34,8 @@ class ConeHead inherits Zombie(
 
 object coneHeadDeathHandler{
     method changeUsersHealth(user){
-        user.maxHealth(190)
-        user.health(190)
+        user.maxHealth(270)
+        user.health(270)
     }
 
     method apply(user){

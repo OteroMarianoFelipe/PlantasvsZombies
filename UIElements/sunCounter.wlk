@@ -31,7 +31,7 @@ object sunCounter{
 }
 
 object sunCounterIcoWithHundreds inherits Sprite( image = "sprites/sunCounter/iconWithHundreds/"){
-    const property position = game.at(0,0)
+    const property position = game.at(1,0)
     var property hundreds = 0
     method beClicked(){}
     method changeHundreds(newNumber){
@@ -43,7 +43,7 @@ object sunCounterIcoWithHundreds inherits Sprite( image = "sprites/sunCounter/ic
 }
 
 object sunCounterTens inherits Sprite( image = "sprites/sunCounter/tens/"){
-    const property position = game.at(1,0)
+    const property position = game.at(2,0)
     var property tens = 0
     method beClicked(){}
     method numberHasSprite(num) = [0, 25, 50, 75].contains(num)

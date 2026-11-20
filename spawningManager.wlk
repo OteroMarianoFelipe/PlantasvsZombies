@@ -2,6 +2,7 @@ import zombies.zombie.*
 import zombies.zombieBasico.*
 import zombies.coneHead.*
 import zombies.poleVaulter.*
+import zombies.flagZombie.*
 import util.config.*
 import util.random.*
 import imageProvider.*
@@ -30,7 +31,7 @@ object script{
         new ScriptEntry(timeInSeconds = 187, entityToSpawn = new ZombieBasico()),
         new ScriptEntry(timeInSeconds = 188, entityToSpawn = new ZombieBasico()),
         new ScriptEntry(timeInSeconds = 188, entityToSpawn = new ZombieBasico()),
-        new ScriptEntry(timeInSeconds = 213, entityToSpawn = new ZombieBasico()), // Should be flag zombie
+        new ScriptEntry(timeInSeconds = 213, entityToSpawn = new FlagZombie()),
         new ScriptEntry(timeInSeconds = 215, entityToSpawn = new PoleVaulter()),
         new ScriptEntry(timeInSeconds = 216, entityToSpawn = new ZombieBasico()),
         new ScriptEntry(timeInSeconds = 216, entityToSpawn = new ZombieBasico()),
@@ -62,7 +63,7 @@ object scriptedSpawner{
         if(not self.finished()){
             const entry = ownScript.head()
             if(entry.timeInSeconds() <= seconds){
-                entry.entityToSpawn().start(self.instancePosition())
+                self.spawnEntity(entry.entityToSpawn())
                 ownScript.remove(entry)
                 self.trySpawn(seconds)
             }
@@ -80,6 +81,8 @@ object scriptedSpawner{
         tickCounter = 0
         entityTickingManager.add(self) 
     }
+
+    method spawnEntity(entity){ entity.start(self.instancePosition()) }
 }
 
 object spawningManager{

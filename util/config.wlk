@@ -1,7 +1,10 @@
-import zombies.zombieBasico.*
 import wollok.game.*
-import entityTickingManager.*
 import player.*
+import zombies.zombieBasico.*
+import zombies.coneHead.*
+import zombies.flagZombie.*
+import zombies.poleVaulter.*
+import entityTickingManager.*
 import UIElements.plantCard.*
 import UIElements.sunCounter.*
 import spawningManager.*
@@ -68,12 +71,12 @@ object config {
   method controlsConfiguration(){
     game.onClickDo({position => player.clickHandler(position)})
     plantCards.size().times({ i =>
-      keyboard.num(i).onPressDo({ => player.clickHandler(game.at(1 + i, 0)) })
+      keyboard.num(i).onPressDo({ => player.clickHandler(game.at(2 + i, 0)) })
     })
-    keyboard.y().onPressDo({ => basicZombieSpawner.spawnNewWave(1)})
-    keyboard.u().onPressDo({ => coneHeadZombieSpawner.spawnNewWave(1)})
-    keyboard.i().onPressDo({ => poleVaulterZombieSpawner.spawnNewWave(1)})
-    keyboard.k().onPressDo({ => console.println(game.allVisuals().map({visual => visual.image()}))})
+    keyboard.y().onPressDo({ => scriptedSpawner.spawnEntity(new ZombieBasico())})
+    keyboard.u().onPressDo({ => scriptedSpawner.spawnEntity(new ConeHead())})
+    keyboard.i().onPressDo({ => scriptedSpawner.spawnEntity(new PoleVaulter())})
+    keyboard.o().onPressDo({ => scriptedSpawner.spawnEntity(new FlagZombie())})
     keyboard.p().onPressDo({ => self.switchPausedState()})
     keyboard.r().onPressDo({ => self.resetGame()})
   }
@@ -82,7 +85,7 @@ object config {
     sunCounter.suns(startingSuns)
     plantCards.size().times({ i =>
       const card = plantCards.get(i-1)
-      card.start(game.at(1 + i, 0))
+      card.start(game.at(2 + i, 0))
       card.reset()
     })
     sunCounter.start()
