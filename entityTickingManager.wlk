@@ -1,3 +1,4 @@
+import team.*
 import util.config.*
 
 object entityTickingManager{

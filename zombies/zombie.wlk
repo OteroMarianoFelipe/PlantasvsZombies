@@ -1,3 +1,4 @@
+import zombieTracker.*
 import entity.*
 import plantas.planta.*
 import entityTickingManager.*
@@ -15,6 +16,16 @@ class Zombie inherits Alive and Active and Entity(
     method freeze(){
         self.actionModule().slowDown(2)
         frozen = config.secondsToTicks(10)
+    }
+
+    override method start(pos){
+        super(pos)
+        zombieTracker.addZombie(self)
+    }
+
+    override method cleanUp(){
+        super()
+        zombieTracker.removeZombie(self)
     }
 
     override method tick(){

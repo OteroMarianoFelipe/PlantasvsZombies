@@ -5,10 +5,12 @@ import zombies.coneHead.*
 import zombies.flagZombie.*
 import zombies.poleVaulter.*
 import entityTickingManager.*
+import UIElements.agradecimientos.*
 import UIElements.plantCard.*
 import UIElements.sunCounter.*
 import UIElements.pauseMenu.*
 import spawning.*
+import zombieTracker.*
 import UIElements.gameOver.*
 import util.debugger.*
 
@@ -103,8 +105,20 @@ object config {
 
   method spawningScripFinished(){
     if(not infinite){
-      self.pause()
+      game.onTick(1000, "SearchForZombies",{ =>
+        if(zombieTracker.zombieCount() <= 0){
+          self.gameFinished()
+        }
+      })
+    }else{
+      scriptedSpawner.startScript()
     }
+  }
+
+  method gameFinished(){
+    self.pause()
+    agradecimientos.show()
+    game.removeTickEvent("SearchForZombies")
   }
 
   method clear(){
