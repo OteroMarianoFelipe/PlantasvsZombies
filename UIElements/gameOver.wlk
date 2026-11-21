@@ -1,6 +1,3 @@
-import entity.*
-import imageProvider.*
-
 object gameOver{  
     const property position = game.at(2, 0)
     var triggered = false
