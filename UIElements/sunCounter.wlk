@@ -37,7 +37,7 @@ object sunCounterIcoWithHundreds inherits Sprite( image = "sprites/sunCounter/ic
             self.hundreds(newNumber)
         }
     }
-    override method image() = image + hundreds + ".png"
+    method image() = image + hundreds + ".png"
 }
 
 object sunCounterTens inherits Sprite( image = "sprites/sunCounter/tens/"){
@@ -50,5 +50,5 @@ object sunCounterTens inherits Sprite( image = "sprites/sunCounter/tens/"){
             self.tens(newNumber)
         }
     }
-    override method image() = image + tens + ".png"
+    method image() = image + tens + ".png"
 }

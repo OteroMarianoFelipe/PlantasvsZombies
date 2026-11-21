@@ -7,7 +7,8 @@ import zombies.poleVaulter.*
 import entityTickingManager.*
 import UIElements.plantCard.*
 import UIElements.sunCounter.*
-import spawningManager.*
+import UIElements.pauseMenu.*
+import spawning.*
 import UIElements.gameOver.*
 import util.debugger.*
 
@@ -18,21 +19,31 @@ object config {
   const property ticksPerSecond = 5
   const cellSize = 64
   const backGroundImage = "sprites/background.png"
+  
+  const infinite = false
 
   const startingSuns = 200
 
   var paused = false
 
+  method pause(){
+    game.removeTickEvent("tickEntities")
+    game.removeTickEvent("AnimateEntities")
+  }
+
+  method unpause(){
+    pauseMenu.cleanUp()
+    entityTickingManager.startTicking()
+  }
+
   method switchPausedState(){
     if(paused){
-      game.removeTickEvent("tickEntities")
-      game.removeTickEvent("AnimateEntities")
-      spawningManager.startSunSpawning()
+      self.unpause()
     }else{
-      entityTickingManager.startTicking()
-      spawningManager.stopSunSpawning()
+      self.pause()
+      pauseMenu.show()
     }
-      paused = not paused
+    paused = not paused
   }
 
   const plantCards = [sunFlowerCard, peashooterCard, wallNutCard, snowPeaCard]
@@ -60,8 +71,7 @@ object config {
   method setUpNewGame(){
     self.controlsConfiguration()
     entityTickingManager.startTicking()
-    //spawningManager.startSpawning()
-    spawningManager.startSunSpawning() // temp
+    sunSpawner.setPeriodicalInstances(10) 
     scriptedSpawner.startScript()
     self.startUIElements()
   }
@@ -69,7 +79,7 @@ object config {
   method shouldResetScript() = not game.hasVisual(gameOver)
 
   method controlsConfiguration(){
-    game.onClickDo({position => player.clickHandler(position)})
+    game.onClickDo({position =>  player.clickHandler(position) })
     plantCards.size().times({ i =>
       keyboard.num(i).onPressDo({ => player.clickHandler(game.at(2 + i, 0)) })
     })
@@ -91,10 +101,16 @@ object config {
     sunCounter.start()
   }
 
+  method spawningScripFinished(){
+    if(not infinite){
+      self.pause()
+    }
+  }
+
   method clear(){
     gameOver.cleanUp()
     entityTickingManager.clear()
-    spawningManager.stopSpawning()
+    sunSpawner.stop()
     game.clear()
   }
 
