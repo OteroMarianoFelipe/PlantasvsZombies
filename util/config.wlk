@@ -29,11 +29,13 @@ object config {
   var paused = false
 
   method pause(){
+    paused = true
     game.removeTickEvent("tickEntities")
     game.removeTickEvent("AnimateEntities")
   }
 
   method unpause(){
+    paused = false
     pauseMenu.cleanUp()
     entityTickingManager.startTicking()
   }
@@ -45,7 +47,6 @@ object config {
       self.pause()
       pauseMenu.show()
     }
-    paused = not paused
   }
 
   const plantCards = [sunFlowerCard, peashooterCard, wallNutCard, snowPeaCard]
@@ -85,10 +86,6 @@ object config {
     plantCards.size().times({ i =>
       keyboard.num(i).onPressDo({ => player.clickHandler(game.at(2 + i, 0)) })
     })
-    keyboard.y().onPressDo({ => scriptedSpawner.spawnEntity(new ZombieBasico())})
-    keyboard.u().onPressDo({ => scriptedSpawner.spawnEntity(new ConeHead())})
-    keyboard.i().onPressDo({ => scriptedSpawner.spawnEntity(new PoleVaulter())})
-    keyboard.o().onPressDo({ => scriptedSpawner.spawnEntity(new FlagZombie())})
     keyboard.p().onPressDo({ => self.switchPausedState()})
     keyboard.r().onPressDo({ => self.resetGame()})
   }
@@ -134,6 +131,7 @@ object config {
   }
 
   method resetGame(){
+    self.unpause()
     self.clear()
     self.setUpNewGame()
   }
