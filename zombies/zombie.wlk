@@ -6,7 +6,7 @@ import util.config.*
 import imageProvider.*
 import team.*
 
-class Zombie inherits Alive and Active and Ticks and Entity(
+class Zombie inherits Alive and Active and Entity(
     team = zombiesTeam,
     collides = true
 ){
@@ -38,9 +38,10 @@ class Zombie inherits Alive and Active and Ticks and Entity(
 object defaultZombieDeathHandler{
     method apply(user){
         user.actionModule().clear()
+        user.actionModule().stop()
         user.removeCollision()
         user.animationCallback({ => user.cleanUp()})
-        user.imageHandler().useTempAnimation(user.imageProviderSet().getProvider("#Death"), 1)
+        user.imageHandler().useTempAnimation(user.imageProviderSet().get("#Death"), 1)
     }
 }
 

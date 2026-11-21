@@ -1,21 +1,39 @@
-import zombies.zombieBasico.*
 import wollok.game.*
-import entityTickingManager.*
 import player.*
+import zombies.zombieBasico.*
+import zombies.coneHead.*
+import zombies.flagZombie.*
+import zombies.poleVaulter.*
+import entityTickingManager.*
 import UIElements.plantCard.*
 import UIElements.sunCounter.*
 import spawningManager.*
 import UIElements.gameOver.*
+import util.debugger.*
 
 object config {
   const property height = 7
   const property width = 12
-  const property animationTicksPerSecond = 30
+  const property animationTicksPerSecond = 10
   const property ticksPerSecond = 5
   const cellSize = 64
   const backGroundImage = "sprites/background.png"
 
   const startingSuns = 200
+
+  var paused = false
+
+  method switchPausedState(){
+    if(paused){
+      game.removeTickEvent("tickEntities")
+      game.removeTickEvent("AnimateEntities")
+      spawningManager.startSunSpawning()
+    }else{
+      entityTickingManager.startTicking()
+      spawningManager.stopSunSpawning()
+    }
+      paused = not paused
+  }
 
   const plantCards = [sunFlowerCard, peashooterCard, wallNutCard, snowPeaCard]
 
@@ -42,41 +60,47 @@ object config {
   method setUpNewGame(){
     self.controlsConfiguration()
     entityTickingManager.startTicking()
-    spawningManager.startSpawning()
+    //spawningManager.startSpawning()
+    spawningManager.startSunSpawning() // temp
+    scriptedSpawner.startScript()
     self.startUIElements()
   }
+
+  method shouldResetScript() = not game.hasVisual(gameOver)
 
   method controlsConfiguration(){
     game.onClickDo({position => player.clickHandler(position)})
     plantCards.size().times({ i =>
-      keyboard.num(i).onPressDo({ => player.clickHandler(game.at(1 + i, 0)) })
+      keyboard.num(i).onPressDo({ => player.clickHandler(game.at(2 + i, 0)) })
     })
-    keyboard.y().onPressDo({ => basicZombieSpawner.spawnNewWave(1)})
-    keyboard.u().onPressDo({ => coneHeadZombieSpawner.spawnNewWave(1)})
-    keyboard.i().onPressDo({ => poleVaulterZombieSpawner.spawnNewWave(1)})
-    keyboard.k().onPressDo({ => console.println(game.allVisuals().map({visual => visual.image()}))})
+    keyboard.y().onPressDo({ => scriptedSpawner.spawnEntity(new ZombieBasico())})
+    keyboard.u().onPressDo({ => scriptedSpawner.spawnEntity(new ConeHead())})
+    keyboard.i().onPressDo({ => scriptedSpawner.spawnEntity(new PoleVaulter())})
+    keyboard.o().onPressDo({ => scriptedSpawner.spawnEntity(new FlagZombie())})
+    keyboard.p().onPressDo({ => self.switchPausedState()})
     keyboard.r().onPressDo({ => self.resetGame()})
   }
 
   method startUIElements(){
+    sunCounter.suns(startingSuns)
     plantCards.size().times({ i =>
       const card = plantCards.get(i-1)
-      card.start(game.at(1 + i, 0))
+      card.start(game.at(2 + i, 0))
       card.reset()
     })
-    sunCounter.suns(startingSuns)
     sunCounter.start()
   }
 
   method clear(){
-    game.clear()
+    gameOver.cleanUp()
     entityTickingManager.clear()
     spawningManager.stopSpawning()
+    game.clear()
   }
 
   method lose(){
     self.clear()
-    game.addVisual(gameOver)
+    gameOver.trigger()
   }
 
   method resetGame(){

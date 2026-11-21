@@ -20,11 +20,13 @@ describe "Agregado de soles correctamente"{
 
 describe "Puede gastar soles correctamente"{
     test "Gastar correctamente 25 soles"{
+        sunCounter.suns(100)
         const valorInicial = sunCounter.suns()
         sunCounter.spendSuns(25)
         assert.equals(valorInicial, sunCounter.suns()+25)
     }
     test "Gastar correctamente 50 soles"{
+        sunCounter.suns(100)
         const valorInicial = sunCounter.suns()
         sunCounter.spendSuns(50)
         assert.equals(valorInicial, sunCounter.suns()+50)
@@ -46,8 +48,8 @@ describe "Determinar correctamente si puede pagar"{
         assert.that(sunCounter.canPay(0))
     }
     test "Puede pagar un precio igual a los soles"{
-        sunCounter.suns(1000)
-        assert.that(sunCounter.canPay(1000))
+        sunCounter.suns(975)
+        assert.that(sunCounter.canPay(975))
     }
 }
 

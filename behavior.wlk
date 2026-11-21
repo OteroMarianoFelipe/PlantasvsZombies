@@ -30,8 +30,9 @@ class Behavior{
     const property strategy
     const property state
     var property providerKey
+    const sendsProviderCandidate = true
 
-    method provider(user) = user.imageProviderSet().getProvider(providerKey)
+    method provider(user) = user.imageProviderSet().get(providerKey)
 
     const coolDownTracker
     method coolDownTracker() = coolDownTracker
@@ -39,21 +40,19 @@ class Behavior{
     method slowDown(factor){ coolDownTracker.slowDown(factor) }
     method restoreSpeed(){ coolDownTracker.restoreSpeed() }
 
-    method shouldSendProviderCandidate(user) = strategy.shouldTick(user)
-
-    method getImageProvider(user) = 
-        if(self.shouldSendProviderCandidate(user)) self.provider(user) 
-        else null
-
     method tick(user){
         if(strategy.shouldTick(user)){
+            if(sendsProviderCandidate){
+                user.actionModule().providerCandidates().add(self.provider(user))
+            }
             coolDownTracker.tickUp()
         }else{
             coolDownTracker.coolDown()
         }
     }
 
-    method tryToUse(user){ 
+    method tryToUse(user){
+        self.tick(user)
         if( coolDownTracker.shouldUseStrategy() ){
             coolDownTracker.coolDown()
             strategy.use(user, state)
@@ -61,13 +60,11 @@ class Behavior{
     }
 }
 
-class AnticipatedBehavior inherits Behavior{
-    override method shouldSendProviderCandidate(user) = 
-        super(user) && coolDownTracker.shouldAnticipate(self.provider(user))
+class AnticipatedBehavior inherits Behavior( sendsProviderCandidate = false ){
 
     override method tryToUse(user){
         super(user)
-        const providerForAnticipation = user.imageProviderSet().getProvider(providerKey)
+        const providerForAnticipation = user.imageProviderSet().get(providerKey)
         if( coolDownTracker.shouldAnticipate(providerForAnticipation) ){
             user.anticipateBehavior( providerForAnticipation )
         }
@@ -90,7 +87,7 @@ object movingStrategy inherits Strategy(){
 
 object meleeAttackStrategy inherits Strategy(){
     method getFirstMeleeAttackObjective(user) = 
-        user.allCollidingEntities().findOrDefault({ e => user.isEnemy(e) && e.canBeKilled() }, null)
+        user.collidingEntities().findOrDefault({ e => user.isEnemy(e) && e.canBeKilled() }, null)
 
     method hasAttackTarget(user) = self.getFirstMeleeAttackObjective(user) != null
 
@@ -112,7 +109,7 @@ object unconditionalShootingStrategy inherits ShootingStrategy{}
 
 object conditionalShootingStrategy inherits ShootingStrategy{
     method allEnemiesInLineOfSight(user) = 
-        user.allEntitiesAtOwnLine().filter({ e => user.isEnemy(e) && e.canBeKilled()})
+        user.entitiesAtOwnLine().filter({ e => user.isEnemy(e) && e.canBeKilled()})
 
     method hasTarget(user) = 
         self.allEnemiesInLineOfSight(user).size() > 0

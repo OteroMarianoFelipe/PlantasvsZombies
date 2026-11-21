@@ -19,25 +19,21 @@ object comportamientoDePrueba inherits Behavior(
     providerKey = "#Test",
     coolDownTracker = coolDownTraker,
     state = 1,
-    strategy = testStrategy
+    strategy = testStrategy,
+    sendsProviderCandidate = false
 ){}
 object trackerMirror inherits ObjectMirror(target = coolDownTraker){}
 
 describe "Behavior"{
 
     method usar(comportamiento, veces){
-        veces.times({ i => 
-            comportamiento.tick(caller)
-            comportamiento.tryToUse(caller) 
-        })
+        veces.times({ i => comportamiento.tryToUse(caller) })
     }
 
     test "Se activa cuando termina su tiempo de espera"{
-        const seconds = 1
-        const comportamiento = comportamientoDePrueba
-        self.usar(comportamiento, config.secondsToTicks(segundosPorUso)-1)
+        self.usar(comportamientoDePrueba, config.secondsToTicks(segundosPorUso)-1)
         assert.equals(0, caller.activaciones())
-        self.usar(comportamiento, 1)
+        self.usar(comportamientoDePrueba, 1)
         assert.equals(1, caller.activaciones())
     }
 

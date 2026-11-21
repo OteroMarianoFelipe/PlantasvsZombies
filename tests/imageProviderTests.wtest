@@ -3,7 +3,7 @@ import imageProvider.*
 import imageProviderHandler.*
 import util.config.*
 
-object handler inherits ImageProviderHandler( imageProvider = noImageProvider, user = caller ){}
+object handler inherits ImageProviderHandler( imageProvider = noImageProvider){}
 object handlerMirror inherits ObjectMirror(target = handler){}
 const tracker = handlerMirror.resolve("stateTracker")
 object caller {
@@ -13,21 +13,24 @@ object caller {
 }
 
 describe "Image provider handler"{
-    const testingAnimation1 = new Animation(
+    const testingAnimation1 = object inherits Animation(
         family = "zombieWalking",
         durationInSeconds = 9,
         framesInAnimation = 7,
         animationDirectory = "zombies/basic/walkingFH" 
-    )
-    const testingAnimation2 = new Animation(
+    ){ method framesInAnimation() = framesInAnimation }
+    const testingAnimation2 = object inherits Animation(
         durationInSeconds = 0.5,
         framesInAnimation = 4,
         animationDirectory = "plants/peashooter/active"
-    )
+    ){ method framesInAnimation() = framesInAnimation }
+    method setTicksInFrameTo(amount, tracker){
+        amount.times({i => tracker.tickUpInFrameTime()})
+    }
     method changeImageProviderTemporarily(handler){
         handler.imageProvider(testingAnimation1)
         tracker.frameNumber(3)
-        tracker.ticksInFrame(2)
+        self.setTicksInFrameTo(2, tracker)
         handler.useTempAnimation(testingAnimation2, 1)
     }
 
@@ -40,11 +43,11 @@ describe "Image provider handler"{
     }
 
     test "Transiciona efectivamente toda la animación temporal"{
-        self.changeImageProviderTemporarily(handler)        
+        self.changeImageProviderTemporarily(handler)      
         handler.currentProvider().framesInAnimation().times({ f =>
             handler.currentProvider().animationTicksPerFrame().times({ t =>
                 assert.equals(testingAnimation2 ,handler.currentProvider())
-                handler.update() 
+                handler.update(caller) 
             })
         })
         assert.equals(testingAnimation1 ,handler.currentProvider())
@@ -53,8 +56,8 @@ describe "Image provider handler"{
     test "Cambia de vuelta a su proveedor original una vez se terminan las repeticiones del temporal"{
         self.changeImageProviderTemporarily(handler)
         tracker.frameNumber(handler.currentProvider().framesInAnimation())
-        tracker.ticksInFrame(handler.currentProvider().animationTicksPerFrame())
-        handler.update()
+        self.setTicksInFrameTo(handler.currentProvider().animationTicksPerFrame(), tracker)
+        handler.update(caller)
         assert.equals(testingAnimation1, handlerMirror.resolve("imageProvider"))
         assert.equals(1, tracker.frameNumber())
         assert.equals(1, tracker.ticksInFrame())
@@ -63,13 +66,19 @@ describe "Image provider handler"{
 }
 
 describe "Animation"{
-    const testingAnimation = new Animation(
+    const testingAnimation = object inherits Animation(
         family = "zombieWalking",
         durationInSeconds = 9,
         framesInAnimation = 7,
         animationDirectory = "zombies/basic/walkingFH" 
-    )
+    ){ 
+        method framesInAnimation() = framesInAnimation
+        method durationInSeconds() = durationInSeconds 
+    }
 
+    method setTicksInFrameTo(amount, tracker){
+        amount.times({i => tracker.tickUpInFrameTime()})
+    }
     method setInLastFrame(tracker){ tracker.frameNumber(handler.imageProvider().framesInAnimation()) }
 
     test "Determina correctamente la cantidad de ticks por frame"{
@@ -78,18 +87,18 @@ describe "Animation"{
     }
 
     test "Identifica el momento de cambiar pasados los ticks necesarios"{
-        tracker.ticksInFrame(testingAnimation.animationTicksPerFrame())
+        self.setTicksInFrameTo(testingAnimation.animationTicksPerFrame(), tracker)
         assert.that(testingAnimation.isTimeToPassFrame(tracker))
     }
 
     test "Identifica que no debe cambiar a falta de los ticks necesarios"{
-        tracker.ticksInFrame(1)
+        self.setTicksInFrameTo(1, tracker)
         assert.that(not testingAnimation.isTimeToPassFrame(tracker))
     }
 
     test "Cambia correctamente los ticks en frame"{
         handler.imageProvider(testingAnimation)
-        handler.update()
+        handler.update(caller)
         assert.equals(2, tracker.ticksInFrame())
     }
 
@@ -98,7 +107,7 @@ describe "Animation"{
         const expectedResults = (1 .. testingAnimation.animationTicksPerFrame()-1).map({ i=> 1 }) + [2]
         handler.imageProvider(testingAnimation)
         (testingAnimation.animationTicksPerFrame()).times({ t =>
-            handler.update()
+            handler.update(caller)
             results.add(tracker.frameNumber())
         })
         assert.equals(expectedResults, results)
@@ -106,15 +115,15 @@ describe "Animation"{
     test "Cambia al primer frame una vez llegado al final"{
         handler.imageProvider(testingAnimation)
         self.setInLastFrame(tracker)
-        tracker.ticksInFrame(handler.imageProvider().animationTicksPerFrame())
-        handler.update()
+        self.setTicksInFrameTo(handler.imageProvider().animationTicksPerFrame(), tracker)
+        handler.update(caller)
         assert.equals(1, tracker.frameNumber())
     }
     test "Envía la señal una vez terminada la animación"{
         handler.imageProvider(testingAnimation)
         self.setInLastFrame(tracker)
-        tracker.ticksInFrame(handler.imageProvider().animationTicksPerFrame())
-        handler.update()
+        self.setTicksInFrameTo(handler.imageProvider().animationTicksPerFrame(), tracker)
+        handler.update(caller)
         assert.that(caller.endedAnimation())
     }
 
@@ -138,7 +147,8 @@ describe "Animation"{
 describe "Animacion Estatica"{
     test "Devuelve como dirección a la imagen la dirección asignada"{
         const newImage = new Sprite( image = "Esta es una dirección muy real")
-        assert.equals(newImage.image(), newImage.getImage("noUser", "noTraker"))
+        const imageMirror = new ObjectMirror(target = newImage)
+        assert.equals(imageMirror.resolve("image"), newImage.getImage("noUser", "noTraker"))
     }
 }
 

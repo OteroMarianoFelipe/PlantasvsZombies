@@ -4,8 +4,18 @@ import UIElements.sunCounter.*
 import imageProvider.*
 
 class Sun inherits Projectile( 
-    imageProviderSet = sunAnimationSet ,
-    defaultImageProviderKey = self.getProperAnimationKey()
+    defaultImageProviderKey = self.getProperAnimationKey(),
+    imageProviderSet = 
+        new ImageProviderSet().initialize([
+            new ImageProviderEntry(
+                key = "#SmallSun",
+                value = sunSmall
+            ),
+            new ImageProviderEntry(
+                key = "#BigSun",
+                value = sunBig
+            )
+        ])
 ){
     const property value
 
@@ -14,10 +24,6 @@ class Sun inherits Projectile(
     method isBig() = self.value() >= 25
 
     method getProperAnimationKey() = if(self.isBig()) "#BigSun" else "#SmallSun"
-    
-    override method updateImageProvider(){
-        self.imageProvider( imageProviderSet.getProvider(self.getProperAnimationKey()) )
-    }
 
     override method tick(){
         if(ticksUntilDesapearing == 0){
@@ -34,25 +40,5 @@ class Sun inherits Projectile(
     override method handleRemoval(){ self.cleanUp() }
 }
 
-object sunAnimationSet inherits ImageProviderSet(
-    entries = #{
-        new KeyProviderPair(
-            key = "#SmallSun",
-            provider = 
-                object inherits Animation(
-                    durationInSeconds = 0.4,
-                    framesInAnimation = 2,
-                    animationDirectory = "projectiles/sun/small" 
-                ){}
-        ),
-        new KeyProviderPair(
-            key = "#BigSun",
-            provider = 
-                object inherits Animation(
-                    durationInSeconds = 0.4,
-                    framesInAnimation = 2,
-                    animationDirectory = "projectiles/sun/big"
-                ){}
-        )
-    }
-){}
+object sunSmall inherits Sprite(image = "animations/projectiles/sun/small.gif"){}
+object sunBig inherits Sprite(image = "animations/projectiles/sun/big.gif"){}
