@@ -67,6 +67,7 @@ object scriptedSpawner{
                 self.trySpawn(seconds)
             }
         }else{
+            self.stopTicking()
             config.spawningScripFinished()
         }
     }
@@ -77,10 +78,13 @@ object scriptedSpawner{
         self.trySpawn(config.ticksToSeconds(tickCounter))
     }
 
+    method startTicking(){entityTickingManager.add(self) }
+    method stopTicking(){entityTickingManager.remove(self)}
+
     method startScript(){ 
         ownScript = script.entries().copy()
         tickCounter = 0
-        entityTickingManager.add(self) 
+        self.startTicking()
     }
 
     method spawnEntity(entity){ entity.start(self.instancePosition()) }
