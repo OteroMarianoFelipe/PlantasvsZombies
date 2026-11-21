@@ -36,7 +36,7 @@ class Pea inherits HandlesCollisions(
     var removalHandled = false
     method state(newState){
         state = newState
-        self.imageProviderSet(state.imageProviderSet())
+        self.changeImageProviderSet(state.imageProviderSet())
         self.updateImageProvider()
     }
 
@@ -46,7 +46,7 @@ class Pea inherits HandlesCollisions(
         self.actionModule().clear()
         self.actionModule().stop()
         animationCallback = { => self.cleanUp()} 
-        imageHandler.useTempAnimation(state.imageProviderSet().get("#Impact"), 1)
+        imageHandler.useTempAnimation(imageProviderSet.get("#Impact"), 1)
     }
 }
 

@@ -2,15 +2,19 @@ import imageProvider.*
 import util.debugger.*
 
 class ImageProviderStateTracker{
-    var property ticksInFrame = 1
-    const owner
+    var ticksInFrame = 1
+    method ticksInFrame() = ticksInFrame
+    var animationEnded = false
+    method animationEnded() = animationEnded
 
     var property frameNumber = 1
     method frameNumber(newFrameNumber){
         self.resetTicksInFrame()
         frameNumber = newFrameNumber
         if(frameNumber == 1){
-            owner.animationEnded()
+            animationEnded = true
+        }else{
+            animationEnded = false
         }
     }
     
@@ -27,11 +31,9 @@ class ImageProviderStateTracker{
 }
 
 class ImageProviderHandler{
-    const user
-
     var timesToUseTempAnimation = 0
     var tempImageProvider = noImageProvider
-    const stateTracker = new ImageProviderStateTracker( owner = self )
+    const stateTracker = new ImageProviderStateTracker()
 
     method currentProvider() = if(self.onTempAnimation()) tempImageProvider else imageProvider
 
@@ -78,12 +80,13 @@ class ImageProviderHandler{
         }
     }
 
-    method animationEnded(){
-        self.checkTemporaryAnimationState()
-        user.animationEnded() 
+    method update(user){ 
+        self.currentProvider().update(user, stateTracker) 
+        if(stateTracker.animationEnded()){
+            self.checkTemporaryAnimationState()
+            user.animationEnded() 
+        }
     }
 
-    method update(){ self.currentProvider().update(user, stateTracker) }
-
-    method getImage() = self.currentProvider().getImage(user, stateTracker)
+    method getImage(user) = self.currentProvider().getImage(user, stateTracker)
 }

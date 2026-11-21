@@ -40,13 +40,11 @@ class Behavior{
     method slowDown(factor){ coolDownTracker.slowDown(factor) }
     method restoreSpeed(){ coolDownTracker.restoreSpeed() }
 
-    method getImageProvider(user) = 
-        if(sendsProviderCandidate) self.provider(user) 
-        else null
-
     method tick(user){
         if(strategy.shouldTick(user)){
-            user.actionModule().providerCandidates().add(self.getImageProvider(user))
+            if(sendsProviderCandidate){
+                user.actionModule().providerCandidates().add(self.provider(user))
+            }
             coolDownTracker.tickUp()
         }else{
             coolDownTracker.coolDown()

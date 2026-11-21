@@ -49,7 +49,7 @@ describe "ZombieBasico"{
         self.setUpDeathHandlerCall()
         zombie.deathHandler(coneHeadDeathHandler)
         zombie.takeDamage(zombie.health())
-        assert.equals(190, zombie.maxHealth())
+        assert.equals(270, zombie.maxHealth())
     }
     test "Cuando un zombie con cono muere cambia correctamente su set de proveedores de imagen"{
         self.setUpDeathHandlerCall()

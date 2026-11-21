@@ -9,9 +9,11 @@ import team.*
 
 class Entity{
     var property team = neutralTeam
-    var property imageProviderSet
     const property defaultImageProviderKey
-    const property imageHandler = new ImageProviderHandler( user = self, imageProvider = noImageProvider )
+    const property imageHandler = new ImageProviderHandler( imageProvider = noImageProvider )
+    
+    var imageProviderSet
+    method imageProviderSet() = imageProviderSet
     
     var collides = false
     method collides() = collides
@@ -27,6 +29,8 @@ class Entity{
         self.position(pos)
         game.addVisual(self)
     }
+
+    method changeImageProviderSet(newSet){ imageProviderSet = newSet }
     
     method cleanUp(){ game.removeVisual(self) }
 
@@ -65,9 +69,9 @@ class Entity{
         self.animationCallback({=>})
     }
 
-    method animate() = imageHandler.update()
+    method animate() = imageHandler.update(self)
 
-    method image() = imageHandler.getImage()
+    method image() = imageHandler.getImage(self)
 }
 
 mixin Ticks{

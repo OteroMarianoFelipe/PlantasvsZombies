@@ -40,7 +40,7 @@ object coneHeadDeathHandler{
 
     method apply(user){
         self.changeUsersHealth(user)
-        user.imageProviderSet(new BasicZombieImageProvider())
+        user.changeImageProviderSet(new BasicZombieImageProvider())
         user.deathHandler(defaultZombieDeathHandler)
     }
 }
