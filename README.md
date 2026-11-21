@@ -7,10 +7,19 @@
 
 **Institución: UTN Facultad Regional Buenos Aires**
 
+---
+
 ## Objetivo
 
-El objetivo del juego es prevenir que los zombies lleguen al otro lado del jardín y se coman tu cerebro
+El objetivo del juego es prevenir que los *zombies* lleguen al otro lado del jardín y se coman tu cerebro
 
 ## Controles
 
-Para poder selecciónar una planta uno puede simplemente clickear en ella o tocar los numeros de 1 a 4, representando, estos, las cartas de las plantas de izquierda a derecha. Luego, para plantar la planta uno debe clickear en una celda vacía.
+P - pausar/reanudar el juego <br>
+R - reiniciar el juego<br>
+
+Seleccionar plantas: (click en las cartas de abajo)<br>
+ 1 - Girasol <br>
+ 2 - Lanzaguisantes<br>
+ 3 - Nuez<br>
+ 4 - SnowPea<br>
