@@ -14,7 +14,7 @@ class ImageProvider{
 }
 
 class Sprite inherits ImageProvider{
-    const property image
+    const image
 
     override method update(user, traker){}
     override method durationInTicks() = 0
@@ -22,13 +22,14 @@ class Sprite inherits ImageProvider{
 }
 
 class Animation inherits ImageProvider{
-    const property durationInSeconds
-    const property framesInAnimation
-    const property animationDirectory
+    const durationInSeconds
+    const framesInAnimation
+    const animationDirectory
 
-    const property animationTicksPerFrame = (config.secondsToAnimationTicks(durationInSeconds)/framesInAnimation).truncate(0)
+    method animationTicksPerFrame() = (config.secondsToAnimationTicks(durationInSeconds)/framesInAnimation).truncate(0)
+    override method durationInTicks() = config.secondsToTicks(durationInSeconds)
 
-    method isTimeToPassFrame(traker) = traker.ticksInFrame() >= animationTicksPerFrame
+    method isTimeToPassFrame(traker) = traker.ticksInFrame() >= self.animationTicksPerFrame()
     method newFrameNumber(previous) = (previous % framesInAnimation) +1
 
     override method update(user, traker){
@@ -39,8 +40,6 @@ class Animation inherits ImageProvider{
             traker.tickUpInFrameTime()
         }
     }
-
-    override method durationInTicks() = config.secondsToTicks(durationInSeconds)
 
     method frameNumber001Format(frameNumber){
         if (frameNumber<10) return "00"+frameNumber

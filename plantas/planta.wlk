@@ -11,8 +11,7 @@ class Planta inherits Alive(
     deathHandler = { user => user.cleanUp() } 
 ) and Ticks and Entity(
     team = plantsTeam,
-    collides = true
-){
-    override method blocksPlantPlacement() = true
-    override method blocksEnemyMovement() = true
-}
+    collides = true,
+    blocksPlantPlacement = true,
+    blocksEnemyMovement = true
+){}

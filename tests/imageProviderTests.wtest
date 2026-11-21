@@ -13,17 +13,17 @@ object caller {
 }
 
 describe "Image provider handler"{
-    const testingAnimation1 = new Animation(
+    const testingAnimation1 = object inherits Animation(
         family = "zombieWalking",
         durationInSeconds = 9,
         framesInAnimation = 7,
         animationDirectory = "zombies/basic/walkingFH" 
-    )
-    const testingAnimation2 = new Animation(
+    ){ method framesInAnimation() = framesInAnimation }
+    const testingAnimation2 = object inherits Animation(
         durationInSeconds = 0.5,
         framesInAnimation = 4,
         animationDirectory = "plants/peashooter/active"
-    )
+    ){ method framesInAnimation() = framesInAnimation }
     method setTicksInFrameTo(amount, tracker){
         amount.times({i => tracker.tickUpInFrameTime()})
     }
@@ -43,7 +43,7 @@ describe "Image provider handler"{
     }
 
     test "Transiciona efectivamente toda la animación temporal"{
-        self.changeImageProviderTemporarily(handler)        
+        self.changeImageProviderTemporarily(handler)      
         handler.currentProvider().framesInAnimation().times({ f =>
             handler.currentProvider().animationTicksPerFrame().times({ t =>
                 assert.equals(testingAnimation2 ,handler.currentProvider())
@@ -66,12 +66,15 @@ describe "Image provider handler"{
 }
 
 describe "Animation"{
-    const testingAnimation = new Animation(
+    const testingAnimation = object inherits Animation(
         family = "zombieWalking",
         durationInSeconds = 9,
         framesInAnimation = 7,
         animationDirectory = "zombies/basic/walkingFH" 
-    )
+    ){ 
+        method framesInAnimation() = framesInAnimation
+        method durationInSeconds() = durationInSeconds 
+    }
 
     method setTicksInFrameTo(amount, tracker){
         amount.times({i => tracker.tickUpInFrameTime()})
@@ -144,7 +147,8 @@ describe "Animation"{
 describe "Animacion Estatica"{
     test "Devuelve como dirección a la imagen la dirección asignada"{
         const newImage = new Sprite( image = "Esta es una dirección muy real")
-        assert.equals(newImage.image(), newImage.getImage("noUser", "noTraker"))
+        const imageMirror = new ObjectMirror(target = newImage)
+        assert.equals(imageMirror.resolve("image"), newImage.getImage("noUser", "noTraker"))
     }
 }
 

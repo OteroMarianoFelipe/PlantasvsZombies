@@ -12,6 +12,9 @@ class Entity{
     const property defaultImageProviderKey
     const property imageHandler = new ImageProviderHandler( imageProvider = noImageProvider )
     
+    const property blocksPlantPlacement = false
+    const property blocksEnemyMovement = false
+    
     var imageProviderSet
     method imageProviderSet() = imageProviderSet
     
@@ -42,8 +45,6 @@ class Entity{
     method obstacles() = self.collidingEntities().filter({ e => self.isEnemy(e) && e.blocksEnemyMovement()})
     method hasObstacle() = self.obstacles().size() > 0
 
-    method blocksPlantPlacement() = false
-    method blocksEnemyMovement() = false
     method canBeKilled() = false
 
     method defaultProvider() = imageProviderSet.get(defaultImageProviderKey)

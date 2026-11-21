@@ -13,7 +13,7 @@ class PlantCard inherits Ticks and Entity(
     defaultImageProviderKey =  "#Available"
 ){
     const property price
-    const property createNewInstance
+    const createNewInstance
 
     var property state = available
     method state(newState){ 
