@@ -18,13 +18,6 @@ describe "ZombieBasico"{
         method hasReceivedCall() = hasBeenCalled
     }
 
-    const imgProvSet = 
-        new ZombieImageProviderSet(
-            walkingImageProvider = noImageProvider,
-            eatingImageProvider = noImageProvider,
-            deathAnimation = noImageProvider
-        )
-
     const zombie = object inherits ZombieBasico{}
 
     method setUpDeathHandlerCall(){
@@ -56,13 +49,13 @@ describe "ZombieBasico"{
         self.setUpDeathHandlerCall()
         zombie.deathHandler(coneHeadDeathHandler)
         zombie.takeDamage(zombie.health())
-        assert.equals(190, zombie.maxHealth())
+        assert.equals(270, zombie.maxHealth())
     }
     test "Cuando un zombie con cono muere cambia correctamente su set de proveedores de imagen"{
         self.setUpDeathHandlerCall()
         zombie.deathHandler(coneHeadDeathHandler)
         zombie.takeDamage(zombie.health())
-        assert.that(zombie.imageProviderSet() != imgProvSet)
+        assert.that(zombie.imageProviderSet() != new BasicZombieImageProvider())
     }
     test "Cuando un zombie con cono muere cambia correctamente su death handler"{
         self.setUpDeathHandlerCall()

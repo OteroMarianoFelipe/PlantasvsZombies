@@ -1,3 +1,5 @@
+// proyectiles/pea.wlk
+// proyectiles/pea.wlk
 import entity.*
 import imageProvider.*
 import proyectiles.projectile.*
@@ -8,7 +10,7 @@ import util.debugger.*
 
 class Pea inherits HandlesCollisions(
     collitionHandler = { entity =>
-        if( self.isEnemy(entity) ) { 
+        if( self.isEnemy(entity) && not self.actionModule().forceStopped() ) { 
             state.apply(entity, self)
         }
     } 
@@ -34,38 +36,32 @@ class Pea inherits HandlesCollisions(
     var removalHandled = false
     method state(newState){
         state = newState
-        self.imageProviderSet(state.imageProviderSet())
+        self.changeImageProviderSet(state.imageProviderSet())
         self.updateImageProvider()
     }
 
     override method handleRemoval(){
-        if(removalHandled){ 
-            self.error("Second time removal")
-            self.cleanUp() 
-        }else{
-            removalHandled = true
-            self.removeCollision()
-            self.actionModule().clear()
-            animationCallback = { => self.cleanUp()} 
-            imageHandler.useTempAnimation(state.imageProviderSet().getProvider("#Impact"), 1)
-        }
+        removalHandled = true
+        self.removeCollision()
+        self.actionModule().clear()
+        self.actionModule().stop()
+        animationCallback = { => self.cleanUp()} 
+        imageHandler.useTempAnimation(imageProviderSet.get("#Impact"), 1)
     }
 }
 
 object frozenState{
     const property imageProviderSet = 
-        new ImageProviderSet(
-            entries = #{
-                new KeyProviderPair(
-                    key = "#Moving",
-                    provider = frozenPeaAnimation
-                ),
-                new KeyProviderPair(
-                    key = "#Impact",
-                    provider = frozenPeaImpactAnimation
-                )
-            }
-        )
+        new ImageProviderSet().initialize([
+            new ImageProviderEntry(
+                key = "#Moving",
+                value = frozenPeaAnimation
+            ),
+            new ImageProviderEntry(
+                key = "#Impact",
+                value = frozenPeaImpactAnimation
+            )
+        ])
 
     method apply(entity, user){
         entity.takeDamage(user.damage())
@@ -74,18 +70,16 @@ object frozenState{
 }
 object noEffect{
     const property imageProviderSet = 
-        new ImageProviderSet(
-            entries = #{
-                new KeyProviderPair(
-                    key = "#Moving",
-                    provider = peaShotAnimation
-                ),
-                new KeyProviderPair(
-                    key = "#Impact",
-                    provider = peaShotImpactAnimation
-                )
-            }
-        )
+        new ImageProviderSet().initialize([
+            new ImageProviderEntry(
+                key = "#Moving",
+                value = peaShotAnimation
+            ),
+            new ImageProviderEntry(
+                key = "#Impact",
+                value = peaShotImpactAnimation
+            )
+        ])
 
     method apply(entity, user){
         entity.takeDamage(user.damage())

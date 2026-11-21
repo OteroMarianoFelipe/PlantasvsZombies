@@ -9,7 +9,7 @@ import behavior.*
 class ConeHead inherits Zombie(
     maxHealth = 370,
     deathHandler = coneHeadDeathHandler,
-    imageProviderSet = coneHeadImageProvidersSet,
+    imageProviderSet = new ConeHeadImageProvider().initialize(),
     defaultImageProviderKey = "#Moving",
     actionModule = 
         new ActionModule(
@@ -32,58 +32,55 @@ class ConeHead inherits Zombie(
         )
 ){}
 
-
-object coneHeadImageProvidersSet inherits ImageProviderSet(
-    entries = #{
-        new KeyProviderPair(
-            key = "#Moving",
-            provider =
-                new HealthBasedImageProvider(
-                    imageProviderSet = [
-                        coneHeadWalkingDying,
-                        coneHeadWalkingHurt,
-                        coneHeadWalkingFH
-                    ]
-                )
-        ),
-        new KeyProviderPair(
-            key = "#MeleeAttack",
-            provider =
-                new HealthBasedImageProvider(
-                    imageProviderSet = [
-                        coneHeadEatingDying,
-                        coneHeadEatingHurt,
-                        coneHeadEatingFH
-                    ]
-                )
-        ),
-        new KeyProviderPair(
-            key = "#Death",
-            provider = noImageProvider
-        )
-    }
-){} 
-
 object coneHeadDeathHandler{
     method changeUsersHealth(user){
-        user.maxHealth(190)
-        user.health(190)
-    }
-    method changeUsersImageProviderSet(user){
-        user.imageProviderSet( basicZombieImageProvidersSet )
+        user.maxHealth(270)
+        user.health(270)
     }
 
     method apply(user){
         self.changeUsersHealth(user)
-        self.changeUsersImageProviderSet(user)
+        user.changeImageProviderSet(new BasicZombieImageProvider())
         user.deathHandler(defaultZombieDeathHandler)
     }
 }
 
-object coneHeadWalkingDying inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/coneHead/walking/dying"){}
-object coneHeadWalkingHurt inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/coneHead/walking/hurt"){}
-object coneHeadWalkingFH inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/coneHead/walking/FH"){}
+class ConeHeadImageProvider inherits ImageProviderSet{
+    method initialize() = 
+        self.initialize([
+            new ImageProviderEntry(
+                key = "#Moving",
+                value =
+                    new HealthBasedImageProvider( 
+                        imageProviderSet=[
+                            coneHeadWalkingDying,
+                            coneHeadWalkingHurt,
+                            coneHeadWalkingFH
+                        ]
+                    )
+            ),
+            new ImageProviderEntry(
+                key = "#MeleeAttack",
+                value =
+                    new HealthBasedImageProvider(
+                        imageProviderSet=[
+                            coneHeadEatingDying,
+                            coneHeadEatingHurt,
+                            coneHeadEatingFH
+                        ]
+                    )
+            ),
+            new ImageProviderEntry(
+                key = "#Death",
+                value = zombieDying
+            )
+        ])
+}
 
-object coneHeadEatingDying inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/coneHead/eating/dying"){}
-object coneHeadEatingHurt inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/coneHead/eating/hurt"){}
-object coneHeadEatingFH inherits Animation(durationInSeconds = 1, framesInAnimation = 7, animationDirectory = "zombies/coneHead/eating/FH"){}
+object coneHeadWalkingDying inherits Sprite(image = "animations/zombies/coneHead/walking/dying.gif"){}
+object coneHeadWalkingHurt inherits Sprite(image = "animations/zombies/coneHead/walking/hurt.gif"){}
+object coneHeadWalkingFH inherits Sprite(image = "animations/zombies/coneHead/walking/fullHealth.gif"){}
+
+object coneHeadEatingDying inherits Sprite(image = "animations/zombies/coneHead/eating/dying.gif"){}
+object coneHeadEatingHurt inherits Sprite(image = "animations/zombies/coneHead/eating/hurt.gif"){}
+object coneHeadEatingFH inherits Sprite(image = "animations/zombies/coneHead/eating/fullHealth.gif"){}
