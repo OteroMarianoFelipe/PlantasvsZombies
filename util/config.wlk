@@ -77,6 +77,8 @@ object config {
     sunSpawner.setPeriodicalInstances(10) 
     scriptedSpawner.startScript()
     self.startUIElements()
+    self.pause()
+    pauseMenu.show()
   }
 
   method shouldResetScript() = not game.hasVisual(gameOver)
