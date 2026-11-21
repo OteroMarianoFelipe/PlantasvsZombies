@@ -19,6 +19,7 @@ class ImageProviderStateTracker{
     }
     
     method resetTracker(){
+        animationEnded = false
         frameNumber = 1
         self.resetTicksInFrame()
     }
