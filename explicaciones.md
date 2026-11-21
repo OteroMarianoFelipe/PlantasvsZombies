@@ -21,3 +21,5 @@
 
 ### 4. Mixins
 * **Mixins (capacidades modulares):** Utilizamos *mixins* para componer capacidades específicas según lo que cada entidad necesita, evitando clases o estructuras base sobrecargadas o jerarquías de herencia rígidas. Contamos con `Ticks` (para recibir actualizaciones periódicas, como un sol actualizando su temporizador para desaparecer), `Alive` (para entidades con vida y muerte, como plantas y *zombies*, pero no proyectiles), `HandlesCollisions` (usado en proyectiles de impacto como el guisante, pero no en plantas ni en el sol) y `Active` (que extiende `Ticks` y aporta un `ActionModule` para comportamientos complejos). Por ejemplo, Active abarca distintos tipos de entidades, como *zombies*, plantas y proyectiles como el guisante para gestionar su movimiento, mientras que una nuez no lo necesita y se limita a `Alive` y `Ticks` para rastrear su vida, actualizar su *sprite* y morir.
+
+  ![Diagrama de clase/estático de `Active`](Mixins-Active.png)
