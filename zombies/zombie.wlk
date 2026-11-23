@@ -24,7 +24,7 @@ class Zombie inherits Alive and Active and Entity(
     }
 
     override method cleanUp(){
-        super()
+        game.removeVisual(self)
         zombieTracker.removeZombie(self)
     }
 
