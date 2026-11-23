@@ -17,27 +17,27 @@ class ScriptEntry{
 
 object script{
     const property entries = [
-        new ScriptEntry(timeInSeconds = 23 , entityToSpawn = new ZombieBasico()),
-        new ScriptEntry(timeInSeconds = 49 , entityToSpawn = new ZombieBasico()),
-        new ScriptEntry(timeInSeconds = 76 , entityToSpawn = new ZombieBasico()),
-        new ScriptEntry(timeInSeconds = 98 , entityToSpawn = new ConeHead()),
-        new ScriptEntry(timeInSeconds = 120, entityToSpawn = new ConeHead()),
-        new ScriptEntry(timeInSeconds = 140, entityToSpawn = new PoleVaulter()),
-        new ScriptEntry(timeInSeconds = 155, entityToSpawn = new ConeHead()),
-        new ScriptEntry(timeInSeconds = 156, entityToSpawn = new ZombieBasico()),
-        new ScriptEntry(timeInSeconds = 174, entityToSpawn = new ZombieBasico()),
-        new ScriptEntry(timeInSeconds = 176, entityToSpawn = new PoleVaulter()),
-        new ScriptEntry(timeInSeconds = 187, entityToSpawn = new ZombieBasico()),
-        new ScriptEntry(timeInSeconds = 188, entityToSpawn = new ZombieBasico()),
-        new ScriptEntry(timeInSeconds = 188, entityToSpawn = new ZombieBasico()),
-        new ScriptEntry(timeInSeconds = 213, entityToSpawn = new FlagZombie()),
-        new ScriptEntry(timeInSeconds = 215, entityToSpawn = new PoleVaulter()),
-        new ScriptEntry(timeInSeconds = 216, entityToSpawn = new ZombieBasico()),
-        new ScriptEntry(timeInSeconds = 216, entityToSpawn = new ZombieBasico()),
-        new ScriptEntry(timeInSeconds = 216, entityToSpawn = new ZombieBasico()),
-        new ScriptEntry(timeInSeconds = 218, entityToSpawn = new ConeHead()),
-        new ScriptEntry(timeInSeconds = 218, entityToSpawn = new ZombieBasico()),
-        new ScriptEntry(timeInSeconds = 218, entityToSpawn = new ZombieBasico())
+        new ScriptEntry(timeInSeconds = 23 , entityToSpawn = { => new ZombieBasico()}),
+        new ScriptEntry(timeInSeconds = 49 , entityToSpawn = { => new ZombieBasico()}),
+        new ScriptEntry(timeInSeconds = 76 , entityToSpawn = { => new ZombieBasico()}),
+        new ScriptEntry(timeInSeconds = 98 , entityToSpawn = { => new ConeHead()}),
+        new ScriptEntry(timeInSeconds = 120, entityToSpawn = { => new ConeHead()}),
+        new ScriptEntry(timeInSeconds = 140, entityToSpawn = { => new PoleVaulter()}),
+        new ScriptEntry(timeInSeconds = 155, entityToSpawn = { => new ConeHead()}),
+        new ScriptEntry(timeInSeconds = 156, entityToSpawn = { => new ZombieBasico()}),
+        new ScriptEntry(timeInSeconds = 174, entityToSpawn = { => new ZombieBasico()}),
+        new ScriptEntry(timeInSeconds = 176, entityToSpawn = { => new PoleVaulter()}),
+        new ScriptEntry(timeInSeconds = 187, entityToSpawn = { => new ZombieBasico()}),
+        new ScriptEntry(timeInSeconds = 188, entityToSpawn = { => new ZombieBasico()}),
+        new ScriptEntry(timeInSeconds = 188, entityToSpawn = { => new ZombieBasico()}),
+        new ScriptEntry(timeInSeconds = 213, entityToSpawn = { => new FlagZombie()}),
+        new ScriptEntry(timeInSeconds = 215, entityToSpawn = { => new PoleVaulter()}),
+        new ScriptEntry(timeInSeconds = 216, entityToSpawn = { => new ZombieBasico()}),
+        new ScriptEntry(timeInSeconds = 216, entityToSpawn = { => new ZombieBasico()}),
+        new ScriptEntry(timeInSeconds = 216, entityToSpawn = { => new ZombieBasico()}),
+        new ScriptEntry(timeInSeconds = 218, entityToSpawn = { => new ConeHead()}),
+        new ScriptEntry(timeInSeconds = 218, entityToSpawn = { => new ZombieBasico()}),
+        new ScriptEntry(timeInSeconds = 218, entityToSpawn = { => new ZombieBasico()})
     ]
 }
 
@@ -62,7 +62,7 @@ object scriptedSpawner{
         if(not self.finished()){
             const entry = ownScript.head()
             if(entry.timeInSeconds() <= seconds){
-                self.spawnEntity(entry.entityToSpawn())
+                self.spawnEntity(entry.entityToSpawn().apply())
                 ownScript.remove(entry)
                 self.trySpawn(seconds)
             }
