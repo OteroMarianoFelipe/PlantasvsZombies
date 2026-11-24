@@ -11,7 +11,7 @@ class Zombie inherits Alive and Active and Entity(
     team = zombiesTeam,
     collides = true
 ){
-    var property frozen = 0
+    var frozen = 0
 
     method freeze(){
         self.actionModule().slowDown(2)

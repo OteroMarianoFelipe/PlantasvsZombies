@@ -1,3 +1,4 @@
+import wollok.mirror.*
 import zombies.coneHead.*
 import zombies.zombie.*
 import zombies.zombieBasico.*
@@ -26,7 +27,8 @@ describe "ZombieBasico"{
 
     test "Un zombie puede ser congelado"{
         zombie.freeze()
-        assert.that(zombie.frozen() > 0)
+        const zombieMirror = new ObjectMirror(target = zombie)
+        assert.that(zombieMirror.resolve("frozen") > 0)
     }
 
     test "Cuando un zombie cruza el patio se pierde la partida"{
