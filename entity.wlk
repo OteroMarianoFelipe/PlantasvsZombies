@@ -21,6 +21,21 @@ class Entity{
     var collides = false
     method collides() = collides
 
+    const collidingEntities = []
+    var collisionsUpToDate = false
+    method outDatedCollisions(){ collisionsUpToDate = false }
+    method collidingEntities(){
+        if(not collisionsUpToDate){
+            self.evaluateCollisions()    
+        }
+        return collidingEntities
+    }
+    method evaluateCollisions(){
+        collisionsUpToDate = true
+        collidingEntities.clear()
+        collidingEntities.addAll(position.allElements().filter({ e => e != self && e.collides()}))
+    }
+
     var property animationCallback = {=>}
     var property position = game.at(0,0)
 
@@ -58,8 +73,6 @@ class Entity{
         }
     }
 
-    method intersectingElements() = position.allElements().filter({ e => e != self && e.collides()})
-    method collidingEntities() = self.intersectingElements().filter({ e => e.collides() })
     method entitiesAtOwnLine() =
         (config.lowerBound().x() .. config.upperBound().x()).map({ x =>
         game.at(x, position.y()).allElements()
@@ -76,7 +89,9 @@ class Entity{
 }
 
 mixin Ticks{
-    method tick(){}
+    method outDatedCollisions()
+
+    method tick(){ self.outDatedCollisions() }
 
     override method start(pos){
         super(pos)
@@ -96,6 +111,7 @@ mixin Active inherits Ticks{
     method imageHandler()
     method imageProviderSetUse(key)
     method defaultImageProviderKey()
+    method evaluateCollisions()
 
     method updateImageProvider(){
         const actionProvider = actionModule.getImageProvider(self)
@@ -140,18 +156,20 @@ mixin HandlesCollisions inherits Ticks{
     var property collitionHandler
 
     method collidingEntities()
+    method position()
 
     override method position(newPosition){
+        self.outDatedCollisions()
         super(newPosition)
-        self.handleCollitions()
+        self.handleCollisions()
     }
 
     override method tick(){
-        self.handleCollitions()
+        self.handleCollisions()
         super()
     }
 
-    method handleCollitions(){
+    method handleCollisions(){
         self.collidingEntities().forEach({ e =>
             collitionHandler.apply(e)
         })
