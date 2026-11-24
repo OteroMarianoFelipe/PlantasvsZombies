@@ -25,7 +25,7 @@ class SnowPea inherits Active(
                                     )
                                 }
                         }}.apply(self),
-                    strategy = conditionalShootingStrategy
+                    strategy = shootOnZombiesInLine
                 )
             }
         )

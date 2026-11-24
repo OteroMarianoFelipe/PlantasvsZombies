@@ -23,7 +23,7 @@ class LanzaGuisantes inherits Active(
                                     )
                                 }
                         }}.apply(self),
-                    strategy = conditionalShootingStrategy
+                    strategy = shootOnZombiesInLine
                 )
             }
         )

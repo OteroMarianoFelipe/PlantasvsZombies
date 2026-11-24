@@ -2,6 +2,7 @@ import util.config.*
 import util.debugger.*
 import entityTickingManager.*
 import imageProvider.*
+import zombieTracker.*
 
 class CoolDownTracker{
     var property secondsPerUse
@@ -106,6 +107,12 @@ class ShootingStrategy inherits Strategy{
 }
 
 object unconditionalShootingStrategy inherits ShootingStrategy{}
+
+object shootOnZombiesInLine inherits ShootingStrategy{
+    method hasTarget(user) = zombieTracker.areThereZombiesInLine(user.position().y())
+        
+    override method shouldTick(user) = self.hasTarget(user)
+}
 
 object conditionalShootingStrategy inherits ShootingStrategy{
     method allEnemiesInLineOfSight(user) = 
