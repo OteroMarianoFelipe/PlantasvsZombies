@@ -2,28 +2,50 @@ import team.*
 import util.config.*
 
 object entityTickingManager{
-  const entities = []
+  const toFunctionalTick = []
+  const toAnimateTick = []
 
   method startTicking(){
     game.onTick(1000/config.ticksPerSecond(), "tickEntities", {  
-      entities.forEach({entity => 
+      /*console.println("startingTick")
+      console.println("finishingTick (should be 200ms max)")*/
+      toFunctionalTick.forEach({entity => 
         entity.tick()
       })  
     })
     
-    game.onTick(1000/config.animationTicksPerSecond(), "AnimateEntities", {
-      entities.forEach({ entity =>
+    game.onTick(1000/config.animationTicksPerSecond(), "animateEntities", {
+      toAnimateTick.forEach({ entity =>
         entity.animate()
       })
     })
   }
 
-  method add(entity){ entities.add(entity) }
-  method remove(entity){ entities.remove(entity) }
+  method stop(){
+    game.removeTickEvent("tickEntities")
+    game.removeTickEvent("animateEntities")
+  }
+
+  method addForFunction(entity){
+    toFunctionalTick.add(entity)
+  }
+
+  method addForAnimation(entity){
+    toAnimateTick.add(entity)
+  }
+
+  method addForAll(entity){
+    self.addForFunction(entity)
+    self.addForAnimation(entity)
+  }
+
+  method remove(entity){ 
+    toFunctionalTick.remove(entity) 
+    toAnimateTick.remove(entity)
+  }
 
   method clear(){
-    entities.forEach({ e =>
-      self.remove(e)
-    })
+    toFunctionalTick.clear()
+    toAnimateTick.clear()
   }
 }

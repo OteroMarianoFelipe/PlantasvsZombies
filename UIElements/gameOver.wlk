@@ -1,6 +1,18 @@
+import zombieTracker.zombieTracker
+import util.config.config
+
 object gameOver{  
     const property position = game.at(2, 0)
     var triggered = false
+
+    method startChecking(){
+        game.onTick(1000, "SearchForZombies",{ =>
+        if(zombieTracker.zombieCount() <= 0){
+                config.gameFinished()
+            }
+        })
+    }
+
     method trigger(){ 
         triggered = true
         game.addVisual(self) 

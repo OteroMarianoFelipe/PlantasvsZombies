@@ -21,8 +21,6 @@ object config {
   const property ticksPerSecond = 5
   const cellSize = 64
   const backGroundImage = "sprites/background.png"
-  
-  const infinite = false
 
   const startingSuns = 200
 
@@ -30,8 +28,7 @@ object config {
 
   method pause(){
     paused = true
-    game.removeTickEvent("tickEntities")
-    game.removeTickEvent("AnimateEntities")
+    entityTickingManager.stop()
   }
 
   method unpause(){
@@ -54,11 +51,11 @@ object config {
   const property upperBound = game.at(11, 5)
   const property lowerBound = game.at(2, 1)
 
-  method secondsToTicks(seconds) = (seconds * ticksPerSecond).truncate(0)
-  method secondsToAnimationTicks(seconds) = (seconds * animationTicksPerSecond).truncate(0)
+  method secondsToTicks(seconds) = (seconds * ticksPerSecond).floor()
+  method secondsToAnimationTicks(seconds) = (seconds * animationTicksPerSecond).floor()
   method ticksToSeconds(ticks) = (ticks / ticksPerSecond)
-  method ticksToAnimationTicks(ticks) = (ticks * animationTicksPerSecond / ticksPerSecond).truncate(0)
-  method animationTicksToTicks(ticks) = (ticks * ticksPerSecond / animationTicksPerSecond ).truncate(0)
+  method ticksToAnimationTicks(ticks) = (ticks * animationTicksPerSecond / ticksPerSecond).floor()
+  method animationTicksToTicks(ticks) = (ticks * ticksPerSecond / animationTicksPerSecond ).floor()
 
   method isInGardenBounds(pos) = pos.x().between(lowerBound.x(), upperBound.x()) && pos.y().between(lowerBound.y(), upperBound.y())
   method isInBounds(pos) = pos.x().between(0, width) && pos.y(0, height)
@@ -75,13 +72,13 @@ object config {
     self.controlsConfiguration()
     entityTickingManager.startTicking()
     sunSpawner.setPeriodicalInstances(10) 
-    scriptedSpawner.startScript()
+    laneDirector.initialize()
+    exampleLevel.setUp()
+    exampleLevel.start()
     self.startUIElements()
     self.pause()
     pauseMenu.show()
   }
-
-  method shouldResetScript() = not game.hasVisual(gameOver)
 
   method controlsConfiguration(){
     game.onClickDo({position =>  player.clickHandler(position) })
@@ -100,18 +97,6 @@ object config {
       card.reset()
     })
     sunCounter.start()
-  }
-
-  method spawningScripFinished(){
-    if(not infinite){
-      game.onTick(1000, "SearchForZombies",{ =>
-        if(zombieTracker.zombieCount() <= 0){
-          self.gameFinished()
-        }
-      })
-    }else{
-      scriptedSpawner.startScript()
-    }
   }
 
   method gameFinished(){

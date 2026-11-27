@@ -11,6 +11,7 @@ class Entity{
     var property team = neutralTeam
     const property defaultImageProviderKey
     const property imageHandler = new ImageProviderHandler( imageProvider = noImageProvider )
+    var usingDefaultImageProvider = false
     
     const property blocksPlantPlacement = false
     const property blocksEnemyMovement = false
@@ -63,14 +64,16 @@ class Entity{
     method canBeKilled() = false
 
     method defaultProvider() = imageProviderSet.get(defaultImageProviderKey)
-    method useDefaultProvider() { imageHandler.imageProvider(self.defaultProvider()) }
-    method imageProviderSetUse(key){
-        const provider = imageProviderSet.get(key)
-        if(provider == null){
-            debugger.warning("Proveedor no encontrado")
-        }else{
-            imageHandler.imageProvider(provider)
+    method useDefaultProvider() { 
+        if(not usingDefaultImageProvider){
+            imageHandler.imageProvider(self.defaultProvider()) 
+            usingDefaultImageProvider = true
         }
+    }
+    method imageProviderSetUse(key){
+        usingDefaultImageProvider = false
+        const provider = imageProviderSet.get(key)
+        imageHandler.imageProvider(provider)
     }
 
     method entitiesAtOwnLine() =
@@ -95,7 +98,7 @@ mixin Ticks{
 
     override method start(pos){
         super(pos)
-        entityTickingManager.add(self)
+        entityTickingManager.addForAll(self)
     }
     override method cleanUp(){
         entityTickingManager.remove(self)
@@ -109,8 +112,7 @@ mixin Active inherits Ticks{
     method actionModule() = actionModule
 
     method imageHandler()
-    method imageProviderSetUse(key)
-    method defaultImageProviderKey()
+    method useDefaultProvider()
     method evaluateCollisions()
 
     method updateImageProvider(){
@@ -118,7 +120,7 @@ mixin Active inherits Ticks{
         if(actionProvider != null){
             self.imageHandler().imageProvider(actionProvider)
         }else{
-            self.imageProviderSetUse(self.defaultImageProviderKey())
+            self.useDefaultProvider()
         }
     }
 
@@ -159,8 +161,8 @@ mixin HandlesCollisions inherits Ticks{
     method position()
 
     override method position(newPosition){
-        self.outDatedCollisions()
         super(newPosition)
+        self.outDatedCollisions()
         self.handleCollisions()
     }
 
