@@ -27,7 +27,29 @@ class FlagZombie inherits Zombie(
                     strategy = meleeAttackStrategy
                 )
             }
-        ){}    
+        ){},
+        thresholdHandler = new FlagZombieHealthThresholds()
+){}
+
+class FlagZombieHealthThresholds inherits HealthThreshold(
+    thresholds = [
+        new Threshold(
+            change = { user => 
+                const imgProvSet = user.imageProviderSet()
+                imgProvSet.add("#Walking", flagZombieWalkingHurt)
+                imgProvSet.add("#MeleeAttack", flagZombieEatingHurt)
+            },
+            condition = new AmountCondition( amount = 135 )
+        ),
+        new Threshold(
+            change = { user => 
+                const imgProvSet = user.imageProviderSet()
+                imgProvSet.add("#Walking", zombieWalkingDying)
+                imgProvSet.add("#MeleeAttack", zombieEatingDying)
+            },
+            condition = new AmountCondition( amount = 20 )
+        )
+    ]
 ){}
 
 class FlagZombieImageProvider inherits ImageProviderSet{
@@ -35,25 +57,11 @@ class FlagZombieImageProvider inherits ImageProviderSet{
         self.initialize([
             new ImageProviderEntry(
                 key = "#Moving",
-                value =
-                    new HealthBasedImageProvider( 
-                        imageProviderSet=[
-                            zombieWalkingDying,
-                            zombieWalkingHurt,
-                            zombieWalkingFH
-                        ]
-                    )
+                value = flagZombieWalkingFH
             ),
             new ImageProviderEntry(
                 key = "#MeleeAttack",
-                value =
-                    new HealthBasedImageProvider(
-                        imageProviderSet=[
-                            zombieEatingDying,
-                            zombieEatingHurt,
-                            zombieEatingFH
-                        ]
-                    )
+                value = flagZombieEatingFH
             ),
             new ImageProviderEntry(
                 key = "#Death",
@@ -63,11 +71,11 @@ class FlagZombieImageProvider inherits ImageProviderSet{
 }
 
 object zombieWalkingDying inherits Sprite(image = "animations/zombies/basic/walking/dying.gif"){}
-object zombieWalkingHurt inherits Sprite(image = "animations/zombies/flagZombie/walking/hurt.gif"){}
-object zombieWalkingFH inherits Sprite(image = "animations/zombies/flagZombie/walking/fullHealth.gif"){}
+object flagZombieWalkingHurt inherits Sprite(image = "animations/zombies/flagZombie/walking/hurt.gif"){}
+object flagZombieWalkingFH inherits Sprite(image = "animations/zombies/flagZombie/walking/fullHealth.gif"){}
 
 object zombieEatingDying inherits Sprite(image = "animations/zombies/basic/eating/dying.gif"){}
-object zombieEatingHurt inherits Sprite(image = "animations/zombies/flagZombie/eating/hurt.gif"){}
-object zombieEatingFH inherits Sprite(image = "animations/zombies/flagZombie/eating/fullHealth.gif"){}
+object flagZombieEatingHurt inherits Sprite(image = "animations/zombies/flagZombie/eating/hurt.gif"){}
+object flagZombieEatingFH inherits Sprite(image = "animations/zombies/flagZombie/eating/fullHealth.gif"){}
 
 object zombieDying inherits Animation(durationInSeconds = 1, framesInAnimation = 9, animationDirectory = "zombies/basic/death"){}

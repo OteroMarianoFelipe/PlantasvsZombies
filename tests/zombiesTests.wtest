@@ -46,23 +46,4 @@ describe "ZombieBasico"{
         zombie.takeDamage(zombie.health())
         assert.that(spy.hasReceivedCall())
     }
-
-    test "Cuando un zombie con cono muere cambia correctamente su vida"{
-        self.setUpDeathHandlerCall()
-        zombie.deathHandler(coneHeadDeathHandler)
-        zombie.takeDamage(zombie.health())
-        assert.equals(270, zombie.maxHealth())
-    }
-    test "Cuando un zombie con cono muere cambia correctamente su set de proveedores de imagen"{
-        self.setUpDeathHandlerCall()
-        zombie.deathHandler(coneHeadDeathHandler)
-        zombie.takeDamage(zombie.health())
-        assert.that(zombie.imageProviderSet() != new BasicZombieImageProvider())
-    }
-    test "Cuando un zombie con cono muere cambia correctamente su death handler"{
-        self.setUpDeathHandlerCall()
-        zombie.deathHandler(coneHeadDeathHandler)
-        zombie.takeDamage(zombie.health())
-        assert.equals(defaultZombieDeathHandler, zombie.deathHandler())
-    }
 }

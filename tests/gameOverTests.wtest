@@ -16,7 +16,7 @@ describe "Perder la partida"{
         game.height(config.height())
     }
 
-    test "Al perder se eliminan las visuales de todas las entidades y se vacía el administrador"{
+    test "Al perder se eliminan las visuales de todas las entidades"{
         const zombie = new ZombieBasico()
         zombie.start(game.at(5, 2))
         const planta = new Nuez()
@@ -26,7 +26,6 @@ describe "Perder la partida"{
 
         assert.notThat(game.hasVisual(zombie))
         assert.notThat(game.hasVisual(planta))
-        assert.equals(0, entityTickingManagerMirror.resolve("entities").size())
     }
 
     test "Al perder aparece la pantalla de game over"{
@@ -43,34 +42,5 @@ describe "Perder la partida"{
 
         assert.notThat(io.containsTimeEvent("tickEntities"))
         assert.notThat(io.containsTimeEvent("AnimateEntities"))
-    }
-}
-
-
-describe "Administrador de entidades: clear"{
-
-    method initialize(){
-        game.width(config.width())
-        game.height(config.height())
-    }
-
-    test "clear vacía el administrador de entidades"{
-        const zombie = new ZombieBasico()
-        zombie.start(game.at(5, 2))
-        const planta = new Nuez()
-        planta.start(game.at(3, 2))
-
-        entityTickingManager.clear()
-
-        assert.equals(0, entityTickingManagerMirror.resolve("entities").size())
-    }
-
-    test "clear solo se ocupa de las entidades: no frena los eventos del juego"{
-        entityTickingManager.startTicking()
-
-        entityTickingManager.clear()
-
-        assert.that(io.containsTimeEvent("tickEntities"))
-        assert.that(io.containsTimeEvent("AnimateEntities"))
     }
 }

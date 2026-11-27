@@ -28,7 +28,7 @@ describe "Image provider handler"{
         amount.times({i => tracker.tickUpInFrameTime()})
     }
     method changeImageProviderTemporarily(handler){
-        handler.imageProvider(testingAnimation1)
+        handler.imageProvider(testingAnimation1, "#Test")
         tracker.frameNumber(3)
         self.setTicksInFrameTo(2, tracker)
         handler.useTempAnimation(testingAnimation2, 1)
@@ -97,7 +97,7 @@ describe "Animation"{
     }
 
     test "Cambia correctamente los ticks en frame"{
-        handler.imageProvider(testingAnimation)
+        handler.imageProvider(testingAnimation, "#Test")
         handler.update(caller)
         assert.equals(2, tracker.ticksInFrame())
     }
@@ -105,7 +105,7 @@ describe "Animation"{
     test "Cambia de frame correctamente dentro del rango"{
         const results = []
         const expectedResults = (1 .. testingAnimation.animationTicksPerFrame()-1).map({ i=> 1 }) + [2]
-        handler.imageProvider(testingAnimation)
+        handler.imageProvider(testingAnimation, "#Test")
         (testingAnimation.animationTicksPerFrame()).times({ t =>
             handler.update(caller)
             results.add(tracker.frameNumber())
@@ -113,14 +113,14 @@ describe "Animation"{
         assert.equals(expectedResults, results)
     }
     test "Cambia al primer frame una vez llegado al final"{
-        handler.imageProvider(testingAnimation)
+        handler.imageProvider(testingAnimation, "#Test")
         self.setInLastFrame(tracker)
         self.setTicksInFrameTo(handler.imageProvider().animationTicksPerFrame(), tracker)
         handler.update(caller)
         assert.equals(1, tracker.frameNumber())
     }
     test "Envía la señal una vez terminada la animación"{
-        handler.imageProvider(testingAnimation)
+        handler.imageProvider(testingAnimation, "#Test")
         self.setInLastFrame(tracker)
         self.setTicksInFrameTo(handler.imageProvider().animationTicksPerFrame(), tracker)
         handler.update(caller)
@@ -140,7 +140,7 @@ describe "Animation"{
     test "Devuelve la dirección correcta a la imagen"{
         const direcciónEsperada = "animations/zombies/basic/walkingFH/frame_909.png"
         tracker.frameNumber(909)
-        assert.equals(direcciónEsperada, testingAnimation.getImage(caller, tracker))
+        assert.equals(direcciónEsperada, testingAnimation.getImage(tracker))
     }
 }
 
@@ -148,52 +148,6 @@ describe "Animacion Estatica"{
     test "Devuelve como dirección a la imagen la dirección asignada"{
         const newImage = new Sprite( image = "Esta es una dirección muy real")
         const imageMirror = new ObjectMirror(target = newImage)
-        assert.equals(imageMirror.resolve("image"), newImage.getImage("noUser", "noTraker"))
-    }
-}
-
-describe "Proveedor de imagen basado en vida"{
-    const caller = object{
-        var property maxHealth = 300
-        var property health = 300
-
-        method animationEnded(){}
-        method setHealthPercentage(percentage){
-            self.health(self.maxHealth()*percentage)
-        }
-    }
-
-    const imageProviderSet = [
-            new Animation(
-                durationInSeconds = 3.14,
-                framesInAnimation = 14.5,
-                animationDirectory = "A" 
-            ),
-            new Animation(
-                durationInSeconds = 16000000,
-                framesInAnimation = 324000,
-                animationDirectory = "B" 
-            ),
-            new Animation(
-                durationInSeconds = 0.1,
-                framesInAnimation = 0.1,
-                animationDirectory = "C" 
-            )
-        ]
-
-    const healthBasedImageProvider = new HealthBasedImageProvider( imageProviderSet = imageProviderSet )
-
-    test "Devuelve la imagen del proveedor de imagen correcto"{
-        const resultadosEsperados = 
-            (1 .. imageProviderSet.size()).map({ i =>
-                const proveedorDeImagenEsperado = imageProviderSet.get(imageProviderSet.size()-i)
-                return proveedorDeImagenEsperado.getImage(caller, tracker)
-            })
-        const resultadosObtenidos = 
-            (1 .. imageProviderSet.size()).map({ i =>
-                caller.setHealthPercentage(1/i)
-                return healthBasedImageProvider.getImage(caller, tracker)
-            })
-        assert.equals(resultadosEsperados, resultadosObtenidos)
+        assert.equals(imageMirror.resolve("image"), newImage.getImage("noTraker"))
     }
 }

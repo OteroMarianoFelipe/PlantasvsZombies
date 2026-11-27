@@ -33,8 +33,6 @@ class Behavior{
     var property providerKey
     const sendsProviderCandidate = true
 
-    method provider(user) = user.imageProviderSet().get(providerKey)
-
     const coolDownTracker
     method coolDownTracker() = coolDownTracker
 
@@ -44,7 +42,7 @@ class Behavior{
     method tick(user){
         if(strategy.shouldTick(user)){
             if(sendsProviderCandidate){
-                user.actionModule().providerCandidates().add(self.provider(user))
+                user.actionModule().providerCandidates().add(providerKey)
             }
             coolDownTracker.tickUp()
         }else{
@@ -119,7 +117,7 @@ object conditionalShootingStrategy inherits ShootingStrategy{
         user.entitiesAtOwnLine().filter({ e => user.isEnemy(e) && e.canBeKilled()})
 
     method hasTarget(user) = 
-        self.allEnemiesInLineOfSight(user).size() > 0
+        not self.allEnemiesInLineOfSight(user).isEmpty()
         
     override method shouldTick(user) = self.hasTarget(user)
 }

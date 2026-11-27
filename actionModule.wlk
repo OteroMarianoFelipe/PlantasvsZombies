@@ -46,7 +46,7 @@ class ActionModule{
         }
     }
 
-    method getImageProvider(user){
+    method getImageProviderKey(user){
         providerCandidates.add(null)
         const returnValue = providerCandidates.head()
         providerCandidates = [].copy()

@@ -68,7 +68,7 @@ describe "Mensajes de consulta"{
 }
 describe "Manejo de proveedores de imagen"{ 
     test "Logra cambiar de proveedor de imagen" {
-        entidadPlana.imageHandler().imageProvider(noImageProvider)
+        entidadPlana.imageHandler().imageProvider(noImageProvider, "#Test")
         assert.equals(noImageProvider, entidadPlana.imageHandler().imageProvider())
     }
 }

@@ -1,3 +1,4 @@
+import zombies.coneHead.*
 import zombies.zombie.*
 import imageProvider.*
 import imageProviderHandler.*
@@ -59,21 +60,25 @@ class Entity{
     method outOfBounds(){ self.cleanUp() }
 
     method obstacles() = self.collidingEntities().filter({ e => self.isEnemy(e) && e.blocksEnemyMovement()})
-    method hasObstacle() = self.obstacles().size() > 0
+    method hasObstacle() = not self.obstacles().isEmpty()
 
     method canBeKilled() = false
 
-    method defaultProvider() = imageProviderSet.get(defaultImageProviderKey)
-    method useDefaultProvider() { 
+    method updateCurrentProvider(){ 
+        self.imageProviderSetUse(imageHandler.imageProviderKey()) 
+        imageProviderSet.checked()
+    }
+
+    method useDefaultProvider() {
         if(not usingDefaultImageProvider){
-            imageHandler.imageProvider(self.defaultProvider()) 
+            self.imageProviderSetUse(defaultImageProviderKey)
             usingDefaultImageProvider = true
         }
     }
     method imageProviderSetUse(key){
         usingDefaultImageProvider = false
         const provider = imageProviderSet.get(key)
-        imageHandler.imageProvider(provider)
+        imageHandler.imageProvider(provider, key)
     }
 
     method entitiesAtOwnLine() =
@@ -88,13 +93,20 @@ class Entity{
 
     method animate() = imageHandler.update(self)
 
-    method image() = imageHandler.getImage(self)
+    method image() = imageHandler.getImage()
 }
 
 mixin Ticks{
     method outDatedCollisions()
+    method imageProviderSet()
+    method updateCurrentProvider()
 
-    method tick(){ self.outDatedCollisions() }
+    method tick(){ 
+        self.outDatedCollisions() 
+        if(self.imageProviderSet().shouldCheck()){
+            self.updateCurrentProvider()
+        }
+    }
 
     override method start(pos){
         super(pos)
@@ -112,13 +124,13 @@ mixin Active inherits Ticks{
     method actionModule() = actionModule
 
     method imageHandler()
+    method imageProviderSetUse(key)
     method useDefaultProvider()
-    method evaluateCollisions()
 
     method updateImageProvider(){
-        const actionProvider = actionModule.getImageProvider(self)
-        if(actionProvider != null){
-            self.imageHandler().imageProvider(actionProvider)
+        const actionProviderKey = actionModule.getImageProviderKey(self)
+        if(actionProviderKey != null){
+            self.imageProviderSetUse(actionProviderKey)
         }else{
             self.useDefaultProvider()
         }
@@ -132,26 +144,6 @@ mixin Active inherits Ticks{
         actionModule.use(self)
         self.updateImageProvider()
     }
-}
-
-mixin Alive{
-    var property maxHealth
-    var property deathHandler
-
-    var property health = maxHealth
-    method health(newHealth){
-        health = newHealth
-        if(not self.lives()){
-            deathHandler.apply(self)
-        }
-    }
-
-    method healthPercentage() = health/maxHealth
-
-    override method canBeKilled() = true
-
-    method lives() = health > 0
-    method takeDamage(damage) { self.health(health-damage) }
 }
 
 mixin HandlesCollisions inherits Ticks{
@@ -176,4 +168,61 @@ mixin HandlesCollisions inherits Ticks{
             collitionHandler.apply(e)
         })
     }
+}
+
+mixin Alive{
+    var property maxHealth
+    var property deathHandler
+
+    var thresholdHandler = noThreshold
+    method changeThresholds(newThresholds){
+        thresholdHandler = newThresholds
+    }
+
+    var property health = maxHealth
+    method health(newHealth){
+        health = newHealth
+        if(not self.lives()){
+            deathHandler.apply(self)
+        }else{
+            thresholdHandler.checkThreshold(self)
+        }
+    }
+
+    method healthPercentage() = health/maxHealth
+
+    override method canBeKilled() = true
+
+    method lives() = health > 0
+    method takeDamage(damage) { self.health(health-damage) }
+}
+
+object noThreshold{
+    method checkThreshold(user){}
+}
+
+class HealthThreshold{
+    const thresholds = []
+    method checkThreshold(user){
+        if(not thresholds.isEmpty() && thresholds.head().check(user)){
+            thresholds.head().activate(user)
+            thresholds.remove(thresholds.head())
+        }
+    }
+}
+
+class Threshold{
+    const change
+    const condition
+    method check(user) = condition.check(user)
+    method activate(user){ change.apply(user) }
+}
+
+class PercentageCondition{
+    const percentage
+    method check(user) = user.healthPercentage() <= percentage
+}
+class AmountCondition{
+    const amount
+    method check(user) = user.health() <= amount
 }

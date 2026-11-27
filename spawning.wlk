@@ -237,7 +237,7 @@ class Wave{
     }
 
     method trySpawn(){
-        if(spawningQueueTimings.size() > 0)
+        if( not spawningQueueTimings.isEmpty())
         if( currentTicks >= spawningQueueTimings.head() ){
             spawningQueueTimings.remove(spawningQueueTimings.head())
             self.spawn()

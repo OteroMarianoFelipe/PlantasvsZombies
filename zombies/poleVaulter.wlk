@@ -30,9 +30,10 @@ class PoleVaulter inherits Zombie(
                     strategy = vaultingStrategy
                 )
             }
-        ){}    
+        ){},
+    thresholdHandler = new PoleVaulterHealthThresholds()
 ){
-    method stopVaulting(){ actionModule.removeBehavior("#Vaulting") }
+    method stopVaulting(){ }
     method startWalking(){ 
         actionModule.addBehavior(
             new Behavior(
@@ -56,15 +57,36 @@ class PoleVaulter inherits Zombie(
             )
         )
     }
-
-    override method health(newHealthTotal){
-        if(newHealthTotal < maxHealth/3 && not actionModule.hasBehavior("#MeleeAttack")){
-            self.stopVaulting()
-            self.startMeleeAttack()
-        }
-        super(newHealthTotal)
-    }
 }
+
+class PoleVaulterHealthThresholds inherits HealthThreshold(
+    thresholds = [
+        new Threshold(
+            change = { user => 
+                const imgProvSet = user.imageProviderSet()
+                imgProvSet.add("#Walking", poleVaulterWalkingHurt)
+                imgProvSet.add("#Running", poleVaulterRunningHurt)
+                imgProvSet.add("#Jumping", poleVaulterJumpingHurt)
+                imgProvSet.add("#MeleeAttack", poleVaulterEatingHurt)
+            },
+            condition = new AmountCondition( amount = 95 )
+        ),
+        new Threshold(
+            change = { user => 
+                const imgProvSet = user.imageProviderSet()
+                imgProvSet.add("#Walking", poleVaulterWalkingDying)
+                imgProvSet.add("#Running", poleVaulterRunningDying)
+                imgProvSet.add("#MeleeAttack", poleVaulterEatingDying)
+                imgProvSet.remove("#Jumping")
+                if(not user.actionModule().hasBehavior("#MeleeAttack")){
+                    user.stopVaulting()
+                    user.startMeleeAttack()
+                }
+            },
+            condition = new AmountCondition( amount = 20 )
+        )
+    ]
+){}
 
 object vaultingStrategy inherits Strategy{
     override method shouldTick(user) = user.hasObstacle()
@@ -87,46 +109,19 @@ class PoleVaulterImageProvider inherits ImageProviderSet{
         self.initialize([
             new ImageProviderEntry(
                 key = "#Running",
-                value =
-                    new HealthBasedImageProvider( 
-                        imageProviderSet=[
-                            poleVaulterRunningDying,
-                            poleVaulterRunningHurt,
-                            poleVaulterRunningFH
-                        ]
-                    )
+                value = poleVaulterRunningFH
             ),
             new ImageProviderEntry(
                 key = "#Walking",
-                value =
-                    new HealthBasedImageProvider( 
-                        imageProviderSet=[
-                            poleVaulterWalkingDying,
-                            poleVaulterWalkingHurt,
-                            poleVaulterWalkingFH
-                        ]
-                    )
+                value = poleVaulterWalkingFH
             ),
             new ImageProviderEntry(
                 key = "#Jumping",
-                value =
-                    new HealthBasedImageProvider( 
-                        imageProviderSet=[
-                            poleVaulterJumpingHurt,
-                            poleVaulterJumpingFH
-                        ]
-                    )
+                value = poleVaulterJumpingFH
             ),
             new ImageProviderEntry(
                 key = "#MeleeAttack",
-                value =
-                    new HealthBasedImageProvider(
-                        imageProviderSet = [
-                            poleVaulterEatingDying,
-                            poleVaulterEatingHurt,
-                            poleVaulterEatingFH
-                        ]
-                    )
+                value = poleVaulterEatingFH
             ),
             new ImageProviderEntry(
                 key = "#Death",

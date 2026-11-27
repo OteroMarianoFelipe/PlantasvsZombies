@@ -1,4 +1,5 @@
 import imageProvider.*
+import entity.*
 import planta.*
 
 class Nuez inherits Planta(
@@ -8,16 +9,28 @@ class Nuez inherits Planta(
         new ImageProviderSet().initialize([
             new ImageProviderEntry(
                 key = "#Idle",
-                value = wallNutIdleImageProvider
+                value = wallNutIdle
             )      
-        ])
+        ]),
+    thresholdHandler = wallNutHealthThresholds
 ){}
 
-object wallNutIdleImageProvider inherits HealthBasedImageProvider( 
-    imageProviderSet=[
-        wallNutDying,
-        wallNutHurt,
-        wallNutIdle
+object wallNutHealthThresholds inherits HealthThreshold(
+    thresholds = [
+        new Threshold(
+            change = { user => 
+                const imgProvSet = user.imageProviderSet()
+                imgProvSet.add("#Idle", wallNutHurt)
+            },
+            condition = new PercentageCondition( percentage = 0.66 )
+        ),
+        new Threshold(
+            change = { user => 
+                const imgProvSet = user.imageProviderSet()
+                imgProvSet.add("#Idle", wallNutDying)
+            },
+            condition = new PercentageCondition( percentage = 0.33 )
+        )
     ]
 ){}
 

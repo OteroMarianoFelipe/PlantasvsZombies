@@ -8,17 +8,17 @@ class ImageProvider{
     method hasFamily() = family != null
     method sameFamily(otherProvider) = family == otherProvider.family()
 
-    method update(user, traker)
-    method getImage(user, traker)
+    method update(traker)
+    method getImage(traker)
     method durationInTicks()
 }
 
 class Sprite inherits ImageProvider{
     const image
 
-    override method update(user, traker){}
+    override method update(traker){}
     override method durationInTicks() = 0
-    override method getImage(user, traker) = image
+    override method getImage(traker) = image
 }
 
 class Animation inherits ImageProvider{
@@ -32,7 +32,7 @@ class Animation inherits ImageProvider{
     method isTimeToPassFrame(traker) = traker.ticksInFrame() >= self.animationTicksPerFrame()
     method newFrameNumber(previous) = (previous % framesInAnimation) +1
 
-    override method update(user, traker){
+    override method update(traker){
         if(self.isTimeToPassFrame(traker)){
             const newFrameNumber = self.newFrameNumber(traker.frameNumber())
             traker.frameNumber(newFrameNumber)
@@ -47,21 +47,7 @@ class Animation inherits ImageProvider{
         return frameNumber.toString()
     }
 
-    override method getImage(user, traker) = "animations/"+animationDirectory+"/frame_"+self.frameNumber001Format(traker.frameNumber())+".png"
-}
-
-class HealthBasedImageProvider inherits ImageProvider{
-    const imageProviderSet    
-    const property durationInTicks = imageProviderSet.average({p=>p.durationInTicks()}).truncate(0)
-
-    method getIndexFromHealth(user) = ((user.health()/user.maxHealth()*imageProviderSet.size()).roundUp(0)-1).max(0)
-
-    method imageProvider(user) = imageProviderSet.get(self.getIndexFromHealth(user))
-
-    override method update(user, traker){
-        self.imageProvider(user).update(user, traker)
-    }   
-    override method getImage(user, traker) = self.imageProvider(user).getImage(user, traker) 
+    override method getImage(traker) = "animations/"+animationDirectory+"/frame_"+self.frameNumber001Format(traker.frameNumber())+".png"
 }
 
 object noImageProvider inherits Sprite(image = "sprites/missingTexture.png"){}
@@ -75,6 +61,8 @@ class ImageProviderSet{
     const property entries = new Dictionary()
     method entries() = entries
 
+    var changed = true
+
     method initialize(startingEntries){
         startingEntries.forEach({ e =>
             entries.put(e.key(), e.value())
@@ -82,9 +70,20 @@ class ImageProviderSet{
         return self
     }
 
+    method shouldCheck() = changed
+    method checked(){
+        changed = false
+    }
+
     method get(key) = entries.get(key)
-    method add(key, value){ entries.put(key, value) }
-    method remove(key){ entries.remove(key) }
+    method add(key, value){
+        changed = true
+        entries.put(key, value) 
+    }
+    method remove(key){
+        changed = true
+        entries.remove(key) 
+    }
 }
 
 object noImageProviderSet{

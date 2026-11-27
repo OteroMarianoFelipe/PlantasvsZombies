@@ -8,13 +8,13 @@ class ZombieBasico inherits Zombie(
     maxHealth = 270,
     deathHandler = defaultZombieDeathHandler,
     imageProviderSet = new BasicZombieImageProvider(),
-    defaultImageProviderKey = "#Moving",
+    defaultImageProviderKey = "#Walking",
     actionModule = 
         object inherits ActionModule(
             behaviors = #{
                 new Behavior(
                     key = "#Movement",
-                    providerKey = "#Moving",
+                    providerKey = "#Walking",
                     coolDownTracker = new CoolDownTracker( secondsPerUse = 4.7 ),
                     state = object{ var property movingDirection = game.at(-1, 0) },
                     strategy = movingStrategy
@@ -27,33 +27,41 @@ class ZombieBasico inherits Zombie(
                     strategy = meleeAttackStrategy
                 )
             }
-        ){}    
+        ){},
+    thresholdHandler = new BasicZombieHealthThresholds()
+){}
+
+class BasicZombieHealthThresholds inherits HealthThreshold(
+    thresholds = [
+        new Threshold(
+            change = { user => 
+                const imgProvSet = user.imageProviderSet()
+                imgProvSet.add("#Walking", zombieWalkingHurt)
+                imgProvSet.add("#MeleeAttack", zombieEatingHurt)
+            },
+            condition = new AmountCondition( amount = 135 )
+        ),
+        new Threshold(
+            change = { user => 
+                const imgProvSet = user.imageProviderSet()
+                imgProvSet.add("#Walking", zombieWalkingDying)
+                imgProvSet.add("#MeleeAttack", zombieEatingDying)
+            },
+            condition = new AmountCondition( amount = 20 )
+        )
+    ]
 ){}
 
 class BasicZombieImageProvider inherits ImageProviderSet{
     method initialize() = 
         self.initialize([
             new ImageProviderEntry(
-                key = "#Moving",
-                value =
-                    new HealthBasedImageProvider( 
-                        imageProviderSet=[
-                            zombieWalkingDying,
-                            zombieWalkingHurt,
-                            zombieWalkingFH
-                        ]
-                    )
+                key = "#Walking",
+                value = zombieWalkingFH
             ),
             new ImageProviderEntry(
                 key = "#MeleeAttack",
-                value =
-                    new HealthBasedImageProvider(
-                        imageProviderSet=[
-                            zombieEatingDying,
-                            zombieEatingHurt,
-                            zombieEatingFH
-                        ]
-                    )
+                value = zombieEatingFH
             ),
             new ImageProviderEntry(
                 key = "#Death",

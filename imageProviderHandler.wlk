@@ -40,8 +40,9 @@ class ImageProviderHandler{
 
     var imageProvider
     method imageProvider() = imageProvider
-    method imageProvider(newImageProvider){
+    method imageProvider(newImageProvider, key){
         if(imageProvider == newImageProvider){return}
+        imageProviderKey = key
         if(
             not self.onTempAnimation() &&
             not newImageProvider.hasFamily() || 
@@ -52,6 +53,8 @@ class ImageProviderHandler{
         imageProvider = newImageProvider
         return
     }
+    var imageProviderKey = null
+    method imageProviderKey() = imageProviderKey
 
     method exitTempAnimation(){
         if(self.onTempAnimation()){
@@ -82,12 +85,12 @@ class ImageProviderHandler{
     }
 
     method update(user){ 
-        self.currentProvider().update(user, stateTracker) 
+        self.currentProvider().update(stateTracker) 
         if(stateTracker.animationEnded()){
             self.checkTemporaryAnimationState()
             user.animationEnded() 
         }
     }
 
-    method getImage(user) = self.currentProvider().getImage(user, stateTracker)
+    method getImage() = self.currentProvider().getImage(stateTracker)
 }

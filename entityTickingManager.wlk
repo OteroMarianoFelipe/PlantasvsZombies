@@ -7,8 +7,6 @@ object entityTickingManager{
 
   method startTicking(){
     game.onTick(1000/config.ticksPerSecond(), "tickEntities", {  
-      /*console.println("startingTick")
-      console.println("finishingTick (should be 200ms max)")*/
       toFunctionalTick.forEach({entity => 
         entity.tick()
       })  
