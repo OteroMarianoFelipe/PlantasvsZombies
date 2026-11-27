@@ -1,18 +1,12 @@
 import wollok.game.*
 import player.*
-import zombies.zombieBasico.*
-import zombies.coneHead.*
-import zombies.flagZombie.*
-import zombies.poleVaulter.*
 import entityTickingManager.*
-import UIElements.agradecimientos.*
 import UIElements.plantCard.*
 import UIElements.sunCounter.*
-import UIElements.pauseMenu.*
 import spawning.*
 import zombieTracker.*
-import UIElements.gameOver.*
 import util.debugger.*
+import UIManager.*
 
 object config {
   const property height = 7
@@ -33,7 +27,7 @@ object config {
 
   method unpause(){
     paused = false
-    pauseMenu.cleanUp()
+    uimanager.unpause()
     entityTickingManager.startTicking()
   }
 
@@ -42,11 +36,11 @@ object config {
       self.unpause()
     }else{
       self.pause()
-      pauseMenu.show()
+      uimanager.pause()
     }
   }
 
-  const plantCards = [sunFlowerCard, peashooterCard, wallNutCard, snowPeaCard]
+  const property plantCards = [sunFlowerCard, peashooterCard, wallNutCard, snowPeaCard]
 
   const property upperBound = game.at(11, 5)
   const property lowerBound = game.at(2, 1)
@@ -66,6 +60,7 @@ object config {
     game.width(width)
     game.cellSize(cellSize)
     game.boardGround(backGroundImage)
+    uimanager.initializeUIElements()
   }
 
   method setUpNewGame(){
@@ -75,9 +70,10 @@ object config {
     laneDirector.initialize()
     exampleLevel.setUp()
     exampleLevel.start()
-    self.startUIElements()
-    self.pause()
-    pauseMenu.show()
+    sunCounter.suns(startingSuns)
+    uimanager.showHUD()
+    paused = false
+    self.switchPausedState()
   }
 
   method controlsConfiguration(){
@@ -89,24 +85,14 @@ object config {
     keyboard.r().onPressDo({ => self.resetGame()})
   }
 
-  method startUIElements(){
-    sunCounter.suns(startingSuns)
-    plantCards.size().times({ i =>
-      const card = plantCards.get(i-1)
-      card.start(game.at(2 + i, 0))
-      card.reset()
-    })
-    sunCounter.start()
-  }
-
   method gameFinished(){
     self.pause()
-    agradecimientos.show()
+    uimanager.showEndCard()
     game.removeTickEvent("SearchForZombies")
   }
 
   method clear(){
-    gameOver.cleanUp()
+    uimanager.cleanUp()
     entityTickingManager.clear()
     sunSpawner.stop()
     game.clear()
@@ -114,7 +100,7 @@ object config {
 
   method lose(){
     self.clear()
-    gameOver.trigger()
+    uimanager.showGameOver()
   }
 
   method resetGame(){

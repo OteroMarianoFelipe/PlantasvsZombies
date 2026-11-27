@@ -1,6 +1,6 @@
 object agradecimientos{  
     const property position = game.at(0, 0)
-    method cleanUp(){ 
+    method hide(){ 
         if(game.hasVisual(self)){ 
             game.removeVisual(self)
         } 

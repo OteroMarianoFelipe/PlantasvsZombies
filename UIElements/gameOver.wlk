@@ -7,17 +7,17 @@ object gameOver{
 
     method startChecking(){
         game.onTick(1000, "SearchForZombies",{ =>
-        if(zombieTracker.zombieCount() <= 0){
+            if(zombieTracker.zombieCount() <= 0){
                 config.gameFinished()
             }
         })
     }
 
-    method trigger(){ 
+    method show(){ 
         triggered = true
         game.addVisual(self) 
     }
-    method cleanUp(){ 
+    method hide(){ 
         if(triggered){
             triggered = false
             game.removeVisual(self) 

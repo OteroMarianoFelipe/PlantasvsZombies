@@ -1,10 +1,10 @@
 object pauseMenu{  
     const property position = game.at(0, 0)
-    method cleanUp(){ 
+    method hide(){ 
         if(game.hasVisual(self)){ 
             game.removeVisual(self)
         } 
-        vignette.cleanUp()
+        vignette.hide()
     }
     method show(){ 
         vignette.show()
@@ -15,7 +15,7 @@ object pauseMenu{
 
 object vignette{  
     const property position = game.at(0, 0)
-    method cleanUp(){ if(game.hasVisual(self)){ game.removeVisual(self) } }
+    method hide(){ if(game.hasVisual(self)){ game.removeVisual(self) } }
     method show(){ game.addVisual(self) }
     method image() = "sprites/vignette.png"
 }

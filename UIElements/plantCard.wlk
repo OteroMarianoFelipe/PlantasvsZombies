@@ -34,6 +34,14 @@ class PlantCard inherits Ticks and Entity(
     override method tick(){ state.tick(self) }
     override method beClicked(){ state.beClicked(self) }
 
+    override method start(pos){
+        super(pos)
+        self.hide()
+    }
+
+    method show(){ game.addVisual(self) }
+    method hide(){ game.removeVisual(self) }
+
     method use(pos){
         self.state(onCoolDown)
         sunCounter.spendSuns(price)

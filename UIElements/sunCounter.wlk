@@ -20,10 +20,14 @@ object sunCounter{
         sunCounterTens.changeTens(self.tens())
     }
 
-    method start(){
+    method show(){
         game.addVisual(sunCounterIcoWithHundreds)
         game.addVisual(sunCounterTens)
         self.updateCount()
+    }
+    method hide(){
+        game.removeVisual(sunCounterIcoWithHundreds)
+        game.removeVisual(sunCounterTens)
     }
 
 }
