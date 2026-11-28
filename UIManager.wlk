@@ -1,7 +1,9 @@
+import UIElements.pressToStart.*
 import UIElements.agradecimientos.*
 import UIElements.pauseMenu.*
 import UIElements.sunCounter.*
 import UIElements.gameOver.*
+import UIElements.readySetGo.*
 import util.config.*
 
 object uimanager{
@@ -10,6 +12,15 @@ object uimanager{
 
     method showGameOver(){ gameOver.show() }
     method showEndCard(){ agradecimientos.show() }
+
+    method showPendingInput(){
+        pressToStart.show()
+    }
+    method hidePendingInput(){
+        pressToStart.hide()
+    }
+
+    method showReadySetGo(){ ready.show() }
 
     method initializeUIElements(){
         config.plantCards().size().times({ i =>

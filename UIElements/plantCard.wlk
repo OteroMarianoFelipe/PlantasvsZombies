@@ -25,8 +25,9 @@ class PlantCard inherits Ticks and Entity(
     }
 
     method reset(){
+        self.deselected()
         imageHandler.exitTempAnimation()
-        self.state(unavailable)
+        self.state(available)
     }
 
     method newInstance() = createNewInstance.apply()
@@ -42,7 +43,10 @@ class PlantCard inherits Ticks and Entity(
         self.hide()
     }
 
-    method show(){ game.addVisual(self) }
+    method show(){ 
+        game.addVisual(self) 
+        self.tick()
+    }
     method hide(){ game.removeVisual(self) }
 
     method use(pos){

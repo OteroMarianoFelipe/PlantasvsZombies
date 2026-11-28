@@ -6,7 +6,6 @@ import behavior.*
 
 class ZombieBasico inherits Zombie(
     maxHealth = 270,
-    deathHandler = defaultZombieDeathHandler,
     imageProviderSet = new BasicZombieImageProvider(),
     defaultImageProviderKey = "#Walking",
     actionModule = 

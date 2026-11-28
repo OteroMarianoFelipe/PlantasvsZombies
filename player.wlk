@@ -5,6 +5,10 @@ import util.config.config
 object player {
   var property cardSelected = null
 
+  method reset(){
+    self.deselectCard()
+  }
+
   method deselectCard(){ 
     self.cardSelected().deselected()
     self.cardSelected(null) 

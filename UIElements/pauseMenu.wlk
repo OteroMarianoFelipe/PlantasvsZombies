@@ -18,5 +18,6 @@ object vignette{
     const property position = game.at(0, 0)
     method hide(){ if(game.hasVisual(self)){ game.removeVisual(self) } }
     method show(){ game.addVisual(self) }
+    method beClicked(){}
     method image() = "sprites/vignette.png"
 }

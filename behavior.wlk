@@ -93,7 +93,8 @@ object meleeAttackStrategy inherits Strategy(){
     override method shouldTick(user) = self.hasAttackTarget(user)
 
     override method use(user, state){
-        self.getFirstMeleeAttackObjective(user).takeDamage(state.damage())
+        const objective = self.getFirstMeleeAttackObjective(user)
+        user.meleeAttack(objective, state.damage())
     }
 }
 

@@ -6,7 +6,6 @@ import behavior.*
 
 class FlagZombie inherits Zombie(
     maxHealth = 200,
-    deathHandler = defaultZombieDeathHandler,
     imageProviderSet = new FlagZombieImageProvider(),
     defaultImageProviderKey = "#Moving",
     actionModule = 

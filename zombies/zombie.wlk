@@ -7,7 +7,9 @@ import util.config.*
 import imageProvider.*
 import team.*
 
-class Zombie inherits Alive and Active and Entity(
+class Zombie inherits Alive(
+    deathHandler = defaultZombieDeathHandler
+) and Active and Entity(
     team = zombiesTeam,
     collides = true
 ){
@@ -30,6 +32,16 @@ class Zombie inherits Alive and Active and Entity(
     override method cleanUp(){
         game.removeVisual(self)
         zombieTracker.removeZombie(self)
+    }
+
+    method meleeAttack(entity, damage){
+        entity.takeDamage(damage)
+        const sound = [
+            game.sound("sounds/zombies/chomp/1.ogg"),
+            game.sound("sounds/zombies/chomp/2.ogg"),
+            game.sound("sounds/zombies/chomp/3.ogg")
+        ].get(0.randomUpTo(2))
+        sound.play()
     }
 
     override method tick(){
@@ -55,6 +67,11 @@ object defaultZombieDeathHandler{
         user.actionModule().clear()
         user.actionModule().stop()
         user.removeCollision()
+        const sound = [
+            game.sound("sounds/zombies/falling/1.ogg"),
+            game.sound("sounds/zombies/falling/2.ogg")
+        ].get(0.randomUpTo(1))
+        sound.play()
         user.animationCallback({ => user.cleanUp()})
         user.imageHandler().useTempAnimation(user.imageProviderSet().get("#Death"), 1)
     }

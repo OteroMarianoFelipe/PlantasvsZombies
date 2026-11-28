@@ -103,6 +103,7 @@ class Level{
     const zombieWeights
     const dificultyOffset
     method setUp(){
+        waves.clear()
         waves.add( new InitialWave( points = self.pointsForWave(0) ) )
         waves.last().pregenerateWave(zombieWeights)
         (flags*10 - 1).times({ i =>
@@ -257,7 +258,8 @@ class Wave{
 
 class InitialWave inherits Wave( 
     waveNumber = 1,
-    ticksToStart = config.secondsToTicks(18.5)
+    ticksToStart = config.secondsToTicks(18.5),
+    state = initialWaveWaiting
 ){}
 
 class HugeWave inherits Wave(
@@ -279,11 +281,22 @@ class WaitingState{
 
 object waiting inherits WaitingState{}
 
+object initialWaveWaiting inherits WaitingState{
+    override method tick(wave){
+        super(wave)
+        if(wave.currentTicks() == wave.ticksToStart() - config.secondsToTicks(4.5)){
+            const sound = game.sound("sounds/tzac.ogg")
+            sound.play()
+        }
+    }
+}
+
 object hugeWaveWaiting inherits WaitingState{
     override method tick(wave){
         super(wave)
         if(wave.currentTicks() == wave.ticksToStart() - config.secondsToTicks(7.5)){
-            console.println("Huge wave aproaching should be shown")
+            const sound = game.sound("sounds/hugewave.ogg")
+            sound.play()
         }
     }
 }

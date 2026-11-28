@@ -8,7 +8,6 @@ import behavior.*
 
 class ConeHead inherits Zombie(
     maxHealth = 640,
-    deathHandler = defaultZombieDeathHandler,
     imageProviderSet = new ConeHeadImageProvider().initialize(),
     defaultImageProviderKey = "#Walking",
     actionModule = 

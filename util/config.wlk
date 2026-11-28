@@ -15,25 +15,19 @@ object config {
   const property ticksPerSecond = 5
   const cellSize = 64
   const backGroundImage = "sprites/background.png"
-  var bgmVolume = 1
-  method bgmVolume(newVolume){
-    bgm.voulme(newVolume)
-  }
 
   const startingSuns = 200
-
-  const bgm = game.sound("sounds/Graze the Roof.mp3")
 
   var paused = false
 
   method pause(){
-    bgm.pause()
+    backgroundMusic.pause()
     paused = true
     entityTickingManager.stop()
   }
 
   method unpause(){
-    bgm.resume()
+    backgroundMusic.resume()
     paused = false
     uimanager.unpause()
     entityTickingManager.startTicking()
@@ -69,22 +63,46 @@ object config {
     game.cellSize(cellSize)
     game.boardGround(backGroundImage)
     uimanager.initializeUIElements()
-    bgm.shouldLoop(true)
-    bgm.volume(bgmVolume)
-    bgm.play()
+  }
+
+  method setUpBGM(){
+    const music = game.sound("sounds/Graze the Roof.mp3")
+    backgroundMusic.music(music)
+  }
+
+  method pendingInput(){
+    uimanager.showPendingInput()
+    game.schedule(250,{ => 
+      keyboard.any().onPressDo({ =>
+        keyboard.any().clean()
+        uimanager.hidePendingInput()
+        self.prepareForGame()
+      })
+    })
+  }
+
+  method prepareForGame(){
+    const sound = game.sound("sounds/readysetplant.ogg")
+    sound.play()
+    uimanager.showReadySetGo()
+    game.schedule(3600, { => self.startGame()})
+  }
+
+  method startGame(){
+    sunCounter.suns(startingSuns)
+    entityTickingManager.startTicking()
+    exampleLevel.start()
+    backgroundMusic.play()
+    uimanager.showHUD()
+    sunSpawner.setPeriodicalInstances(10) 
+    self.controlsConfiguration()
   }
 
   method setUpNewGame(){
-    self.controlsConfiguration()
-    entityTickingManager.startTicking()
-    sunSpawner.setPeriodicalInstances(10) 
     laneDirector.initialize()
     exampleLevel.setUp()
-    exampleLevel.start()
-    sunCounter.suns(startingSuns)
-    uimanager.showHUD()
-    paused = false
-    self.switchPausedState()
+    self.setUpBGM()
+    self.pendingInput()
   }
 
   method controlsConfiguration(){
@@ -104,12 +122,14 @@ object config {
 
   method clear(){
     uimanager.cleanUp()
+    plantCards.forEach({ p => p.reset() })
     entityTickingManager.clear()
     sunSpawner.stop()
     game.clear()
   }
 
   method lose(){
+    backgroundMusic.stop()
     entityTickingManager.clear()
     uimanager.hideHUD()
     uimanager.showGameOver()
@@ -118,6 +138,65 @@ object config {
   method resetGame(){
     self.unpause()
     self.clear()
+    backgroundMusic.stop()
     self.setUpNewGame()
+  }
+}
+
+object backgroundMusic{
+  var volume = 1
+  var music = game.sound("")
+  var property state = stopped
+
+  method volume(newVolume){
+    volume = newVolume
+    music.volume(newVolume)
+  }
+  method music(newMusic){ 
+    music = newMusic 
+    music.shouldLoop(true)
+    music.volume(volume)
+  }
+
+  method play(){state.play(music, self)}
+  method stop(){state.stop(music, self)}
+  method pause(){ state.pause(music, self) }
+  method resume(){ state.resume(music, self) }
+}
+
+object playing {
+  method play(sound, manager){}
+  method stop(sound, manager){ 
+    sound.stop() 
+    manager.state(stopped)
+  }
+  method pause(sound, manager){ 
+    sound.pause() 
+    manager.state(paused)
+  }
+  method resume(sound, manager){}
+}
+object stopped {
+  method play(sound, manager){
+    sound.play()
+    manager.state(playing)
+  }
+  method stop(sound, manager){}
+  method pause(sound, manager){}
+  method resume(sound, manager){
+    sound.play()
+    manager.state(playing)
+  }
+}
+object paused {
+  method play(sound, manager){
+    sound.resume()
+    manager.state(playing)
+  }
+  method stop(sound, manager){}
+  method pause(sound, manager){}
+  method resume(sound, manager){
+    sound.resume()
+    manager.state(playing)
   }
 }

@@ -8,7 +8,6 @@ import util.debugger.*
 
 class PoleVaulter inherits Zombie(
     maxHealth = 190,
-    deathHandler = defaultZombieDeathHandler,
     imageProviderSet = new PoleVaulterImageProvider(),
     defaultImageProviderKey = "#Running",
     actionModule = 
