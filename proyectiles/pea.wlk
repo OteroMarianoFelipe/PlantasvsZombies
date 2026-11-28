@@ -65,6 +65,7 @@ object frozenState{
 
     method apply(entity, user){
         entity.takeDamage(user.damage())
+        entity.freeze()
         user.handleRemoval()
     }
 }
