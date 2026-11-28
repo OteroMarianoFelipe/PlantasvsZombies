@@ -45,6 +45,12 @@ class Pea inherits HandlesCollisions(
         self.removeCollision()
         self.actionModule().clear()
         self.actionModule().stop()
+        const sound = [
+            game.sound("sounds/peaSplat/1.ogg"),
+            game.sound("sounds/peaSplat/2.ogg"),
+            game.sound("sounds/peaSplat/3.ogg")
+        ].get(0.randomUpTo(2))
+        sound.play()
         animationCallback = { => self.cleanUp()} 
         imageHandler.useTempAnimation(imageProviderSet.get("#Impact"), 1)
     }
@@ -66,6 +72,8 @@ object frozenState{
     method apply(entity, user){
         entity.takeDamage(user.damage())
         entity.freeze()
+        const sound = game.sound("sounds/peaSplat/snow_sparkles.ogg")
+        sound.play()
         user.handleRemoval()
     }
 }

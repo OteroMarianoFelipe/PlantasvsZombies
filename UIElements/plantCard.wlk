@@ -8,6 +8,7 @@ import plantas.snowPea.SnowPea
 import entityTickingManager.*
 import UIElements.sunCounter.sunCounter
 import imageProvider.*
+import util.random.*
 
 class PlantCard inherits Ticks and Entity(
     defaultImageProviderKey =  "#Available"
@@ -17,8 +18,10 @@ class PlantCard inherits Ticks and Entity(
 
     var property state = available
     method state(newState){ 
-        state = newState
-        state.start(self) 
+        if(state != newState){
+            state = newState
+            state.start(self) 
+        }
     }
 
     method reset(){
@@ -43,6 +46,11 @@ class PlantCard inherits Ticks and Entity(
     method hide(){ game.removeVisual(self) }
 
     method use(pos){
+        const sound = [
+            game.sound("sounds/plant/1.ogg"),
+            game.sound("sounds/plant/2.ogg")
+        ].get(0.randomUpTo(1))
+        sound.play()
         self.state(onCoolDown)
         sunCounter.spendSuns(price)
         self.newInstance().start(pos)
@@ -53,6 +61,7 @@ class CardState{
     method start(card){ self.tick(card) }
     method tick(card){}
     method beClicked(card){}
+    method deselected(card){}
 }
 object unavailable inherits CardState{
     override method tick(card){
@@ -76,10 +85,12 @@ object available inherits CardState{
 object selected inherits CardState{
     override method start(card){
         super(card)
+        const sound = game.sound("sounds/seedlift.ogg")
+        sound.play()
         player.selectCard(card)
         card.imageProviderSetUse("#Selected")
     }
-    method deselected(card){
+    override method deselected(card){
         card.state(unavailable)
     }
 }
@@ -89,7 +100,7 @@ object onCoolDown inherits CardState{
         card.animationCallback({ => card.state(unavailable) })
         card.imageHandler().useTempAnimation(card.imageProviderSet().get("#CoolDown"), 1)
     }
-    method deselected(card){}
+    override method deselected(card){}
 }
 
 object sunFlowerCard inherits PlantCard(

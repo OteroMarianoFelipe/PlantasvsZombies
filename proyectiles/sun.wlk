@@ -34,6 +34,8 @@ class Sun inherits Projectile(
     }
 
     override method beClicked(){
+        const sound = game.sound("sounds/points.ogg")
+        sound.play()
         sunCounter.addSuns(self.value())
         self.handleRemoval()
     }

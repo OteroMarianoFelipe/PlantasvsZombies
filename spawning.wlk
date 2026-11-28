@@ -10,7 +10,7 @@ import util.config.config
 import util.random.*
 import team.*
 import entityTickingManager.entityTickingManager
-import UIElements.gameOver.gameOver
+import UIElements.agradecimientos.agradecimientos
 
 object sunSpawner{
     var tickCounter = 0
@@ -310,7 +310,7 @@ object waveDiedThreshold{
         if(wave.healthPercentage() <= 0){
             wave.stopTicking()
             if(wave.nextWave() == null){
-                gameOver.startChecking()
+                agradecimientos.startChecking()
             }
         }
     }

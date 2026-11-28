@@ -15,17 +15,25 @@ object config {
   const property ticksPerSecond = 5
   const cellSize = 64
   const backGroundImage = "sprites/background.png"
+  var bgmVolume = 1
+  method bgmVolume(newVolume){
+    bgm.voulme(newVolume)
+  }
 
   const startingSuns = 200
+
+  const bgm = game.sound("sounds/Graze the Roof.mp3")
 
   var paused = false
 
   method pause(){
+    bgm.pause()
     paused = true
     entityTickingManager.stop()
   }
 
   method unpause(){
+    bgm.resume()
     paused = false
     uimanager.unpause()
     entityTickingManager.startTicking()
@@ -61,6 +69,9 @@ object config {
     game.cellSize(cellSize)
     game.boardGround(backGroundImage)
     uimanager.initializeUIElements()
+    bgm.shouldLoop(true)
+    bgm.volume(bgmVolume)
+    bgm.play()
   }
 
   method setUpNewGame(){
@@ -99,7 +110,8 @@ object config {
   }
 
   method lose(){
-    self.clear()
+    entityTickingManager.clear()
+    uimanager.hideHUD()
     uimanager.showGameOver()
   }
 

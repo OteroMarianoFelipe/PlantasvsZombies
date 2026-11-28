@@ -14,6 +14,10 @@ class Zombie inherits Alive and Active and Entity(
     var frozen = 0
 
     method freeze(){
+        if(frozen == 0){
+            const sound = game.sound("sounds/zombies/frozen.ogg")
+            sound.play()
+        }
         self.actionModule().slowDown(2)
         frozen = config.secondsToTicks(10)
     }

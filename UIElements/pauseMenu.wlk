@@ -8,6 +8,7 @@ object pauseMenu{
     }
     method show(){ 
         vignette.show()
+        game.sound("sounds/pause.ogg").play()
         game.addVisual(self) 
     }
     method image() = "sprites/pauseMenu.png"
